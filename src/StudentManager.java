@@ -1,6 +1,12 @@
 import java.util.HashMap;
 
 public class StudentManager {
+    private static HashMap<String, Student> students = FileReader.loadStudents();
+
+    public static Student getStudent(String matricNo){
+        return students.get(matricNo);
+    }
+
     public void dropCourse(String courseCode, String indexNo, Student student) {
         return;
     }
