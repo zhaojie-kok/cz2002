@@ -27,7 +27,6 @@ public class Course implements Serializable{
     private String courseName;
     private School school;
     private HashMap<Integer, Index> indexes;
-    private int totalSlots;
     private int AU;
     private Time examDate;
 
@@ -51,10 +50,6 @@ public class Course implements Serializable{
 
     public int getAvailableSlots(int index){
         return indexes.get(index).getSlotsAvailable();
-    }
-
-    public int getTotalSlots(){
-        return totalSlots;
     }
 
     public int getAU(){
