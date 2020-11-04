@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.List;
+import java.util.Queue;
 
 public class Index implements Serializable{
 
@@ -12,6 +13,7 @@ public class Index implements Serializable{
 	private int slotsTotal;
 	private List<Student> registeredStudents; 
 	private List<LessonDetails>[] timeTable;
+    private Queue<Student> waitlist;
 	
 	public String getIndexNo() {
 		return indexNo;
@@ -67,6 +69,13 @@ public class Index implements Serializable{
 	
 	public void minusSlotsTotal() {
 		this.slotsTotal--;
+	}
+
+	public Student dequeueWaitlist(){
+		return waitlist.remove();
+	}
+	public void enqueueWaitlist(Student student){
+		waitlist.add(student);
 	}
 }
 

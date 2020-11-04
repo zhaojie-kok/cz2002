@@ -1,17 +1,29 @@
 import java.util.HashMap;
 
-public class StudentManager implements EntityManager{
-    public int dropCourse(Course course, String indexNo, Student student) {
-        String courseCode = course.getCourseCode();
-        if (student.getCourseIndex(courseCode) == null) {
-            return -1;
-        }
+// public class StudentManager implements EntityManager{
+//     public int dropCourse(Course course, String indexNo, Student student) {
+//         String courseCode = course.getCourseCode();
+//         if (student.getCourseIndex(courseCode) == null) {
+//             return -1;
+//         }
+        // student.removeCourse(courseCode);
+        //         // TODO: removeStudent, dequeue waitlist
+        //         // CourseMgr.removeStudent()
+        //         return 1;
+        //     }
 
-        student.removeCourse(courseCode);
-        // TODO: removeStudent, dequeue waitlist
-        // CourseMgr.removeStudent()
-        return 1;
+public class StudentManager implements EntityManager {
+    private static HashMap<String, Student> students = FileReader.loadStudents();
+
+    public static Student getStudent(String matricNo){
+        return students.get(matricNo);
     }
+
+    public void dropCourse(String courseCode, String indexNo, Student student) {
+        return;
+    }
+
+        
 
     public int addCourse(Course course, String indexNo, Student student) {
         HashMap <String, String> courses = student.getCourses();
@@ -19,7 +31,7 @@ public class StudentManager implements EntityManager{
         // not allowed to add a course already registered for or requires overloading
         if (courses.containsKey(course.getCourseCode())) {
             return -1;
-        } else if (student.getAcadUnits() + course.getAcadUnits() > student.getAcadUnitsAllowed()) {
+        } else if (student.getAcadUnits() + course.getAU() > student.getAcadUnitsAllowed()) {
             return -1;
         }
 

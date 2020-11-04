@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FileReader {
@@ -29,10 +30,10 @@ public class FileReader {
         writeSerializedObject(dataPath + "filename", mylist);
 	}
 
-	public static String[] getUserDetails(String userId){
+	public static String[] getLoginDetails(String userId){
         String line = "";
 		String tvsSplitBy = "\\t";
-		String tsvFile = userLoginDetailsPath + "TSV.tsv";
+		String tsvFile = userLoginDetailsPath + "LoginDetails.tsv";
 		BufferedReader br;
 		String[] details = null;
 
@@ -55,49 +56,60 @@ public class FileReader {
 		return details;
 	}
 	
-	public static Course[] loadCourses(){
+	public static HashMap<String, Course> loadCourses(){
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
-		Course[] courses = new Course[listOfFiles.length];
+		HashMap<String, Course> courses = new HashMap<>();
+		Course toAdd;
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				courses[i] = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Course.class);
+				toAdd = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Course.class);
+				if (toAdd != null){
+					courses.put(toAdd.getCourseCode(), toAdd);
+				}
 			}
 		}
 		return courses;
 	}
 
-	public static Staff[] loadStaff(){
+	public static HashMap<String, Staff> loadStaff(){
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
-		Staff[] staff = new Staff[listOfFiles.length];
+		HashMap<String, Staff> staff = new HashMap<>();
+		Staff toAdd;
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				staff[i] = cast(readSerializedObject(staffPath + listOfFiles[i].getName()), Staff.class);
+				toAdd = cast(readSerializedObject(staffPath + listOfFiles[i].getName()), Staff.class);
+				if (toAdd != null){
+					staff.put(toAdd.getStaffNo(), toAdd);
+				}
 			}
 		}
 		return staff;
 	}
 
-	public static Student[] loadStudents(){
+	public static HashMap<String, Student> loadStudents(){
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
-		Student[] students = new Student[listOfFiles.length];
+		HashMap<String, Student> students = new HashMap<>();
+		Student toAdd;
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				students[i] = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Student.class);
+				toAdd = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Student.class);
+				if (toAdd != null){
+					students.put(toAdd.getMatricNo(), toAdd);
+				}
 			}
 		}
 		return students;
 	}
 
 	public static void writeCourse(Course course){
-		writeSerializedObject(coursesPath + course.getCourseName(), course);
+		writeSerializedObject(coursesPath + course.getCourseCode(), course);
 	}
-
 	public static void writeStaff(Staff staff){
 		writeSerializedObject(staffPath + staff.getStaffNo(), staff);
 	}

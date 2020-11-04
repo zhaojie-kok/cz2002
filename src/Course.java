@@ -1,42 +1,49 @@
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Queue;
 
 public class Course implements Serializable{
     private static final long serialVersionUID = -9117232107080367454L;
-    
+
+    enum School {
+        NBS,
+        SCBE,
+        SCEE,
+        SCSE,
+        SEEE,
+        SMSE,
+        SMAE,
+        SADM,
+        SOH,
+        SOSS,
+        WKWSCI,
+        SBS,
+        SPMS,
+        ASE,
+        LKCM
+    }
+
     private String courseCode;
     private String courseName;
-    private HashMap<String, Index> indexes; // <indexNo, Index object>
-    private HashMap<String, Integer> availableSlots;
-    private int totalSlots;
+    private School school;
+    private HashMap<String, Index> indexes; // <indexNo, Index>
+    private HashMap<String, Queue<String>> waitlist; // <indexNo, Queue<matricNo>>
+    private int AU;
     private Calendar examDate;
-    private HashMap<String, Queue<String>> waitlist; // <indexNo, List<matricNo>>
-    private int acadUnits;
 
     public Course(String courseCode, 
-                    String courseName, 
-                    Index[] indexes,
-                    int totalSlots,
-                    Calendar examDate,
-                    HashMap<String, Queue<String>> waitlist,
-                    int acadUnits) 
-    {
+                School school, 
+                HashMap<String, Index> indexes, 
+                HashMap<String, Queue<String>> waitlist,
+                int AU, 
+                Calendar examDate){
         this.courseCode = courseCode;
-        this.courseName = courseName;
-        this.totalSlots = totalSlots;
-        this.examDate = examDate;
+        this.school = school;
+        this.indexes = indexes;
         this.waitlist = waitlist;
-        this.acadUnits = acadUnits;
-
-        HashMap<String, Index> indexHM = new HashMap<>();
-        HashMap<String, Integer> slotsAvail = new HashMap<>();
-        for (Index ind: indexes) {
-            indexHM.put(ind.getIndexNo(), ind);
-            slotsAvail.put(ind.getIndexNo(), ind.getSlotsAvailable());
-        }
+        this.AU = AU;
+        this.examDate = examDate;
     }
 
     public String getCourseCode(){
@@ -46,16 +53,16 @@ public class Course implements Serializable{
         return courseName;
     }
 
-    public int getAvailableSlots(String index){
-        return availableSlots.get(index);
+    public String getSchool(){
+        return school.toString();
     }
 
-    public int getTotalSlots(){
-        return totalSlots;
+    public int getAvailableSlots(String indexNo){
+        return indexes.get(indexNo).getSlotsAvailable();
     }
 
-    public int getAcadUnits() {
-        return this.acadUnits;
+    public int getAU(){
+        return AU;
     }
 
     public Index getIndex(String indexNo) {
@@ -74,18 +81,34 @@ public class Course implements Serializable{
         if (this.waitlist.get(indexNo) != null) {
             Queue<String> newList = this.waitlist.get(indexNo);
             newList.add(student.getMatricNo());
-
+            this.waitlist.put(indexNo, newList);
         }
 
         return true;
     }
 
-    public void updateAvailableSlots(String index, int change){
+    public HashMap<String, Index> getIndexes(){
+        return indexes;
+    }
+
+    public void changeAvailableSlots(String indexNo, int change){
         /**
-        Adds the change to the available slots mapped to index of course
+        Adds the change to the available slots mapped to indexNo of course
         */
-        int slots = availableSlots.get(index);
-        slots = slots + change;
-        availableSlots.replace(index, slots);
+        if (change == 1){
+
+        }
+        else if (change == -1){
+
+        }
+        else{
+            int slots = indexes.get(indexNo).getSlotsAvailable();
+            slots = slots + change;
+            indexes.get(indexNo).setSlotsAvailable(slots);
+        }
+    }
+
+    public void setAvailableSlots(String indexNo, int set){
+        indexes.get(indexNo).setSlotsAvailable(set);
     }
 }
