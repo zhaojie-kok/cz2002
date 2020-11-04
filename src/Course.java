@@ -28,21 +28,18 @@ public class Course implements Serializable{
     private String courseName;
     private School school;
     private HashMap<String, Index> indexes; // <indexNo, Index>
-    private HashMap<String, Queue<String>> waitlist; // <indexNo, Queue<matricNo>>
-    private int AU;
+    private int acadU;
     private Calendar examDate;
 
     public Course(String courseCode, 
                 School school, 
-                HashMap<String, Index> indexes, 
-                HashMap<String, Queue<String>> waitlist,
-                int AU, 
+                HashMap<String, Index> indexes,
+                int acadU, 
                 Calendar examDate){
         this.courseCode = courseCode;
         this.school = school;
         this.indexes = indexes;
-        this.waitlist = waitlist;
-        this.AU = AU;
+        this.acadU = acadU;
         this.examDate = examDate;
     }
 
@@ -61,54 +58,31 @@ public class Course implements Serializable{
         return indexes.get(indexNo).getSlotsAvailable();
     }
 
-    public int getAU(){
-        return AU;
+    public int getAcadU(){
+        return acadU;
     }
 
     public Index getIndex(String indexNo) {
-        if (this.indexes.containsKey(indexNo)) {
+        if (indexes.containsKey(indexNo)) {
             return (Index) this.indexes.get(indexNo);
         }
-
         return null;
     }
 
-    public boolean enqueueWaitlist(Student student, String indexNo) {
-        if (!this.indexes.containsKey(indexNo)) {
-            return false;
+    public void updateIndex(Index index){
+        /**
+         * Can add new index or modify existing index (if another index with same index no exists)
+         */
+        Index prev = indexes.get(index.getIndexNo());
+        if (prev != null){
+            indexes.replace(index.getIndexNo(), prev, index);
         }
-
-        if (this.waitlist.get(indexNo) != null) {
-            Queue<String> newList = this.waitlist.get(indexNo);
-            newList.add(student.getMatricNo());
-            this.waitlist.put(indexNo, newList);
+        else{
+            indexes.put(index.getIndexNo(), index);
         }
-
-        return true;
     }
 
     public HashMap<String, Index> getIndexes(){
         return indexes;
-    }
-
-    public void changeAvailableSlots(String indexNo, int change){
-        /**
-        Adds the change to the available slots mapped to indexNo of course
-        */
-        if (change == 1){
-
-        }
-        else if (change == -1){
-
-        }
-        else{
-            int slots = indexes.get(indexNo).getSlotsAvailable();
-            slots = slots + change;
-            indexes.get(indexNo).setSlotsAvailable(slots);
-        }
-    }
-
-    public void setAvailableSlots(String indexNo, int set){
-        indexes.get(indexNo).setSlotsAvailable(set);
     }
 }

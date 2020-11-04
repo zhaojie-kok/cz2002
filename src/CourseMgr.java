@@ -29,6 +29,8 @@ public class CourseMgr implements EntityManager {
         if (removed){
             ind.setRegisteredStudents(studentList);
             ind.addSlotsAvailable();
+            course.updateIndex(ind);
+            saveState(course);
         }
         return removed;
     }
@@ -54,12 +56,14 @@ public class CourseMgr implements EntityManager {
             l.add(s);
             i.setRegisteredStudents(l);
             i.minusSlotsAvailable();
+            course.updateIndex(i);
+            saveState(course);
             return true;
         }
         return false;
     }
 
-    public boolean addStudent(Student s, Index i){
+    private boolean addStudent(Student s, Index i){
         if (s == null || i == null){
             return false;
         }
@@ -82,25 +86,19 @@ public class CourseMgr implements EntityManager {
         Student s = i.dequeueWaitlist();
         if (s != null && addStudent(s, i)){
             informWaitlistSuccess(s, c, i);
+            c.updateIndex(i);
+            saveState(c);
         }
-    }
-
-    public void enqueueWaitlist(Student student, Course course, String indexNo){
-        // no need to check again since the clashes would've been checked by student manager before calling this
-        course.enqueueWaitlist(student, indexNo);
-        student.addWaitlist(course, indexNo);
-    }
-
-    public static Index getCourseIndex(String courseCode, String indexNo) {
-        // create an index from courseCoude and indexNo
-        return null;
     }
 
     public void enqueueWaitlist(Student s, String indexNo, String courseCode){
-        Index i = getCourse(courseCode).getIndex(indexNo);
+        Course c = getCourse(courseCode);
+        Index i = c.getIndex(indexNo);
         if (s != null && s != null){
             i.enqueueWaitlist(s);
         }
+        c.updateIndex(i);
+        saveState(c);
     }
 
     public HashMap<String, List<Student>> checkStudentsRegistered(Course course){
