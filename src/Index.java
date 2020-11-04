@@ -1,7 +1,12 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class Index {
+public class Index implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4814561120331706322L;
 	private int indexNo;
 	private int slotsAvailable;
 	private int slotsTotal;
