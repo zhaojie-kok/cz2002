@@ -101,6 +101,7 @@ public class FileReader {
 	public static void writeStaff(Staff staff){
 		writeSerializedObject(staffPath + staff.getStaffNo(), staff);
 	}
+	
 	public static void writeStudent(Student student){
 		writeSerializedObject(studentsPath + student.getMatricNo(), student);
 	}
