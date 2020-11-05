@@ -1,81 +1,81 @@
+import java.io.Serializable;
 import java.util.List;
+import java.util.Queue;
 
-public class Index {
+public class Index implements Serializable{
 
-	private int indexNo;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4814561120331706322L;
+	private String indexNo;
 	private int slotsAvailable;
 	private int slotsTotal;
 	private List<Student> registeredStudents; 
-	private List<LessonDetails> timeTable;
+	private List<LessonDetails>[] timeTable;
+    private Queue<Student> waitlist;
 	
-	public int getIndexNo()
-	{
+	public String getIndexNo() {
 		return indexNo;
 	}
 	
-	public void setIndexNo(int indexNo)
-	{
+	public void setIndexNo(String indexNo) {
 		this.indexNo = indexNo;
 	}
 	
-	public int getSlotsAvailable()
-	{
+	public int getSlotsAvailable() {
 		return slotsAvailable;
 	}
 	
-	public void setSlotsAvailable(int slotsAvailable)
-	{
+	public void setSlotsAvailable(int slotsAvailable) {
 		this.slotsAvailable = slotsAvailable;
 	}
 	
-	public int getSlotsTotal()
-	{
+	public int getSlotsTotal() {
 		return slotsTotal;
 	}
 	
-	public void setSlotsTotal(int slotsTotal)
-	{
+	public void setSlotsTotal(int slotsTotal) {
 		this.slotsTotal = slotsTotal;
 	}
 	
-	public List<Student> getRegisteredStudents()
-	{
+	public List<Student> getRegisteredStudents() {
 		return registeredStudents;
 	}
 	
-	public void setRegisteredStudents(List<Student> registeredStudents)
-	{
+	public void setRegisteredStudents(List<Student> registeredStudents) {
 		this.registeredStudents = registeredStudents;
 	}
 	
-	public List<LessonDetails> getTimeTable()
-	{
+	public List<LessonDetails>[] getTimeTable() {
 		return timeTable;
 	}
 	
-	public void setTimeTable(List<LessonDetails> timeTable)
-	{
+	public void setTimeTable(List<LessonDetails>[] timeTable) {
 		this.timeTable = timeTable;
 	}
 	
-	public void addSlotsAvailable()
-	{
+	public void addSlotsAvailable() {
 		this.slotsAvailable++;
 	}
 	
-	public void minusSlotsAvailable()
-	{
+	public void minusSlotsAvailable() {
 		this.slotsAvailable--;
 	}
 	
-	public void addSlotsTotal()
-	{
+	public void addSlotsTotal() {
 		this.slotsTotal++;
 	}
 	
-	public void minusSlotsTotal()
-	{
+	public void minusSlotsTotal() {
 		this.slotsTotal--;
+	}
+
+	public Student dequeueWaitlist(){
+		return waitlist.remove();
+	}
+	public void enqueueWaitlist(Student student){
+		waitlist.add(student);
 	}
 }
 

@@ -5,6 +5,9 @@ public class Student extends User{
     private String matricNo;
     private Date[] accessPeriod;
     private HashMap<String, String> courses; // <Course Code, Index No>
+    private int acadUnits;
+    private int acadUnitsAllowed = 0;
+    private HashMap<String, String> waitlist; // <Course Code, Index No>
 
     public Student(
         String userId, String name, String gender, String nationality,
@@ -30,6 +33,26 @@ public class Student extends User{
         return this.courses;
     }
 
+    public String getCourseIndex(String courseCode) {
+        if (this.courses.containsKey(courseCode)) {
+            return this.courses.get(courseCode);
+        } else {
+            return null;
+        }
+    }
+
+    public int getAcadUnits() {
+        return this.acadUnits;
+    }
+
+    public int getAcadUnitsAllowed() {
+        return this.acadUnitsAllowed;
+    }
+
+    public HashMap<String, String> getWaitlist() {
+        return this.waitlist;
+    }
+
     // mutator methods
     public void changeAccessPeriod(Date[] newAccessPeriod) {
         this.accessPeriod = newAccessPeriod;
@@ -43,4 +66,11 @@ public class Student extends User{
         this.courses.remove(courseCode);
     }
 
+    public void addWaitlist(Course course, String indexNo) {
+        this.waitlist.put(course.getCourseCode(), indexNo);
+    }
+
+    public void removeWaitlist(Course course) {
+        this.waitlist.remove(course.getCourseCode());
+    }
 }

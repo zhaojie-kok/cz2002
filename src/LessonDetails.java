@@ -9,45 +9,37 @@ public class LessonDetails {
 	private Calendar endTime;
 	
 	
-	public String getLessonVenue()
-	{
+	public String getLessonVenue() {
 		return lessonVenue;
 	}
 	
-	public void setLessonVenue(String lessonVenue)
-	{
+	public void setLessonVenue(String lessonVenue) {
 		this.lessonVenue = lessonVenue;
 	}
 	
-	public String getLessonType()
-	{
+	public String getLessonType() {
 		return lessonType;
 	}
 	
-	public void setLessonType(String lessonType)
-	{
+	public void setLessonType(String lessonType) {
 		this.lessonType = lessonType;
 	}
 	
-	public int getLessonDay()
-	{
+	public int getLessonDay() {
 		return lessonDay;
 	}
 	
-	public void setLessonDay(int lessonDay)
-	{
+	public void setLessonDay(int lessonDay) {
 		this.lessonDay = lessonDay;
 	}
 	
 
 	
-	public Calendar getStartTime()
-	{
+	public Calendar getStartTime() {
 		return startTime;
 	}
 	
-	public void setStartTime(Calendar startTime)
-	{
+	public void setStartTime(Calendar startTime) {
 		this.startTime = startTime;
 	}
 	
@@ -55,8 +47,7 @@ public class LessonDetails {
 		return endTime;
 	}
 	
-	public void setEndTime(Calendar endTime)
-	{
+	public void setEndTime(Calendar endTime) {
 		this.endTime = endTime;
 	}
 	

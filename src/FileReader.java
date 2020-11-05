@@ -1,44 +1,159 @@
-import java.io.IOException;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.util.Scanner;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.List;
 
-public class FileReader{
-    private String filePath;
+public class FileReader {
+    /**
+     * Reads and writes files
+     */
 
-    public FileReader(String fp){
-        filePath = fp;
+	private static String dataPath = "data/";
+	private static String coursesPath = "courses/";
+	private static String studentsPath = "students/";
+	private static String staffPath = "staffs/";
+	private static String userLoginDetailsPath = "loginDetails/";
+    public FileReader(){
+
     }
-    public String getPassword(String userId){
-        
-        return "";
-    }
-    public String getInfo(String userId){
-        return "";
-    }
-    public String getCourseInfo(String courseCode){
-        
-        String separator = "|";
 
-        ArrayList stringArray = (ArrayList)read(filePath);
-        ArrayList al = new ArrayList(); 
+    public static void main(String args[]){
+        List<Integer> mylist = new ArrayList<Integer>();
+        writeSerializedObject(dataPath + "filename", mylist);
+	}
 
-        for (int i=0; i<stringArray.size(); i++)
-        {
-            String st = (String)stringArray.get(i);
-            StringTokenizer star = new StringTokenizer(st, separator);
-            if (courseCode == star.nextToken().trim())
-            {
-                return star.nextToken();
+	public static String[] getLoginDetails(String userId){
+        String line = "";
+		String tvsSplitBy = "\\t";
+		String tsvFile = userLoginDetailsPath + "LoginDetails.tsv";
+		BufferedReader br;
+		String[] details = null;
+
+        try {
+            FileInputStream fis = new FileInputStream(tsvFile);
+			InputStreamReader isr = new InputStreamReader(fis);
+			br = new BufferedReader(isr);
+			while ((line = br.readLine()) != null) {
+                details = line.split(tvsSplitBy);
+                if (details[0] == userId){
+					br.close();
+					break;
+				}
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
+		return details;
+	}
+	
+	public static HashMap<String, Course> loadCourses(){
+		File folder = new File(coursesPath);
+		File[] listOfFiles = folder.listFiles();
+		HashMap<String, Course> courses = new HashMap<>();
+		Course toAdd;
 
-        }
-    }
-    public boolean changeUserDetails(String[] details){
-        return true;
-    }
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				toAdd = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Course.class);
+				if (toAdd != null){
+					courses.put(toAdd.getCourseCode(), toAdd);
+				}
+			}
+		}
+		return courses;
+	}
+
+	public static HashMap<String, Staff> loadStaff(){
+		File folder = new File(coursesPath);
+		File[] listOfFiles = folder.listFiles();
+		HashMap<String, Staff> staff = new HashMap<>();
+		Staff toAdd;
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				toAdd = cast(readSerializedObject(staffPath + listOfFiles[i].getName()), Staff.class);
+				if (toAdd != null){
+					staff.put(toAdd.getStaffNo(), toAdd);
+				}
+			}
+		}
+		return staff;
+	}
+
+	public static HashMap<String, Student> loadStudents(){
+		File folder = new File(coursesPath);
+		File[] listOfFiles = folder.listFiles();
+		HashMap<String, Student> students = new HashMap<>();
+		Student toAdd;
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+				toAdd = cast(readSerializedObject(coursesPath + listOfFiles[i].getName()), Student.class);
+				if (toAdd != null){
+					students.put(toAdd.getMatricNo(), toAdd);
+				}
+			}
+		}
+		return students;
+	}
+
+	public static void writeCourse(Course course){
+		writeSerializedObject(coursesPath + course.getCourseCode(), course);
+	}
+	public static void writeStaff(Staff staff){
+		writeSerializedObject(staffPath + staff.getStaffNo(), staff);
+	}
+	
+	public static void writeStudent(Student student){
+		writeSerializedObject(studentsPath + student.getMatricNo(), student);
+	}
+
+    private static Object readSerializedObject(String filename){
+		Object o = null;
+		FileInputStream fis = null;
+		ObjectInputStream in = null;
+		try {
+			fis = new FileInputStream(filename);
+			in = new ObjectInputStream(fis);
+			o = in.readObject();
+			in.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		return o;
+	}
+
+	private static void writeSerializedObject(String filename, Object o){
+		FileOutputStream fos = null;
+		ObjectOutputStream out = null;
+		try {
+			fos = new FileOutputStream(filename, false);
+			out = new ObjectOutputStream(fos);
+			out.writeObject(o);
+			out.close();
+		//	System.out.println("Object Persisted");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static <I, O> O cast(I input, Class<O> outClass) {
+		try {
+			return outClass.cast(input);
+		} catch (ClassCastException e) {
+			return null;
+		}
+	}
 }
