@@ -6,7 +6,7 @@ import java.util.Queue;
 public class Course implements Serializable{
     private static final long serialVersionUID = -9117232107080367454L;
 
-    enum School {
+    public enum School {
         NBS,
         SCBE,
         SCEE,
@@ -32,13 +32,12 @@ public class Course implements Serializable{
     private Calendar examDate;
 
     public Course(String courseCode, 
-                School school, 
-                HashMap<String, Index> indexes,
+                School school,
                 int acadU, 
                 Calendar examDate){
+        this.indexes = new HashMap<String,Index>();
         this.courseCode = courseCode;
         this.school = school;
-        this.indexes = indexes;
         this.acadU = acadU;
         this.examDate = examDate;
     }
@@ -80,6 +79,10 @@ public class Course implements Serializable{
         else{
             indexes.put(index.getIndexNo(), index);
         }
+    }
+
+    public Index deleteIndex(String indexNo){
+        return indexes.remove(indexNo);
     }
 
     public HashMap<String, Index> getIndexes(){
