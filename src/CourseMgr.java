@@ -1,13 +1,55 @@
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import Course.School;
 
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> hashMap = FileReader.loadCourses();
-    
+
+    public Course createCourse(String courseCode,
+                            School school,
+                            int acadU, 
+                            Calendar examDate){
+        Course c = new Course(courseCode, school, acadU, examDate);
+        hashMap.put(courseCode, c);
+        saveState(c);
+        return c;
+    }
+
+    public Index createIndex(String courseCode,
+                            String indexNo,
+                            int slotsTotal,
+                            List<LessonDetails>[] timeTable){
+        Index i = new Index(indexNo, slotsTotal, timeTable);
+        Course c = getCourse(courseCode);
+        c.updateIndex(i);
+        saveState(c);
+        return i;
+    }
+
+    public boolean updateIndexTotalSlots(String courseCode, String indexNo, int slotsTotal){
+        /**
+         * Returns boolean of whether the new slotsTotal is a valid change
+         * Eg. if there are only 2 available slots, reducing slotsTotal by more than 2
+         * will return false
+         */
+        Course c = getCourse(courseCode);
+        Index i = c.getIndex(indexNo);
+        int changeInSlots = slotsTotal - i.getSlotsTotal();
+        if (i.getSlotsAvailable() < changeInSlots){
+            return false;
+        }
+        i.setSlotsTotal(slotsTotal);
+        i.setSlotsAvailable(i.getSlotsAvailable() - changeInSlots);
+        c.updateIndex(i);
+        saveState(c);
+        return true;
+    }
+
     public Course getCourse(String courseCode){
         return hashMap.get(courseCode);
     }
-    
+
     public boolean removeStudent(String matricNo, String indexNo, String courseCode){
         Course course = getCourse(courseCode);
         if (course == null){
