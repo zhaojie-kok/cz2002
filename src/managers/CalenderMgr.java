@@ -1,14 +1,12 @@
 package managers;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
 
-public class CalenderMgr {  
+public class CalenderMgr {
     public boolean checkClash(Index i1, Index i2) {
         List<LessonDetails>[] timetable1 = i1.getTimeTable();
         List<LessonDetails>[] timetable2 = i2.getTimeTable();
@@ -62,36 +60,5 @@ public class CalenderMgr {
         } else {
             return true;
         }
-    }
-
-    public boolean checkAddClash(Student s, Index i) {
-        HashMap<String, String> courses = s.getCourses();
-        Index registeredInd;
-
-        // iterate through all of student's registered courses to check for clash
-        for (Map.Entry<String, String> entry: courses.entrySet()) {
-            registeredInd = CourseMgr.getCourseIndex(entry.getKey(), entry.getValue());
-            if (checkClash(registeredInd, i)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkSwopClash(Student s, String courseCode, Index newIndex) {
-        HashMap<String, String> courses = s.getCourses();
-
-        // remove the course to be changed from the list of courses
-        courses.remove(courseCode);
-        Index registeredInd;
-
-        // iterate through all of student's registered courses to check for clash
-        for (Map.Entry<String, String> entry: courses.entrySet()) {
-            registeredInd = CourseMgr.getCourseIndex(entry.getKey(), entry.getValue());
-            if (checkClash(registeredInd, newIndex)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

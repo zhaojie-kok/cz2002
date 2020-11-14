@@ -67,6 +67,9 @@ public abstract class FileReader {
 	}
 	
 	public static HashMap<String, Course> loadCourses(){
+		/**
+		 * Returns HashMap where key is course code of course
+		 */
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
 		HashMap<String, Course> courses = new HashMap<>();
@@ -84,6 +87,9 @@ public abstract class FileReader {
 	}
 
 	public static HashMap<String, Staff> loadStaff(){
+		/**
+		 * Returns HashMap where key is staff no of staff
+		 */
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
 		HashMap<String, Staff> staff = new HashMap<>();
@@ -101,6 +107,9 @@ public abstract class FileReader {
 	}
 
 	public static HashMap<String, Student> loadStudents(){
+		/**
+		 * Returns HashMap where key is matric no of student
+		 */
 		File folder = new File(coursesPath);
 		File[] listOfFiles = folder.listFiles();
 		HashMap<String, Student> students = new HashMap<>();

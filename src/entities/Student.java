@@ -1,12 +1,13 @@
 package entities;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import entities.course_info.*;
 
 public class Student extends User{
     private String matricNo;
-    private Date[] accessPeriod;
+    private Calendar[] accessPeriod;
     private HashMap<String, String> courses; // <Course Code, Index No>
     private int acadUnits;
     private int acadUnitsAllowed = 0;
@@ -14,7 +15,7 @@ public class Student extends User{
 
     public Student(
         String userId, String name, String gender, String nationality,
-        String matricNo, Date[] accessPeriod, HashMap<String, String> courses) {
+        String matricNo, Calendar[] accessPeriod, HashMap<String, String> courses) {
         super(userId, "student", name, gender, nationality);
         
         // TODO: throw exception if any of these fields are null or invalid
@@ -28,7 +29,7 @@ public class Student extends User{
         return this.matricNo;
     }
 
-    public Date[] getAccessPeriod() {
+    public Calendar[] getAccessPeriod() {
         return this.accessPeriod;
     }
 
@@ -44,6 +45,22 @@ public class Student extends User{
         }
     }
 
+    public boolean isRegistered(Course course){
+        return this.courses.containsKey(course.getCourseCode());
+    }
+
+    public boolean isRegistered(Index index){
+        return this.courses.containsValue(index.getIndexNo());
+    }
+    
+    public boolean isWaitlisted(Course course){
+        return this.waitlist.containsKey(course.getCourseCode());
+    }
+
+    public boolean isWaitlisted(Index index){
+        return this.waitlist.containsValue(index.getIndexNo());
+    }
+
     public int getAcadUnits() {
         return this.acadUnits;
     }
@@ -57,7 +74,7 @@ public class Student extends User{
     }
 
     // mutator methods
-    public void changeAccessPeriod(Date[] newAccessPeriod) {
+    public void changeAccessPeriod(Calendar[] newAccessPeriod) {
         this.accessPeriod = newAccessPeriod;
     }
 
@@ -67,6 +84,10 @@ public class Student extends User{
 
     public void removeCourse(String courseCode) {
         this.courses.remove(courseCode);
+    }
+
+    public void changeIndex(String courseCode, String oldIndex, String newIndex){
+        this.courses.replace(courseCode, oldIndex, newIndex);
     }
 
     public void addWaitlist(Course course, String indexNo) {

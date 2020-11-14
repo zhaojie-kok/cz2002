@@ -1,5 +1,6 @@
 package managers;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import entities.*;
@@ -8,105 +9,112 @@ import readers.FileReader;
 import boundaries.NotifSender;
 
 public class CourseMgr implements EntityManager {
-    private HashMap<String, Course> hashMap = FileReader.loadCourses();
+    private HashMap<String, Course> hashMap;
+
+    public CourseMgr(){
+        hashMap = FileReader.loadCourses();
+    }
+
+    public Course createCourse(String courseCode,
+                            School school,
+                            int acadU, 
+                            Calendar examDate){
+        Course c = new Course(courseCode, school, acadU, examDate);
+        hashMap.put(courseCode, c);
+        saveState(c);
+        return c;
+    }
+
+    public Index createIndex(String courseCode,
+                            String indexNo,
+                            int slotsTotal,
+                            List<LessonDetails>[] timeTable){
+        Index i = new Index(indexNo, slotsTotal, timeTable);
+        Course c = getCourse(courseCode);
+        c.updateIndex(i);
+        saveState(c);
+        return i;
+    }
+
+    public boolean updateIndexTotalSlots(Course course, Index index, int slotsTotal){
+        /**
+         * Returns boolean of whether the new slotsTotal is a valid change
+         * Eg. if there are only 2 available slots, reducing slotsTotal by more than 2
+         * will return false
+         */
+        int changeInSlots = slotsTotal - index.getSlotsTotal();
+        if (index.getSlotsAvailable() < changeInSlots){
+            return false;
+        }
+        index.setSlotsTotal(slotsTotal);
+        index.setSlotsAvailable(index.getSlotsAvailable() - changeInSlots);
+        course.updateIndex(index);
+        saveState(course);
+        return true;
+    }
+
+    public HashMap<String, Course> getHashMap(){
+        return hashMap;
+    }
     
     public Course getCourse(String courseCode){
         return hashMap.get(courseCode);
     }
-    
-    public boolean removeStudent(String matricNo, String indexNo, String courseCode){
-        Course course = getCourse(courseCode);
-        if (course == null){
-            System.out.println("No such course: " + courseCode);
+
+    public Index getCourseIndex(Course course, String indexNo){
+        return course.getIndex(indexNo);
+    }
+
+    public boolean removeStudent(Student student, Index index, Course course){
+        if (student == null || index == null || course == null){
             return false;
         }
-        Index ind = course.getIndex(indexNo);
-        if (ind == null){
-            System.out.println("No such index: " + indexNo);
-            return false;
-        }
-        List<Student> studentList = ind.getRegisteredStudents();
-        Student student = StudentManager.getStudent(matricNo);
-        if (student == null){
-            System.out.println("No such student: " + matricNo);
-            return false;
-        }
+        List<Student> studentList = index.getRegisteredStudents();
         boolean removed = studentList.remove(student);
         if (removed){
-            ind.setRegisteredStudents(studentList);
-            ind.addSlotsAvailable();
+            index.setRegisteredStudents(studentList);
+            index.addSlotsAvailable();
+            course.updateIndex(index);
+            saveState(course);
         }
         return removed;
     }
 
-    public boolean addStudent(String matricNo, String indexNo, String courseCode){
-        Course course = getCourse(courseCode);
-        if (course == null){
-            System.out.println("No such course: " + courseCode);
+    public boolean addStudent(Student student, Index index, Course course){
+        if (student == null || index == null){
             return false;
         }
-        Index ind = course.getIndex(indexNo);
-        if (ind == null){
-            System.out.println("No such index: " + indexNo);
-            return false;
-        }
-        List<Student> l = ind.getRegisteredStudents();
-        Student student = StudentManager.getStudent(matricNo);
-        if (student == null){
-            System.out.println("No such student: " + matricNo);
-            return false;
-        }
+        List<Student> l = index.getRegisteredStudents();
         if (!l.contains(student)){
             l.add(student);
-            ind.setRegisteredStudents(l);
-            ind.minusSlotsAvailable();
+            index.setRegisteredStudents(l);
+            index.minusSlotsAvailable();
+            course.updateIndex(index);
+            saveState(course);
             return true;
         }
         return false;
     }
 
-    public boolean addStudent(Student s, Index i){
-        if (s == null || i == null){
-            return false;
-        }
-        List<Student> l = i.getRegisteredStudents();
-        if (!l.contains(s)){
-            l.add(s);
-            i.setRegisteredStudents(l);
-            i.minusSlotsAvailable();
-            return true;
-        }
-        return false;
-    }
-
-    public void dequeueWaitlist(String indexNo, String courseCode){
-        Course c = getCourse(courseCode);
-        Index i = c.getIndex(indexNo);
-        if (i == null){
+    public void dequeueWaitlist(Course course, Index index){
+        if (index == null || course == null){
             return;
         }
-        Student s = i.dequeueWaitlist();
-        if (s != null && addStudent(s, i)){
-            informWaitlistSuccess(s, c, i);
+        Student student = index.dequeueWaitlist();
+        if (student != null && addStudent(student, index, course)){
+            informWaitlistSuccess(student, course, index);
+            course.updateIndex(index);
+            saveState(course);
         }
     }
 
-    public void enqueueWaitlist(Student student, Course course, String indexNo){
-        // no need to check again since the clashes would've been checked by student manager before calling this
-        course.enqueueWaitlist(student, indexNo);
-        student.addWaitlist(course, indexNo);
-    }
-
-    public static Index getCourseIndex(String courseCode, String indexNo) {
-        // create an index from courseCoude and indexNo
-        return null;
-    }
-
-    public void enqueueWaitlist(Student s, String indexNo, String courseCode){
-        Index i = getCourse(courseCode).getIndex(indexNo);
-        if (s != null && s != null){
-            i.enqueueWaitlist(s);
+    public void enqueueWaitlist(Student student, Index index, Course course){
+        if (student != null && index != null){
+            return;
         }
+        index.enqueueWaitlist(student);
+        course.updateIndex(index);
+        saveState(course);
     }
 
     public HashMap<String, List<Student>> checkStudentsRegistered(Course course){
@@ -118,8 +126,8 @@ public class CourseMgr implements EntityManager {
         return sHashMap;
     }
 
-    public List<Student> checkStudentsRegistered(Course course, String indexNo){
-        return course.getIndex(indexNo).getRegisteredStudents();
+    public List<Student> checkStudentsRegistered(Index index){
+        return index.getRegisteredStudents();
     }
 
     public HashMap<String, Integer> checkVacanciesAvailable(Course course){
@@ -131,9 +139,15 @@ public class CourseMgr implements EntityManager {
         return sHashMap;
     }
 
+    public int checkVacanciesAvailable(Index index){
+        return index.getSlotsAvailable();
+    }
+
     @Override
     public void saveState(Object course) {
-        FileReader.writeCourse((Course) course);
+        Course c = (Course) course;
+        FileReader.writeCourse(c);
+        hashMap.replace(c.getCourseCode(), c);
     }
 
     private void informWaitlistSuccess(Student s, Course c, Index i){

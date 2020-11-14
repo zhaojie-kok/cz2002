@@ -1,6 +1,8 @@
 package entities.course_info;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import entities.*;
@@ -16,7 +18,18 @@ public class Index implements Serializable{
 	private int slotsTotal;
 	private List<Student> registeredStudents; 
 	private List<LessonDetails>[] timeTable;
-    private Queue<Student> waitlist;
+	private LinkedList<Student> waitlist;
+	
+	public Index(String indexNo,
+				int slotsTotal,
+				List<LessonDetails>[] timeTable){
+		this.indexNo = indexNo;
+		this.slotsAvailable = slotsTotal;
+		this.slotsTotal = slotsTotal;
+		this.registeredStudents = new ArrayList<>(slotsTotal);
+		this.waitlist = new LinkedList<Student>();
+		this.timeTable = timeTable;
+	}
 	
 	public String getIndexNo() {
 		return indexNo;
