@@ -1,28 +1,9 @@
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Queue;
 
 public class Course implements Serializable{
     private static final long serialVersionUID = -9117232107080367454L;
-
-    public enum School {
-        NBS,
-        SCBE,
-        SCEE,
-        SCSE,
-        SEEE,
-        SMSE,
-        SMAE,
-        SADM,
-        SOH,
-        SOSS,
-        WKWSCI,
-        SBS,
-        SPMS,
-        ASE,
-        LKCM
-    }
 
     private String courseCode;
     private String courseName;
