@@ -1,3 +1,9 @@
+package managers;
+
+import readers.*;
+import entities.course_info.*;
+import entities.*;
+
 public class StaffSystem {
     FileReader fileReader;
     String studentDetailsFilePath;

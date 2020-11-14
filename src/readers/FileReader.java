@@ -1,3 +1,5 @@
+package readers;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FileReader {
+import entities.*;
+import entities.course_info.*;
+
+public abstract class FileReader {
     /**
      * Reads and writes files
      */
@@ -21,6 +26,7 @@ public class FileReader {
 	private static String studentsPath = "students/";
 	private static String staffPath = "staffs/";
 	private static String userLoginDetailsPath = "loginDetails/";
+	protected String filepath;
     public FileReader(){
 
     }
@@ -29,6 +35,10 @@ public class FileReader {
         List<Integer> mylist = new ArrayList<Integer>();
         writeSerializedObject(dataPath + "filename", mylist);
 	}
+
+	public abstract Object getData(String params);
+
+	public abstract int writeData(Object o);
 
 	public static String[] getLoginDetails(String userId){
         String line = "";
@@ -110,6 +120,7 @@ public class FileReader {
 	public static void writeCourse(Course course){
 		writeSerializedObject(coursesPath + course.getCourseCode(), course);
 	}
+	
 	public static void writeStaff(Staff staff){
 		writeSerializedObject(staffPath + staff.getStaffNo(), staff);
 	}
@@ -118,7 +129,7 @@ public class FileReader {
 		writeSerializedObject(studentsPath + student.getMatricNo(), student);
 	}
 
-    private static Object readSerializedObject(String filename){
+    protected static Object readSerializedObject(String filename){
 		Object o = null;
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
@@ -135,7 +146,7 @@ public class FileReader {
 		return o;
 	}
 
-	private static void writeSerializedObject(String filename, Object o){
+	protected static void writeSerializedObject(String filename, Object o){
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		try {

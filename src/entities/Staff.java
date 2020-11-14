@@ -1,3 +1,5 @@
+package entities;
+
 public class Staff extends User{
     private String staffNo;
 

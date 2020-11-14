@@ -1,5 +1,11 @@
+package managers;
+
 import java.util.HashMap;
 import java.util.List;
+import entities.*;
+import entities.course_info.*;
+import readers.FileReader;
+import boundaries.NotifSender;
 
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> hashMap = FileReader.loadCourses();
@@ -39,21 +45,21 @@ public class CourseMgr implements EntityManager {
             System.out.println("No such course: " + courseCode);
             return false;
         }
-        Index i = course.getIndex(indexNo);
-        if (i == null){
+        Index ind = course.getIndex(indexNo);
+        if (ind == null){
             System.out.println("No such index: " + indexNo);
             return false;
         }
-        List<Student> l = i.getRegisteredStudents();
-        Student s = StudentManager.getStudent(matricNo);
-        if (s == null){
+        List<Student> l = ind.getRegisteredStudents();
+        Student student = StudentManager.getStudent(matricNo);
+        if (student == null){
             System.out.println("No such student: " + matricNo);
             return false;
         }
-        if (!l.contains(s)){
-            l.add(s);
-            i.setRegisteredStudents(l);
-            i.minusSlotsAvailable();
+        if (!l.contains(student)){
+            l.add(student);
+            ind.setRegisteredStudents(l);
+            ind.minusSlotsAvailable();
             return true;
         }
         return false;

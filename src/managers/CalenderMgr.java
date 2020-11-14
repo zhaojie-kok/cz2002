@@ -1,7 +1,12 @@
+package managers;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import entities.*;
+import entities.course_info.*;
 
 public class CalenderMgr {  
     public boolean checkClash(Index i1, Index i2) {

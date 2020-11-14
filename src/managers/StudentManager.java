@@ -1,4 +1,9 @@
+package managers;
+
 import java.util.HashMap;
+import readers.*;
+import entities.*;
+import entities.course_info.*;
 
 // public class StudentManager implements EntityManager{
 //     public int dropCourse(Course course, String indexNo, Student student) {

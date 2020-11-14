@@ -1,5 +1,8 @@
+package entities;
+
 import java.util.Date;
 import java.util.HashMap;
+import entities.course_info.*;
 
 public class Student extends User{
     private String matricNo;

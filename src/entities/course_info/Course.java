@@ -1,7 +1,10 @@
+package entities.course_info;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Queue;
+import entities.*;
 
 public class Course implements Serializable{
     private static final long serialVersionUID = -9117232107080367454L;

@@ -1,3 +1,5 @@
+package entities;
+
 public class User {
     protected String userId;
     protected String userType;

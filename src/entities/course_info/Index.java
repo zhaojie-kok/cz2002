@@ -1,6 +1,9 @@
+package entities.course_info;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Queue;
+import entities.*;
 
 public class Index implements Serializable{
 
