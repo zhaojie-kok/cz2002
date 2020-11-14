@@ -10,7 +10,7 @@ public class CourseMgr implements EntityManager {
     }
 
     public Course createCourse(String courseCode,
-                            Course.School school,
+                            School school,
                             int acadU, 
                             Calendar examDate){
         Course c = new Course(courseCode, school, acadU, examDate);
@@ -74,7 +74,7 @@ public class CourseMgr implements EntityManager {
         return removed;
     }
 
-    public boolean addStudent(Student student, Index index){
+    public boolean addStudent(Student student, Index index, Course course){
         if (student == null || index == null){
             return false;
         }
@@ -83,6 +83,8 @@ public class CourseMgr implements EntityManager {
             l.add(student);
             index.setRegisteredStudents(l);
             index.minusSlotsAvailable();
+            course.updateIndex(index);
+            saveState(course);
             return true;
         }
         return false;
@@ -93,7 +95,7 @@ public class CourseMgr implements EntityManager {
             return;
         }
         Student student = index.dequeueWaitlist();
-        if (student != null && addStudent(student, index)){
+        if (student != null && addStudent(student, index, course)){
             informWaitlistSuccess(student, course, index);
             course.updateIndex(index);
             saveState(course);

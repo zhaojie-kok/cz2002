@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class StudentSystem {
     Student user;
@@ -22,24 +21,36 @@ public class StudentSystem {
 
     public int addCourse() {
         /**
-         * Returns 1 is successfully registered, 0 if waitlisted, and -1 if not possible
+         * Returns 1 is successfully registered, 0 if waitlisted, and negative if not possible
          * to add.
+         *  
+         * -1 : Timetable clash
+         * -2 : Already registered
+         * -3 : Exceeds AU
          */
-        // Check addable (AU requirement and whether already registered)
 
         // Check timing clash
+        if (checkAddClash(user)){
+            return -1;
+        }
 
-        // Check index has vacancy
-
-        // If no vacancy, add to waitlist
-        return 0;
+        return studentManager.addCourse(selectedCourse, selectedIndex, user);
     }
 
     public int dropCourse() {
         /**
-         * Checks if registered, then proceeds to drop. 1 for success. Else 0.
+         * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
          */
-        return 0;
+        if (user.isRegistered(selectedCourse)){
+            user.removeCourse(selectedCourse.getCourseCode());
+            return 1;
+        }
+        else if (user.isWaitlisted(selectedCourse)){
+            user.removeWaitlist(selectedCourse);
+            return 0;
+        }
+        // if successfully dropped, dequeue waitlist
+        return -1;
     }
 
     public String printAllCourses(String format){
@@ -47,27 +58,48 @@ public class StudentSystem {
          * Converts to printable format
          */
         String toReturn = "";
+        Course c;
 
-        Iterator<String> courses = courseMgr.getHashMap().keySet().iterator();
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
         while (courses.hasNext()) { 
-            toReturn += String.format(format, courses.next());
+            c = courses.next();
+            toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
         }
         return toReturn;
     }
 
     public String printCoursesBySchool(School school, String format){
-        return "";
+        /**
+         * Converts to printable format
+         */
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        while (courses.hasNext()) { 
+            c = courses.next();
+            if (c.isSchool(school)){
+                toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
+            }
+        }
+        return toReturn;
     }
 
     public String printCoursesByStringFilter(String filter, String format){
-        return "";
-    }
-
-    public HashMap<String, String> printRegisteredCourses() {
         /**
-         * If no parameters provided, returns HashMap<String,String>
+         * Searched course name and code for the filter
          */
-        return user.getCourses();
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        while (courses.hasNext()) { 
+            c = courses.next();
+            if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
+                toReturn += String.format(format, c);
+            }
+        }
+        return toReturn;
     }
 
     public String printRegisteredCourses(String format) {
@@ -87,7 +119,7 @@ public class StudentSystem {
     }
 
     public int selectCourse(String courseCode){
-        Course tmp = courseMgr.getCourse(courseCode)
+        Course tmp = courseMgr.getCourse(courseCode);
         if (tmp == null){
             return 0;
         }
@@ -105,13 +137,6 @@ public class StudentSystem {
         }
         selectedIndex = tmp;
         return 1;
-    }
-
-    public HashMap<String, Index> getIndexesOfCourse() {
-        /**
-         * If no parameters provided, returns HashMap<String,Index>
-         */
-        return selectedCourse.getIndexes();
     }
 
     public String getIndexesOfCourse(String format) {
@@ -144,24 +169,33 @@ public class StudentSystem {
             studentManager.swopIndex(user, toSwapWith, selectedCourse.getCourseCode());
             courseMgr.removeStudent(user, currentIndex, selectedCourse);
             courseMgr.removeStudent(toSwapWith, toSwapTo, selectedCourse);
-            courseMgr.addStudent(user, toSwapTo);
-            courseMgr.addStudent(toSwapWith, currentIndex);
+            courseMgr.addStudent(user, toSwapTo, selectedCourse);
+            courseMgr.addStudent(toSwapWith, currentIndex, selectedCourse);
             return 1;
         }
         return 0;
     }
 
-    public int swopIndexWithAvailableSlot(Index toSwapTo){
-        if (toSwapTo.getSlotsAvailable() <= 0){
+    public int swopToIndex(){
+        // already registered for index
+        if (user.isRegistered(selectedIndex)){
             return -1;
         }
+        // no more slots
+        if (selectedIndex.getSlotsAvailable() <= 0){
+            return -2;
+        }
         String current = user.getCourseIndex(selectedCourse.getCourseCode());
+        if (checkSwopClash(user, selectedIndex)){
+            // clashes with current timetable, not including current index
+            return -3;
+        }
         courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
-        courseMgr.addStudent(user, toSwapTo);
-        return toSwapTo.getSlotsAvailable();
+        courseMgr.addStudent(user, selectedIndex, selectedCourse);
+        return selectedIndex.getSlotsAvailable();
     }
 
-    public boolean checkAddClash(Student student) {
+    private boolean checkAddClash(Student student) {
         /**
          * Returns false if no ADD clash. Else returns true.
          */
@@ -180,7 +214,7 @@ public class StudentSystem {
         return false;
     }
 
-    public boolean checkSwopClash(Student student, Index newIndex) {
+    private boolean checkSwopClash(Student student, Index newIndex) {
         /**
          * Returns false if no SWOP clash. Else returns true.
          */

@@ -41,6 +41,22 @@ public class Student extends User{
         }
     }
 
+    public boolean isRegistered(Course course){
+        return this.courses.containsKey(course.getCourseCode());
+    }
+
+    public boolean isRegistered(Index index){
+        return this.courses.containsValue(index.getIndexNo());
+    }
+    
+    public boolean isWaitlisted(Course course){
+        return this.waitlist.containsKey(course.getCourseCode());
+    }
+
+    public boolean isWaitlisted(Index index){
+        return this.waitlist.containsValue(index.getIndexNo());
+    }
+
     public int getAcadUnits() {
         return this.acadUnits;
     }

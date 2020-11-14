@@ -19,19 +19,33 @@ public class StudentManager implements EntityManager {
         return students.get(matricNo);
     }
 
-    public void dropCourse(String courseCode, String indexNo, Student student) {
-        return;
+    public boolean dropCourse(Course course, Student student) {
+        if (student.isRegistered(course)){
+            student.removeCourse(course.getCourseCode());
+            return true;
+        }
+        return false;
     }
 
     public int addCourse(Course course, Index index, Student student) {
         /**
-         * Returns int. 1=successful registration, 0=waitlisted.
+         * Returns int. 1=successful registration, 0=waitlisted, negative if other results (Fail)
          */
+        if (student.isRegistered(course) || student.isWaitlisted(course)) {
+            // already registered
+            return -2;
+        } else if (student.getAcadUnits() + course.getAcadU() > student.getAcadUnitsAllowed()) {
+            // overload
+            return -3;
+        }
+
         if (index.getSlotsAvailable() > 0) {
+            // register successfully
             student.addCourse(course.getCourseCode(), index.getIndexNo());
             saveState(student);
             return 1;
         } else {
+            // waitlisted
             student.addWaitlist(course, index.getIndexNo());
             saveState(student);
             return 0;
@@ -46,24 +60,6 @@ public class StudentManager implements EntityManager {
         s2.changeIndex(courseCode, i2, i1);
         saveState(s1);
         saveState(s2);
-    }
-
-    public int isAddable(Student student, Course course){
-        /**
-         * Returns 1 if able to be added. Else 0 for already registered, -1 for exceeding AU
-         */
-        HashMap <String, String> courses = student.getCourses();
-        HashMap <String, String> waitlist = student.getWaitlist();
-        
-        // not allowed to add a course already registered for or requires overloading
-        if (courses.containsKey(course.getCourseCode()) || waitlist.containsKey(course.getCourseCode())) {
-            // already registered
-            return 0;
-        } else if (student.getAcadUnits() + course.getAcadU() > student.getAcadUnitsAllowed()) {
-            // overload
-            return -1;
-        }
-        return 1;
     }
 
 	@Override

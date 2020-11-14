@@ -30,8 +30,8 @@ public class Course implements Serializable{
         return courseName;
     }
 
-    public String getSchool(){
-        return school.toString();
+    public boolean isSchool(School school){
+        return this.school == school;
     }
 
     public int getAvailableSlots(String indexNo){
