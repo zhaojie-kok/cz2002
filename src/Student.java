@@ -66,6 +66,10 @@ public class Student extends User{
         this.courses.remove(courseCode);
     }
 
+    public void changeIndex(String courseCode, String oldIndex, String newIndex){
+        this.courses.replace(courseCode, oldIndex, newIndex);
+    }
+
     public void addWaitlist(Course course, String indexNo) {
         this.waitlist.put(course.getCourseCode(), indexNo);
     }

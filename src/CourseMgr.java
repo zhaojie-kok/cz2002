@@ -47,6 +47,10 @@ public class CourseMgr implements EntityManager {
         return true;
     }
 
+    public HashMap<String, Course> getHashMap(){
+        return hashMap;
+    }
+    
     public Course getCourse(String courseCode){
         return hashMap.get(courseCode);
     }
