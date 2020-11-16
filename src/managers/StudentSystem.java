@@ -8,17 +8,26 @@ import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
+import readers.StudentReader;
 
-public class StudentSystem {
-    Student user;
-    Course selectedCourse;
-    Index selectedIndex;
-    CourseMgr courseMgr;
-    StudentManager studentManager;
-    CalenderMgr calendarMgr;
+public class StudentSystem implements System {
+    private Student user;
+    private Course selectedCourse;
+    private Index selectedIndex;
+    private CourseMgr courseMgr;
+    private StudentManager studentManager;
+    private CalenderMgr calendarMgr;
+    private static StudentReader studentReader = new StudentReader("student_files/");
 
     public StudentSystem(Student student) {
         user = student;
+        calendarMgr = new CalenderMgr();
+        studentManager = new StudentManager();
+        courseMgr = new CourseMgr();
+    }
+
+    public StudentSystem(String userId) {
+        user = (Student) studentReader.getData(userId);
         calendarMgr = new CalenderMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();

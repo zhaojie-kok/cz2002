@@ -1,5 +1,4 @@
-test.java
-test.ser
+src/test.java
 .vs/
 .vs/ProjectSettings.json
-FileReader.java
+FileReaderOG.java

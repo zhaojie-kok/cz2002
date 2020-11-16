@@ -1,4 +1,6 @@
-public interface UI {
+package boundaries;
+
+public interface GeneralUI {
     // a generalised UI interface so that other kinds of UI can be created from this
 
     // all kinds of UI should require login
