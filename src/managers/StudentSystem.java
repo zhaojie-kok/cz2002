@@ -8,31 +8,124 @@ import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
-import readers.StudentReader;
 
 public class StudentSystem implements Systems {
     private Student user;
-    private Course selectedCourse;
-    private Index selectedIndex;
+    private Course selectedCourse = null;
+    private Index selectedIndex = null;
     private CourseMgr courseMgr;
     private StudentManager studentManager;
-    private CalenderMgr calendarMgr;
-    private static StudentReader studentReader = new StudentReader("student_files/");
-
-    public StudentSystem(Student student) {
-        user = student;
-        calendarMgr = new CalenderMgr();
-        studentManager = new StudentManager();
-        courseMgr = new CourseMgr();
-    }
+    private CalendarMgr calendarMgr;
 
     public StudentSystem(String userId) {
+<<<<<<< HEAD
         calendarMgr = new CalenderMgr();
+=======
+        calendarMgr = new CalendarMgr();
+>>>>>>> 32a4b1620f633682976e5c8a162851dcca734229
         studentManager = new StudentManager();
+        studentManager.getStudent(userId);
         courseMgr = new CourseMgr();
         user = studentManager.getStudent(userId);
     }
 
+    public String printAllCourses(){
+        /**
+         * Converts to printable format
+         */
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        while (courses.hasNext()) { 
+            c = courses.next();
+            toReturn += c.getInfo();
+        }
+        return toReturn;
+    }
+
+    public String printCoursesBySchool(School school, String format){
+        /**
+         * Converts to printable format
+         */
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        while (courses.hasNext()) { 
+            c = courses.next();
+            if (c.isSchool(school)){
+                toReturn += c.getInfo();
+            }
+        }
+        return toReturn;
+    }
+
+    public String printCoursesByStringFilter(String filter, String format){
+        /**
+         * Searched course name and code for the filter
+         */
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        while (courses.hasNext()) { 
+            c = courses.next();
+            if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
+                toReturn += c.getInfo();
+            }
+        }
+        return toReturn;
+    }
+
+    // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
+    public String printRegisteredCourses(String format) {
+        /**
+         * Converts to printable format
+         */
+        String toReturn = "";
+        String toAdd;
+        HashMap<String, String> hMap = user.getCourses();
+        List<String> indexes = new ArrayList<String>(hMap.values());
+        List<String> courses = new ArrayList<String>(hMap.keySet());
+        for (int i = 0; i < hMap.size(); i++) {
+            toAdd = String.format(format, courses.get(i), indexes.get(i));
+            toReturn += toAdd;
+        }
+        return toReturn;
+    }
+
+    /////////////// Select course/select index are necessary for the following functions
+    public int selectCourse(String courseCode){
+        Course tmp = courseMgr.getCourse(courseCode);
+        if (tmp == null){
+            return 0;
+        }
+        selectedCourse = tmp;
+        return 1;
+    }
+
+    public int selectIndex(String indexNo){
+        if (selectedCourse == null){
+            return -1;
+        }
+        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
+        if (tmp == null){
+            return 0;
+        }
+        selectedIndex = tmp;
+        return 1;
+    }
+
+    public String getSystemStatus(){
+        String sc = selectedCourse == null ? "":"Selected course: " + selectedCourse.getCourseName();
+        String si = selectedIndex == null ? "":"Selected index: " + selectedIndex.getIndexNo();
+        return sc + "\n" + si;
+    }
+
+    // These are called AFTER selectCourse/selectIndex
+    ////// ++++++++ START +++++++++
+    // FUNCTIONAL REQUIREMENT - Student: 1. Add course
     public int addCourse() {
         /**
          * Returns 1 is successfully registered, 0 if waitlisted, and negative if not possible
@@ -51,12 +144,14 @@ public class StudentSystem implements Systems {
         return studentManager.addCourse(selectedCourse, selectedIndex, user);
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
     public int dropCourse() {
         /**
          * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
          */
+        // TODO: Go through StudentMgr
         if (user.isRegistered(selectedCourse)){
-            user.removeCourse(selectedCourse.getCourseCode());
+            user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
             return 1;
         }
         else if (user.isWaitlisted(selectedCourse)){
@@ -66,111 +161,30 @@ public class StudentSystem implements Systems {
         // if successfully dropped, dequeue waitlist
         return -1;
     }
-
-    public String printAllCourses(String format){
-        /**
-         * Converts to printable format
-         */
-        String toReturn = "";
-        Course c;
-
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
-        while (courses.hasNext()) { 
-            c = courses.next();
-            toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
-        }
-        return toReturn;
-    }
-
-    public String printCoursesBySchool(School school, String format){
-        /**
-         * Converts to printable format
-         */
-        String toReturn = "";
-        Course c;
-
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
-        while (courses.hasNext()) { 
-            c = courses.next();
-            if (c.isSchool(school)){
-                toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
-            }
-        }
-        return toReturn;
-    }
-
-    public String printCoursesByStringFilter(String filter, String format){
-        /**
-         * Searched course name and code for the filter
-         */
-        String toReturn = "";
-        Course c;
-
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
-        while (courses.hasNext()) { 
-            c = courses.next();
-            if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
-                toReturn += String.format(format, c);
-            }
-        }
-        return toReturn;
-    }
-
-    public String printRegisteredCourses(String format) {
-        /**
-         * Converts to printable format
-         */
-        String toReturn = "";
-        String toAdd;
-        HashMap<String, String> hMap = user.getCourses();
-        List<String> indexes = new ArrayList<String>(hMap.values());
-        List<String> courses = new ArrayList<String>(hMap.keySet());
-        for (int i = 0; i < hMap.size(); i++) {
-            toAdd = String.format(format, courses.get(i), indexes.get(i));
-            toReturn += toAdd;
-        }
-        return toReturn;
-    }
-
-    public int selectCourse(String courseCode){
-        Course tmp = courseMgr.getCourse(courseCode);
-        if (tmp == null){
-            return 0;
-        }
-        selectedCourse = tmp;
-        return 1;
-    }
-
-    public int selectIndex(String indexNo){
-        if (selectedCourse == null){
-            return 0;
-        }
-        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
-        if (tmp == null){
-            return 0;
-        }
-        selectedIndex = tmp;
-        return 1;
-    }
-
+    
     public String getIndexesOfCourse(String format) {
         /**
          * Converts to printable format
          */
         String toReturn = "";
-        Iterator<String> indexes = selectedCourse.getIndexes().keySet().iterator();
+        Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
         while (indexes.hasNext()) { 
-            toReturn += String.format(format, indexes.next());
+            toReturn += String.format(format, indexes.next().getInfo());
         }
         return toReturn;
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
     public int checkVacanciesAvailable(){
         return selectedIndex.getSlotsAvailable();
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
     public int swopIndexWithStudent(String matricNo){
-        // Check timing clash
+        /** 
+         * Returns 0 and does nothing if either students will havetimetable clash, 
+         * else swaps indexes and returns 1
+         */
         Student toSwapWith = studentManager.getStudent(matricNo);
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
@@ -190,6 +204,7 @@ public class StudentSystem implements Systems {
         return 0;
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
     public int swopToIndex(){
         // already registered for index
         if (user.isRegistered(selectedIndex)){
@@ -238,6 +253,7 @@ public class StudentSystem implements Systems {
 
         // iterate through all of student's registered courses to check for clash
         for (Map.Entry<String, String> entry: courses.entrySet()) {
+            // except for the course intending to switch out (since they will likely clash)
             if (entry.getKey() == selectedCourse.getCourseCode()){
                 continue;
             }
@@ -249,4 +265,5 @@ public class StudentSystem implements Systems {
         }
         return false;
     }
+    ////// ++++++++ END +++++++++
 }

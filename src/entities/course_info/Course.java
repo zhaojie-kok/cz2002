@@ -1,12 +1,10 @@
 package entities.course_info;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Queue;
 import entities.*;
 
-public class Course implements Serializable{
+public class Course implements Serializable, Printable{
     private static final long serialVersionUID = -9117232107080367454L;
 
     private String courseCode;
@@ -14,17 +12,14 @@ public class Course implements Serializable{
     private School school;
     private HashMap<String, Index> indexes; // <indexNo, Index>
     private int acadU;
-    private Calendar examDate;
 
     public Course(String courseCode, 
                 School school,
-                int acadU, 
-                Calendar examDate){
+                int acadU){
         this.indexes = new HashMap<String,Index>();
         this.courseCode = courseCode;
         this.school = school;
         this.acadU = acadU;
-        this.examDate = examDate;
     }
 
     public String getCourseCode(){
@@ -72,5 +67,38 @@ public class Course implements Serializable{
 
     public HashMap<String, Index> getIndexes(){
         return indexes;
+    }
+
+    @Override
+    public String getInfo() {
+        /**
+         * Returns formatted string of course information
+         * Eg.
+         * AC2101 - Accounting Recognition and Measurement
+         * .....
+         * (see index.getInfo)
+         */
+        String toReturn = String.format("%s - %s\n", courseCode, courseName);
+        for (Index index: indexes.values()){
+            toReturn += index.getInfo();
+        }
+        return toReturn;
+    }
+
+    @Override
+    public String getMoreInfo() {
+        /**
+         * Returns formatted string of course information
+         * Eg.
+         * AC2101 - Accounting Recognition and Measurement
+         * .....
+         * .....
+         * (see index.getMoreInfo)
+         */
+        String toReturn = String.format("%s - %s\n", courseCode, courseName);
+        for (Index index: indexes.values()){
+            toReturn += index.getMoreInfo();
+        }
+        return toReturn;
     }
 }

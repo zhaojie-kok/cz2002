@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 public abstract class FileReader {
     /**
@@ -14,7 +15,7 @@ public abstract class FileReader {
 
 	public abstract Object getData(String params);
 
-	public abstract int writeData(Object o);
+	public abstract int writeData(Serializable o);
 
     protected static Object readSerializedObject(String filename){
 		Object o = null;
@@ -33,7 +34,7 @@ public abstract class FileReader {
 		return o;
 	}
 
-	protected static void writeSerializedObject(String filename, Object o){
+	protected static void writeSerializedObject(String filename, Serializable o){
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		try {

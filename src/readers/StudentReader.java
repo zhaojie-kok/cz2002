@@ -1,6 +1,7 @@
 package readers;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.Student;
@@ -12,7 +13,11 @@ public class StudentReader extends FileReader {
     }
 
     @Override
-    public Object getData(String identifier) {
+    public Object getData(String params){
+        return getData();
+    }
+
+    public Object getData() {
         /*
         Returns all students (HashMap where key is matric no of student) if the identifier is null
         Returns only a specific student if the student can be identified with the identifier (matricNo or userId)
@@ -36,20 +41,11 @@ public class StudentReader extends FileReader {
 				}
 			}
         }
-        
-        if (identifier == null) {
-            return students;
-        } else {
-            if (students.containsKey(identifier)) {
-                return students.get(identifier);
-            } else {
-                return null;
-            }
-        }
+        return students;
     }
 
     @Override
-    public int writeData(Object o) {
+    public int writeData(Serializable o) {
         /* CODES FOR StudentReader.writeData:
         1: successfully changed
         -1: unable to read/write changes to file */

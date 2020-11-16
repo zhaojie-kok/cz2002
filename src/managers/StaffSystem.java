@@ -5,75 +5,102 @@ import entities.course_info.*;
 import entities.*;
 
 import java.util.Calendar;
-import java.util.HashMap;
 
-public class StaffSystem implements Systems {
-    private static HashMap<String, Staff> staff = FileReader.loadStaff();
-
+public class StaffSystem {
     FileReader fileReader;
     String studentDetailsFilePath;
     String courseDetailsFilePath;
+    CourseMgr courseMgr;
+    StudentManager studentManager;
+    CalendarMgr calendarMgr;
+    LoginReader loginReader;
 
+    Course selectedCourse;
+    Index selectedIndex;
+    Student selectedStudent;
 
+    public StaffSystem(){
+        loginReader = new LoginReader("");
+        calendarMgr = new CalendarMgr();
+        studentManager = new StudentManager();
+        courseMgr = new CourseMgr();
+    }
 
-    public boolean updateAccessPeriod(Student student){
-        StudentManager smgr = new StudentManager(); // check constructor
-        Calendar[] accessPeriod = student.getAccessPeriod();
-
-        // do we need to check accessPeriod? what do we update it to?
-        Calendar[] newAccessPeriod;
-		if (accessPeriod[] == newAccessPeriod){
-            // same/updated alr
-            return false;
+    public int selectCourse(String courseCode){
+        /**
+         * Returns 1 if course is selected, else 0
+         */
+        Course tmp = courseMgr.getCourse(courseCode);
+        if (tmp == null){
+            return 0;
         }
-        student.changeAccessPeriod(newAccessPeriod);
-        return true;
+        selectedCourse = tmp;
+        return 1;
     }
-    public void addStudent(Object[] details){
-        // iterate through Object[] 
-        // take each attribute
-        // instantiate Student object by putting in
-        // each of the attributes into args of constructor
-        
-        Student student = new Student()
+
+    public int selectIndex(String indexNo){
+        /**
+         * Returns 1 if index is selected, else 0
+         */
+        if (selectedCourse == null){
+            return 0;
+        }
+        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
+        if (tmp == null){
+            return 0;
+        }
+        selectedIndex = tmp;
+        return 1;
     }
+
+    public int selectStudent(String identifier){
+        /**
+         * Returns 1 if student is selected, else 0
+         */
+        Student tmp = studentManager.getStudent(identifier);
+        if (tmp == null){
+            return 0;
+        }
+        selectedStudent = tmp;
+        return 1;
+    }
+
+    public boolean updateAccessPeriod(String userId, Calendar[] newAccessPeriod){
+        return studentManager.updateAccessPeriod(userId, newAccessPeriod);
+    }
+
+    public boolean addStudent(String userId, String name, String gender, String nationality,
+                            String matricNo, Calendar[] accessPeriod, String password){
+        // Call student manager
+        if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
+            // If student is created, then create login details
+            Object[] data = new Object[]{userId, password, "student"};
+            loginReader.writeData(data);
+            return true;
+        }
+        return false;
+    }
+
     public void updateCourse(String courseCode, Object[] details){
-        
-    }
-    public void addCourse(){
-        String courseCode = course.getCourseCode();
-        String school = course.getSchool();
-        int acadU = course.getAcadU();
-        Calendar examDate = course.getExamDate();
-
-        CourseMgr cmgr = new CourseMgr(); // check constructor
-        createCourse(courseCode, school, acadU, examDate);
-        createIndex(courseCode, indexNo)
-
+        // No idea
     }
 
-
-    public int checkAvailableVacancies(Course course){
-        CourseMgr cmgr = new CourseMgr(); // check constructor
-        cmgr.checkAvailableVacancies(course);
-        // anything else needs to be done?
+    public void addCourse(String courseCode,
+                            School school,
+                            int acadU){
+        courseMgr.createCourse(courseCode, school, acadU);
     }
 
-    public void printStudentsbyIndex(){
-        HashMap<String, Student> students = FileReader.loadStudents();
-        // TODO
+    public int checkAvailableVacancies(){
+        return selectedIndex.getSlotsAvailable();
     }
 
-    public void printStudentsbyCourse(String courseCode){
-        HashMap<String, Student> students = FileReader.loadStudents();
-        // in the above hashmap string is matricNo
-        for (Student s : students.values()){
-            HashMap<String, String> courses = s.getCourses();
-            for (String cc : courses.keySet())
-                if (courseCode == cc){
-                    System.out.printf(s.name + s.gender + s.nationality + "\n");
-                }
-        }
+    public String printStudentsbyIndex(String indexNo){
+        return courseMgr.getCourseIndex(selectedCourse, indexNo).getMoreInfo();
+    }
+
+    public String printStudentsbyCourse(String courseCode){
+        return courseMgr.getCourse(courseCode).getMoreInfo();
     }
     
 }

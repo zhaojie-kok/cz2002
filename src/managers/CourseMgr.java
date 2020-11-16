@@ -1,26 +1,25 @@
 package managers;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import entities.*;
 import entities.course_info.*;
-import readers.FileReader;
+import readers.CourseReader;
 import boundaries.NotifSender;
 
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> hashMap;
+    private CourseReader cReader;
 
     public CourseMgr(){
-        hashMap = FileReader.loadCourses();
+        cReader = new CourseReader("courses/");
+        hashMap = (HashMap<String, Course>) cReader.getData();
     }
 
     public Course createCourse(String courseCode,
                             School school,
-                            int acadU, 
-                            Calendar examDate){
-        Course c = new Course(courseCode, school, acadU, examDate);
-        hashMap.put(courseCode, c);
+                            int acadU){
+        Course c = new Course(courseCode, school, acadU);
         saveState(c);
         return c;
     }
@@ -34,6 +33,14 @@ public class CourseMgr implements EntityManager {
         c.updateIndex(i);
         saveState(c);
         return i;
+    }
+    
+    public void deleteCourse(){
+
+    }
+
+    public void deleteIndex(){
+        
     }
 
     public boolean updateIndexTotalSlots(Course course, Index index, int slotsTotal){
@@ -146,8 +153,8 @@ public class CourseMgr implements EntityManager {
     @Override
     public void saveState(Object course) {
         Course c = (Course) course;
-        FileReader.writeCourse(c);
-        hashMap.replace(c.getCourseCode(), c);
+        cReader.writeData(c);
+        hashMap.put(c.getCourseCode(), c);
     }
 
     private void informWaitlistSuccess(Student s, Course c, Index i){
