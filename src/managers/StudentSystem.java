@@ -17,48 +17,12 @@ public class StudentSystem implements Systems {
     private CourseMgr courseMgr;
     private StudentManager studentManager;
     private CalendarMgr calendarMgr;
-    private static StudentReader studentReader = new StudentReader("student_files/");
 
     public StudentSystem(String userId) {
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
         studentManager.getStudent(userId);
         courseMgr = new CourseMgr();
-    }
-
-    public int addCourse() {
-        /**
-         * Returns 1 is successfully registered, 0 if waitlisted, and negative if not possible
-         * to add.
-         *  
-         * -1 : Timetable clash
-         * -2 : Already registered
-         * -3 : Exceeds AU
-         */
-
-        // Check timing clash
-        if (checkAddClash(user)){
-            return -1;
-        }
-
-        return studentManager.addCourse(selectedCourse, selectedIndex, user);
-    }
-
-    public int dropCourse() {
-        /**
-         * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
-         */
-        // TODO: Go through StudentMgr
-        if (user.isRegistered(selectedCourse)){
-            user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
-            return 1;
-        }
-        else if (user.isWaitlisted(selectedCourse)){
-            user.removeWaitlist(selectedCourse);
-            return 0;
-        }
-        // if successfully dropped, dequeue waitlist
-        return -1;
     }
 
     public String printAllCourses(String format){
@@ -110,6 +74,7 @@ public class StudentSystem implements Systems {
         return toReturn;
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
     public String printRegisteredCourses(String format) {
         /**
          * Converts to printable format
@@ -147,6 +112,53 @@ public class StudentSystem implements Systems {
         return 1;
     }
 
+    public Index getSelectedIndex(){
+        return selectedIndex;
+    }
+
+    public Course getSelectedCourse(){
+        return selectedCourse;
+    }
+
+    // These are called AFTER selectCourse/selectIndex
+    ////// ++++++++ START +++++++++
+    // FUNCTIONAL REQUIREMENT - Student: 1. Add course
+    public int addCourse() {
+        /**
+         * Returns 1 is successfully registered, 0 if waitlisted, and negative if not possible
+         * to add.
+         *  
+         * -1 : Timetable clash
+         * -2 : Already registered
+         * -3 : Exceeds AU
+         */
+
+        // Check timing clash
+        if (checkAddClash(user)){
+            return -1;
+        }
+
+        return studentManager.addCourse(selectedCourse, selectedIndex, user);
+    }
+
+    // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
+    public int dropCourse() {
+        /**
+         * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
+         */
+        // TODO: Go through StudentMgr
+        if (user.isRegistered(selectedCourse)){
+            user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
+            return 1;
+        }
+        else if (user.isWaitlisted(selectedCourse)){
+            user.removeWaitlist(selectedCourse);
+            return 0;
+        }
+        // if successfully dropped, dequeue waitlist
+        return -1;
+    }
+    
     public String getIndexesOfCourse(String format) {
         /**
          * Converts to printable format
@@ -159,12 +171,17 @@ public class StudentSystem implements Systems {
         return toReturn;
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
     public int checkVacanciesAvailable(){
         return selectedIndex.getSlotsAvailable();
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
     public int swopIndexWithStudent(String matricNo){
-        // Check timing clash
+        /** 
+         * Returns 0 and does nothing if either students will havetimetable clash, 
+         * else swaps indexes and returns 1
+         */
         Student toSwapWith = studentManager.getStudent(matricNo);
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
@@ -184,6 +201,7 @@ public class StudentSystem implements Systems {
         return 0;
     }
 
+    // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
     public int swopToIndex(){
         // already registered for index
         if (user.isRegistered(selectedIndex)){
@@ -232,15 +250,18 @@ public class StudentSystem implements Systems {
 
         // iterate through all of student's registered courses to check for clash
         for (Map.Entry<String, String> entry: courses.entrySet()) {
+            // except for the course intending to switch out (since they will likely clash)
             if (entry.getKey() == selectedCourse.getCourseCode()){
                 continue;
             }
             course = courseMgr.getCourse(entry.getKey());
             registered = courseMgr.getCourseIndex(course, entry.getValue());
             if (calendarMgr.checkClash(registered, newIndex)) {
+                deselectIndex();
                 return true;
             }
         }
         return false;
     }
+    ////// ++++++++ END +++++++++
 }

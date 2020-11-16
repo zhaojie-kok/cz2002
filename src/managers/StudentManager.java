@@ -16,11 +16,11 @@ public class StudentManager implements EntityManager {
         students = (HashMap<String, Student>) sReader.getData();
     }
 
-    public Student getStudent(String indentifier){
+    public Student getStudent(String identifier){
         /**
          * Returns student based on identifier (either matricNo or userId)
          */
-        return students.get(indentifier);
+        return students.get(identifier);
     }
 
     public boolean createStudent(String userId, String name, String gender, String nationality,

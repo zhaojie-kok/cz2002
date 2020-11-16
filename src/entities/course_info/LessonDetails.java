@@ -2,15 +2,11 @@ package entities.course_info;
 
 import java.util.Calendar;
 
-import entities.Printable;
-
 public class LessonDetails{
 
 	private String lessonVenue;
 	private String lessonType;
 	private int lessonDay;
-	private boolean oddWeek;
-	private boolean evenWeek;
 	private Calendar startTime;
 	private Calendar endTime;
 	
@@ -52,8 +48,6 @@ public class LessonDetails{
 	public void setLessonDay(int lessonDay) {
 		this.lessonDay = lessonDay;
 	}
-	
-
 	
 	public Calendar getStartTime() {
 		return startTime;

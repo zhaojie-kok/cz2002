@@ -2,7 +2,6 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import entities.course_info.*;
 
@@ -22,11 +21,11 @@ public class Student extends User implements Printable, Serializable{
         String userId, String name, String gender, String nationality,
         String matricNo, Calendar[] accessPeriod, HashMap<String, String> courses) {
         super(userId, "student", name, gender, nationality);
-        
-        // TODO: throw exception if any of these fields are null or invalid
+    
+        this.acadUnits = 0;
+        this.acadUnitsAllowed = 21;
         this.matricNo = matricNo;
         this.accessPeriod = accessPeriod;
-        this.courses = courses;
     }
 
     // accessor methods
