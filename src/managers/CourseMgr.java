@@ -34,6 +34,14 @@ public class CourseMgr implements EntityManager {
         saveState(c);
         return i;
     }
+    
+    public void deleteCourse(){
+
+    }
+
+    public void deleteIndex(){
+        
+    }
 
     public boolean updateIndexTotalSlots(Course course, Index index, int slotsTotal){
         /**

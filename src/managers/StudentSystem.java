@@ -102,7 +102,7 @@ public class StudentSystem implements Systems {
 
     public int selectIndex(String indexNo){
         if (selectedCourse == null){
-            return 0;
+            return -1;
         }
         Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
         if (tmp == null){
