@@ -1,6 +1,6 @@
 package boundaries;
 
-public class StaffUI implements GeneralUI {
+public class StaffUI extends GeneralUI {
     @Override
     public void getUserInput(Object storageObject) {
         // TODO Auto-generated method stub
@@ -15,6 +15,12 @@ public class StaffUI implements GeneralUI {
 
     @Override
     public void displayOutput(Object toDisplay) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void run() {
         // TODO Auto-generated method stub
 
     }

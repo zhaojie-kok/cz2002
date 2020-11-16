@@ -28,6 +28,7 @@ public class LoginMgr{
         */
         Object data = loginReader.getData(userId);
         
+        // TODO: change to exceptions
         if (data == null) {
             return -3;
         } else {

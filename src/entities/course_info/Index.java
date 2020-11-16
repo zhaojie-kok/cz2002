@@ -90,8 +90,13 @@ public class Index implements Serializable, Printable{
 	public Student dequeueWaitlist(){
 		return waitlist.remove();
 	}
+
 	public void enqueueWaitlist(Student student){
 		waitlist.add(student);
+	}
+
+	public void removeFromWaitList(Student student) {
+		waitlist.remove(student);
 	}
 
 	@Override

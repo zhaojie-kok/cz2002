@@ -55,6 +55,7 @@ public class StudentManager implements EntityManager {
     public int addCourse(Course course, Index index, Student student) {
         /**
          * Returns int. 1=successful registration, 0=waitlisted, negative if other results (Fail)
+         * Note: error code -1 is returnedby student system
          */
         if (student.isRegistered(course) || student.isWaitlisted(course)) {
             // already registered
@@ -81,10 +82,15 @@ public class StudentManager implements EntityManager {
         // update the student info only
         String i1 = s1.getCourseIndex(courseCode);
         String i2 = s2.getCourseIndex(courseCode);
-        s1.changeIndex(courseCode, i1, i2);
-        s2.changeIndex(courseCode, i2, i1);
+        s1.changeIndex(courseCode, i2);
+        s2.changeIndex(courseCode, i1);
         saveState(s1);
         saveState(s2);
+    }
+
+    public void swopIndex(Student student, Course course, Index newIndex) {
+        student.changeIndex(course.getCourseCode(), newIndex.getIndexNo());
+        saveState(student);
     }
 
     public boolean updateAccessPeriod(String matricNo, Calendar[] newAccessPeriod){

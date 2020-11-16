@@ -18,11 +18,7 @@ public class StudentSystem implements Systems {
     private CalendarMgr calendarMgr;
 
     public StudentSystem(String userId) {
-<<<<<<< HEAD
-        calendarMgr = new CalenderMgr();
-=======
         calendarMgr = new CalendarMgr();
->>>>>>> 32a4b1620f633682976e5c8a162851dcca734229
         studentManager = new StudentManager();
         studentManager.getStudent(userId);
         courseMgr = new CourseMgr();
@@ -55,7 +51,7 @@ public class StudentSystem implements Systems {
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.isSchool(school)){
-                toReturn += c.getInfo();
+                toReturn += String.format(format, c.getInfo());
             }
         }
         return toReturn;
@@ -72,14 +68,14 @@ public class StudentSystem implements Systems {
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
-                toReturn += c.getInfo();
+                toReturn += String.format(format, c.getInfo());
             }
         }
         return toReturn;
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
-    public String printRegisteredCourses(String format) {
+    public String checkRegisteredCourses(String format) {
         /**
          * Converts to printable format
          */
@@ -128,7 +124,9 @@ public class StudentSystem implements Systems {
     // FUNCTIONAL REQUIREMENT - Student: 1. Add course
     public int addCourse() {
         /**
-         * Returns 1 is successfully registered, 0 if waitlisted, and negative if not possible
+         * Returns 1 is successfully registered, 
+         * 0 if waitlisted,
+         * negative if not possible
          * to add.
          *  
          * -1 : Timetable clash
@@ -140,26 +138,45 @@ public class StudentSystem implements Systems {
         if (checkAddClash(user)){
             return -1;
         }
+        
+        // TODO: throw exceptions for negative results
+        int result = studentManager.addCourse(selectedCourse, selectedIndex, user);
 
-        return studentManager.addCourse(selectedCourse, selectedIndex, user);
+        // in the event that student has been successfully added or waitlisted,
+        // the course needs to be updated
+        switch(result) {
+            case 1:
+                courseMgr.addStudent(user, selectedIndex, selectedCourse);
+                break;
+            case 2:
+                courseMgr.enqueueWaitlist(user, selectedIndex, selectedCourse);
+                break;
+        }
+
+        return result;
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
     public int dropCourse() {
         /**
-         * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
+         * Checks if registered, then proceeds to drop. 
+         * 1 for success. 
+         * 0 for removed from waitlist. 
+         * -1 else
          */
         // TODO: Go through StudentMgr
+        int result = -1;
         if (user.isRegistered(selectedCourse)){
             user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
-            return 1;
-        }
-        else if (user.isWaitlisted(selectedCourse)){
+            result = 1;
+        } else if (user.isWaitlisted(selectedCourse)){
             user.removeWaitlist(selectedCourse);
-            return 0;
+            result = 0;
         }
-        // if successfully dropped, dequeue waitlist
-        return -1;
+        
+        // remove the student from the course after
+        courseMgr.removeStudent(user, selectedIndex, selectedCourse);
+        return result;
     }
     
     public String getIndexesOfCourse(String format) {
@@ -175,8 +192,18 @@ public class StudentSystem implements Systems {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
-    public int checkVacanciesAvailable(){
-        return selectedIndex.getSlotsAvailable();
+    public HashMap<String, Integer> checkVacanciesAvailable(){
+        if (selectedCourse != null) {
+            // if a particular slot has been selected then return the vacancy
+            HashMap<String, Integer> compiled = new HashMap<>();
+            HashMap<String, Index> indexes = selectedCourse.getIndexes();
+            for (Index index: indexes.values()) {
+                compiled.put(index.getIndexNo(), index.getSlotsAvailable());
+            }
+            return compiled;
+        } else {
+            return null;
+        }
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
@@ -206,6 +233,7 @@ public class StudentSystem implements Systems {
 
     // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
     public int swopToIndex(){
+        // TODO: convert into exceptions
         // already registered for index
         if (user.isRegistered(selectedIndex)){
             return -1;
@@ -221,6 +249,7 @@ public class StudentSystem implements Systems {
         }
         courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
         courseMgr.addStudent(user, selectedIndex, selectedCourse);
+        studentManager.swopIndex(user, selectedCourse, selectedIndex);
         return selectedIndex.getSlotsAvailable();
     }
 
