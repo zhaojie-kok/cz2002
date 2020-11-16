@@ -1,5 +1,6 @@
 package readers;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 public class LoginReader extends FileReader {
@@ -23,7 +24,7 @@ public class LoginReader extends FileReader {
     }
 
     @Override
-    public int writeData(Object o) {
+    public int writeData(Serializable o) {
         /* CODES FOR LoginReader.writeData:
         1: successfully changed
         -1: unable to read/write changes to file */

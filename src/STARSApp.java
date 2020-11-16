@@ -39,10 +39,10 @@ public class STARSApp extends GeneralUI {
         try {
             switch(loginStatus) {
                 case 1:
-                    newUI = new StudentUI(scn);
+                    newUI = new StudentUI(scn, userId);
                     break;
                 case 2:
-                    newUI = new StaffUI(scn);
+                    newUI = new StaffUI(scn, userId);
                     break;
             }
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class STARSApp extends GeneralUI {
 
         // show the choices of what to do according to each system
         // TODO: throw these into each system later on
-        choice = mainMenuOptions();
+        newUI.run();
 
     }
 
@@ -99,32 +99,6 @@ public class STARSApp extends GeneralUI {
     @Override
     public void displayOutput(Object toDisplay) {
         System.out.println(toDisplay.toString());
-    }
-
-    // method to get choices from user
-    public int promptChoice(String prompt, String[] options) {
-        displayOutput(prompt);
-
-        for (int i=0; i<options.length; i++) {
-            String option = i+1 + ". " + options[i];
-            displayOutput(option);
-        }
-
-        int choice;
-        do {
-            try {
-                choice = Integer.parseInt(getUserInput());
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                choice = -1;
-            }
-
-            if (!(choice>=1 && choice<=options.length)) {
-                displayOutput("Please make a choice between 1 and " + options.length);
-            } else {
-                return choice-1;
-            }
-        } while (true);
     }
 
 }
