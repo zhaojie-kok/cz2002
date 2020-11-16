@@ -91,6 +91,7 @@ public class StudentSystem implements Systems {
         return toReturn;
     }
 
+    /////////////// Select course/select index are necessary for the following functions
     public int selectCourse(String courseCode){
         Course tmp = courseMgr.getCourse(courseCode);
         if (tmp == null){
@@ -257,7 +258,6 @@ public class StudentSystem implements Systems {
             course = courseMgr.getCourse(entry.getKey());
             registered = courseMgr.getCourseIndex(course, entry.getValue());
             if (calendarMgr.checkClash(registered, newIndex)) {
-                deselectIndex();
                 return true;
             }
         }
