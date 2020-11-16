@@ -19,17 +19,10 @@ public class StudentSystem implements Systems {
     private CalendarMgr calendarMgr;
     private static StudentReader studentReader = new StudentReader("student_files/");
 
-    public StudentSystem(Student student) {
-        user = student;
+    public StudentSystem(String userId) {
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
-        courseMgr = new CourseMgr();
-    }
-
-    public StudentSystem(String userId) {
-        user = (Student) studentReader.getData(userId);
-        calendarMgr = new CalenderMgr();
-        studentManager = new StudentManager();
+        studentManager.getStudent(userId);
         courseMgr = new CourseMgr();
     }
 

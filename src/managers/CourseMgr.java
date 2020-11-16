@@ -13,8 +13,8 @@ public class CourseMgr implements EntityManager {
     private CourseReader cReader;
 
     public CourseMgr(){
-        cReader = new CourseReader("/courses");
-        hashMap = CourseReader.getData();
+        cReader = new CourseReader("courses/");
+        hashMap = (HashMap<String, Course>) cReader.getData();
     }
 
     public Course createCourse(String courseCode,
@@ -148,7 +148,7 @@ public class CourseMgr implements EntityManager {
     @Override
     public void saveState(Object course) {
         Course c = (Course) course;
-        FileReader.writeCourse(c);
+        cReader.writeData(c);
         hashMap.replace(c.getCourseCode(), c);
     }
 

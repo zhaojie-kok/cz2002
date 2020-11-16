@@ -74,12 +74,34 @@ public class Course implements Serializable, Printable{
 
     @Override
     public String getInfo() {
-        return String.format("%s - %s", courseCode, courseName);
+        /**
+         * Returns formatted string of course information
+         * Eg.
+         * AC2101 - Accounting Recognition and Measurement
+         * .....
+         * (see index.getInfo)
+         */
+        String toReturn = String.format("%s - %s\n", courseCode, courseName);
+        for (Index index: indexes.values()){
+            toReturn += index.getInfo();
+        }
+        return toReturn;
     }
 
     @Override
     public String getMoreInfo() {
-        // TODO Auto-generated method stub
-        return String.format("%s - %s", courseCode, courseName);
+        /**
+         * Returns formatted string of course information
+         * Eg.
+         * AC2101 - Accounting Recognition and Measurement
+         * .....
+         * .....
+         * (see index.getInfo and index.getMoreInfo)
+         */
+        String toReturn = String.format("%s - %s\n", courseCode, courseName);
+        for (Index index: indexes.values()){
+            toReturn += index.getInfo() + index.getMoreInfo();
+        }
+        return toReturn;
     }
 }

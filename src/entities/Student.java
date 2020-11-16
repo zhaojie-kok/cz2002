@@ -1,11 +1,16 @@
 package entities;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import entities.course_info.*;
 
-public class Student extends User implements Printable{
+public class Student extends User implements Printable, Serializable{
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7073083131568074880L;
     private String matricNo;
     private Calendar[] accessPeriod;
     private HashMap<String, String> courses; // <Course Code, Index No>

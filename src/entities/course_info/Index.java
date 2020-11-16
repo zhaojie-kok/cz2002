@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import entities.*;
 
 public class Index implements Serializable, Printable{
@@ -132,6 +131,7 @@ public class Index implements Serializable, Printable{
 		 * Registered students:
 		 * 1. 
 		 * Waitlisted students:
+		 * 1. 
 		 */
 		String toReturn = "Registered students: ";
 		int i = 1;

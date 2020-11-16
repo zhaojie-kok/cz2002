@@ -1,6 +1,7 @@
 package readers;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.course_info.Course;
@@ -11,7 +12,11 @@ public class CourseReader extends FileReader {
     }
 
     @Override
-    public Object getData(String courseCode) {
+    public Object getData(String params){
+        return getData();
+    }
+
+    public Object getData() {
         /**
 		Returns all courses (HashMap where key is courseCode) if the courseCode is null
         Returns only a specific course if the course can be identified with the courseCode
@@ -30,21 +35,12 @@ public class CourseReader extends FileReader {
                     courses.put(toAdd.getCourseCode(), toAdd);
 				}
 			}
-		}
-        
-        if (courseCode == null) {
-            return courses;
-        } else {
-            if (courses.containsKey(courseCode)) {
-                return courses.get(courseCode);
-            } else {
-                return null;
-            }
         }
+        return courses;
     }
 
     @Override
-    public int writeData(Object o) {
+    public int writeData(Serializable o) {
         /* CODES FOR CourseReader.writeData:
         1: successfully changed
         -1: unable to read/write changes to file */
@@ -58,5 +54,4 @@ public class CourseReader extends FileReader {
             return -1;
         }
     }
-    
 }

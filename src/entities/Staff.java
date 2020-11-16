@@ -1,6 +1,12 @@
 package entities;
 
-public class Staff extends User{
+import java.io.Serializable;
+
+public class Staff extends User implements Serializable{
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7309047941954437648L;
     private String staffNo;
 
     Staff(String staffNo, String userId, String userType, String name, String gender, String nationality) {

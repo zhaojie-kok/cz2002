@@ -6,29 +6,30 @@ import readers.*;
 import entities.*;
 import entities.course_info.*;
 
-// public class StudentManager implements EntityManager{
-//     public int dropCourse(Course course, String indexNo, Student student) {
-//         String courseCode = course.getCourseCode();
-//         if (student.getCourseIndex(courseCode) == null) {
-//             return -1;
-//         }
-        // student.removeCourse(courseCode);
-        //         // TODO: removeStudent, dequeue waitlist
-        //         // CourseMgr.removeStudent()
-        //         return 1;
-        //     }
-
 public class StudentManager implements EntityManager {
-    private HashMap<String, Student> students = FileReader.loadStudents();
+    private HashMap<String, Student> students;
+    StudentReader sReader;
 
-    public Student getStudent(String matricNo){
-        return students.get(matricNo);
+    public StudentManager(){
+        // TODO: filepath
+        StudentReader sReader = new StudentReader("PLACEHOLDER");
+        students = (HashMap<String, Student>) sReader.getData();
+    }
+
+    public Student getStudent(String indentifier){
+        /**
+         * Returns student based on identifier (either matricNo or userId)
+         */
+        return students.get(indentifier);
     }
 
     public boolean createStudent(String userId, String name, String gender, String nationality,
     String matricNo, Calendar[] accessPeriod){
-        // TODO: Does userId need to be unique
-        if (students.containsKey(matricNo)){
+        /**
+         * Returns boolean for creating a student (true if created, false otherwise)
+         */
+        if (students.containsKey(matricNo) || students.containsKey(userId)){
+            // If another student exists with the matricNo or userId, no student is created
             return false;
         }
         Student newStudent = new Student(userId, name, gender, nationality,
@@ -39,8 +40,12 @@ public class StudentManager implements EntityManager {
     }
 
     public boolean dropCourse(Course course, Student student) {
+        /**
+         * Returns boolean for dropping a course (true if successful, false otherwise)
+         */
+        // Check if student is registered
         if (student.isRegistered(course)){
-            student.removeCourse(course.getCourseCode());
+            student.removeCourse(course.getCourseCode(), course.getAcadU());
             saveState(student);
             return true;
         }
@@ -61,7 +66,7 @@ public class StudentManager implements EntityManager {
 
         if (index.getSlotsAvailable() > 0) {
             // register successfully
-            student.addCourse(course.getCourseCode(), index.getIndexNo());
+            student.addCourse(course.getCourseCode(), index.getIndexNo(), course.getAcadU());
             saveState(student);
             return 1;
         } else {
@@ -73,7 +78,7 @@ public class StudentManager implements EntityManager {
     }
 
     public void swopIndex(Student s1, Student s2, String courseCode) {
-        // update the student info
+        // update the student info only
         String i1 = s1.getCourseIndex(courseCode);
         String i2 = s2.getCourseIndex(courseCode);
         s1.changeIndex(courseCode, i1, i2);
@@ -96,7 +101,7 @@ public class StudentManager implements EntityManager {
 	@Override
     public void saveState(Object student) {
         Student s = (Student) student;
-        FileReader.writeStudent((Student) s);
+        sReader.writeData(s);
         students.replace(s.getMatricNo(), s);
     }
 }
