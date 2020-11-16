@@ -13,8 +13,8 @@ public class StudentUI extends GeneralUI {
     private static StudentSystem system;
 
     public StudentUI(Scanner scn, String userId) {
-        this.scn =  scn;
-        this.system = new StudentSystem(userId);
+        StudentUI.scn =  scn;
+        StudentUI.system = new StudentSystem(userId);
     }
 
     @Override
