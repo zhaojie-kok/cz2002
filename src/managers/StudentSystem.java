@@ -27,10 +27,10 @@ public class StudentSystem implements Systems {
     }
 
     public StudentSystem(String userId) {
-        user = (Student) studentReader.getData(userId);
         calendarMgr = new CalenderMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();
+        user = studentManager.getStudent(userId);
     }
 
     public int addCourse() {

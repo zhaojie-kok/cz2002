@@ -4,39 +4,61 @@ import managers.Systems;
 import managers.StaffSystem;
 import managers.StudentSystem;
 import managers.LoginMgr;
-import boundaries.GeneralUI;
+import boundaries.*;
 
-public class STARSApp implements GeneralUI{
+public class STARSApp extends GeneralUI {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
+    private int loginStatus;
 
     public static void main(String[] args) {
-        int loginStatus;
-        int choice = 0;
         STARSApp app = new STARSApp(); // to allow calling of non-static methods
-        loginStatus = app.promptLogin();
+        
+        app.run();
+    }
+
+    @Override
+    public void run() {
+        int choice = 0;
+        loginStatus = promptLogin();
 
         while (loginStatus <= 0) {
             String[] options= {"Yes", "No"};
-            choice = app.promptChoice("Would you like to login again?", options);
+            choice = promptChoice("Would you like to login again?", options);
             if (choice != 0) {
                 return;
             } else {
-                loginStatus = app.promptLogin();
+                loginStatus = promptLogin();
             }
         }
 
         // create and start up a system based on the loginStatus
         // at this point the login details have already been verified to the userId can be used to retrieve info
-        Systems system;
-        switch(loginStatus) {
-            case 1:
-                system = new StudentSystem(STARSApp.userId);
+        GeneralUI newUI;
+        try {
+            switch(loginStatus) {
+                case 1:
+                    newUI = new StudentUI(scn);
+                    break;
+                case 2:
+                    newUI = new StaffUI(scn);
+                    break;
+            }
+        } catch (Exception e) {
+            // at this point, since the userId has been verified
+            // any error in starting either system should be alerted to admin
+            e.printStackTrace();
+            System.out.println("Unable to find user records in system. Please inform system admin");
+            return;
         }
+
+        // show the choices of what to do according to each system
+        // TODO: throw these into each system later on
+        choice = mainMenuOptions();
+
     }
 
-    @Override
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
@@ -103,6 +125,6 @@ public class STARSApp implements GeneralUI{
                 return choice-1;
             }
         } while (true);
-        
     }
+
 }
