@@ -96,11 +96,11 @@ public class Course implements Serializable, Printable{
          * AC2101 - Accounting Recognition and Measurement
          * .....
          * .....
-         * (see index.getInfo and index.getMoreInfo)
+         * (see index.getMoreInfo)
          */
         String toReturn = String.format("%s - %s\n", courseCode, courseName);
         for (Index index: indexes.values()){
-            toReturn += index.getInfo() + index.getMoreInfo();
+            toReturn += index.getMoreInfo();
         }
         return toReturn;
     }

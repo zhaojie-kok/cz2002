@@ -27,6 +27,9 @@ public class StaffSystem {
     }
 
     public int selectCourse(String courseCode){
+        /**
+         * Returns 1 if course is selected, else 0
+         */
         Course tmp = courseMgr.getCourse(courseCode);
         if (tmp == null){
             return 0;
@@ -36,6 +39,9 @@ public class StaffSystem {
     }
 
     public int selectIndex(String indexNo){
+        /**
+         * Returns 1 if index is selected, else 0
+         */
         if (selectedCourse == null){
             return 0;
         }
@@ -47,13 +53,15 @@ public class StaffSystem {
         return 1;
     }
 
-    
     public int selectStudent(String identifier){
+        /**
+         * Returns 1 if student is selected, else 0
+         */
         Student tmp = studentManager.getStudent(identifier);
         if (tmp == null){
             return 0;
         }
-        selectedIndex = tmp;
+        selectedStudent = tmp;
         return 1;
     }
 
@@ -65,6 +73,7 @@ public class StaffSystem {
                             String matricNo, Calendar[] accessPeriod, String password){
         // Call student manager
         if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
+            // If student is created, then create login details
             Object[] data = new Object[]{userId, password, "student"};
             loginReader.writeData(data);
             return true;
@@ -73,7 +82,7 @@ public class StaffSystem {
     }
 
     public void updateCourse(String courseCode, Object[] details){
-        
+        // No idea
     }
 
     public void addCourse(String courseCode,
@@ -83,18 +92,16 @@ public class StaffSystem {
         courseMgr.createCourse(courseCode, school, acadU, examDate);
     }
 
-    
-
-    public int checkAvailableVacancies(Course course){
-        return 0;
+    public int checkAvailableVacancies(){
+        return selectedIndex.getSlotsAvailable();
     }
 
     public String printStudentsbyIndex(String indexNo){
-        // TODO
+        return courseMgr.getCourseIndex(selectedCourse, indexNo).getMoreInfo();
     }
 
     public String printStudentsbyCourse(String courseCode){
-        return courseMgr.getCourse(courseCode).getInfo();
+        return courseMgr.getCourse(courseCode).getMoreInfo();
     }
     
 }

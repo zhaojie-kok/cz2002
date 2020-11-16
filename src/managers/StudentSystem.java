@@ -8,12 +8,11 @@ import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
-import readers.StudentReader;
 
 public class StudentSystem implements Systems {
     private Student user;
-    private Course selectedCourse;
-    private Index selectedIndex;
+    private Course selectedCourse = null;
+    private Index selectedIndex = null;
     private CourseMgr courseMgr;
     private StudentManager studentManager;
     private CalendarMgr calendarMgr;
@@ -25,7 +24,7 @@ public class StudentSystem implements Systems {
         courseMgr = new CourseMgr();
     }
 
-    public String printAllCourses(String format){
+    public String printAllCourses(){
         /**
          * Converts to printable format
          */
@@ -35,7 +34,7 @@ public class StudentSystem implements Systems {
         Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
         while (courses.hasNext()) { 
             c = courses.next();
-            toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
+            toReturn += c.getInfo();
         }
         return toReturn;
     }
@@ -68,7 +67,7 @@ public class StudentSystem implements Systems {
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
-                toReturn += String.format(format, c);
+                toReturn += c.getInfo();
             }
         }
         return toReturn;
@@ -113,12 +112,10 @@ public class StudentSystem implements Systems {
         return 1;
     }
 
-    public Index getSelectedIndex(){
-        return selectedIndex;
-    }
-
-    public Course getSelectedCourse(){
-        return selectedCourse;
+    public String getSystemStatus(){
+        String sc = selectedCourse == null ? "":"Selected course: " + selectedCourse.getCourseName();
+        String si = selectedIndex == null ? "":"Selected index: " + selectedIndex.getIndexNo();
+        return sc + "\n" + si;
     }
 
     // These are called AFTER selectCourse/selectIndex
