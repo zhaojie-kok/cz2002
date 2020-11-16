@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
-import entities.Student;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
@@ -217,10 +216,10 @@ public class StudentUI extends GeneralUI {
 
     private void printCourses() {
         // print all, b sch, or by filter
-        String[] options = {"All courses", "By School", "By keywords"}
+        String[] options = {"All courses", "By School", "By keywords"};
 
         int choice = promptChoice("Select Printing Option", options);
-        String result;
+        String result = "";
         switch(choice) {
             case 0:
                 result = system.printAllCourses();

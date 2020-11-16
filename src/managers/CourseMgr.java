@@ -1,7 +1,6 @@
 package managers;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import entities.*;
 import entities.course_info.*;

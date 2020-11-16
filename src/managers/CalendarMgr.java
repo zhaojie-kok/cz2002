@@ -3,7 +3,6 @@ package managers;
 import java.util.Calendar;
 import java.util.List;
 
-import entities.*;
 import entities.course_info.*;
 
 public class CalendarMgr {

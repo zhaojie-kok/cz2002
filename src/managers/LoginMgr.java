@@ -35,7 +35,7 @@ public class LoginMgr{
             String[] details = (String[]) data;
             if (details.length == 0) {
                 return -1;
-            } else if (!password.equals(details[1])) {
+            } else if (!hashPassword(password).equals(details[1])) {
                 return -2;
             } else {
                 // return positive numerics instead of just boolean for success to make it easy to add more classes
