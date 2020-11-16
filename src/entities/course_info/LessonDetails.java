@@ -2,14 +2,32 @@ package entities.course_info;
 
 import java.util.Calendar;
 
-public class LessonDetails {
+import entities.Printable;
+
+public class LessonDetails{
 
 	private String lessonVenue;
 	private String lessonType;
 	private int lessonDay;
+	private boolean oddWeek;
+	private boolean evenWeek;
 	private Calendar startTime;
 	private Calendar endTime;
 	
+	public LessonDetails(String lessonVenue, 
+							String lessonType, 
+							int lessonDay,
+							int evenOdd,
+							Calendar startTime,
+							Calendar endTime
+							){
+		/**
+		 * 
+		 * @param evenOdd 0 if even, 1 if odd, 2 if both
+		 */
+		this.lessonDay = lessonDay;
+		this.startTime = startTime;
+	}
 	
 	public String getLessonVenue() {
 		return lessonVenue;
@@ -52,5 +70,4 @@ public class LessonDetails {
 	public void setEndTime(Calendar endTime) {
 		this.endTime = endTime;
 	}
-	
 }

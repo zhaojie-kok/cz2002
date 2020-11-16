@@ -5,14 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import entities.*;
 import entities.course_info.*;
-import readers.FileReader;
+import readers.CourseReader;
 import boundaries.NotifSender;
 
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> hashMap;
+    private CourseReader cReader;
 
     public CourseMgr(){
-        hashMap = FileReader.loadCourses();
+        cReader = new CourseReader("/courses");
+        hashMap = CourseReader.getData();
     }
 
     public Course createCourse(String courseCode,

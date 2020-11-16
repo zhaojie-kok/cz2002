@@ -6,7 +6,7 @@ import java.util.List;
 import entities.*;
 import entities.course_info.*;
 
-public class CalenderMgr {
+public class CalendarMgr {
     public boolean checkClash(Index i1, Index i2) {
         List<LessonDetails>[] timetable1 = i1.getTimeTable();
         List<LessonDetails>[] timetable2 = i2.getTimeTable();

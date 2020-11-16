@@ -13,30 +13,33 @@ public class StaffSystem implements Systems {
     FileReader fileReader;
     String studentDetailsFilePath;
     String courseDetailsFilePath;
+    CourseMgr courseMgr;
+    StudentManager studentManager;
+    CalendarMgr calendarMgr;
+    LoginReader loginReader;
 
-
-
-    public boolean updateAccessPeriod(Student student){
-        StudentManager smgr = new StudentManager(); // check constructor
-        Calendar[] accessPeriod = student.getAccessPeriod();
-
-        // do we need to check accessPeriod? what do we update it to?
-        Calendar[] newAccessPeriod;
-		if (accessPeriod[] == newAccessPeriod){
-            // same/updated alr
-            return false;
-        }
-        student.changeAccessPeriod(newAccessPeriod);
-        return true;
+    public StaffSystem(){
+        loginReader = new LoginReader("");
+        calendarMgr = new CalendarMgr();
+        studentManager = new StudentManager();
+        courseMgr = new CourseMgr();
     }
-    public void addStudent(Object[] details){
-        // iterate through Object[] 
-        // take each attribute
-        // instantiate Student object by putting in
-        // each of the attributes into args of constructor
-        
-        Student student = new Student()
+
+    public boolean updateAccessPeriod(String userId, Calendar[] newAccessPeriod){
+        return studentManager.updateAccessPeriod(userId, newAccessPeriod);
     }
+
+    public void addStudent(String userId, String name, String gender, String nationality,
+                            String matricNo, Calendar[] accessPeriod, String password){
+        // Call student manager
+        studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod);
+        Object[] data = new Object[]{userId, password, "student"};
+        loginReader.writeData(data);
+    }
+
+
+
+
     public void updateCourse(String courseCode, Object[] details){
         
     }
@@ -49,7 +52,6 @@ public class StaffSystem implements Systems {
         CourseMgr cmgr = new CourseMgr(); // check constructor
         createCourse(courseCode, school, acadU, examDate);
         createIndex(courseCode, indexNo)
-
     }
 
 

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Queue;
 import entities.*;
 
-public class Course implements Serializable{
+public class Course implements Serializable, Printable{
     private static final long serialVersionUID = -9117232107080367454L;
 
     private String courseCode;
@@ -14,7 +14,6 @@ public class Course implements Serializable{
     private School school;
     private HashMap<String, Index> indexes; // <indexNo, Index>
     private int acadU;
-    private Calendar examDate;
 
     public Course(String courseCode, 
                 School school,
@@ -24,7 +23,6 @@ public class Course implements Serializable{
         this.courseCode = courseCode;
         this.school = school;
         this.acadU = acadU;
-        this.examDate = examDate;
     }
 
     public String getCourseCode(){
@@ -72,5 +70,16 @@ public class Course implements Serializable{
 
     public HashMap<String, Index> getIndexes(){
         return indexes;
+    }
+
+    @Override
+    public String getInfo() {
+        return String.format("%s - %s", courseCode, courseName);
+    }
+
+    @Override
+    public String getMoreInfo() {
+        // TODO Auto-generated method stub
+        return String.format("%s - %s", courseCode, courseName);
     }
 }

@@ -16,12 +16,12 @@ public class StudentSystem implements Systems {
     private Index selectedIndex;
     private CourseMgr courseMgr;
     private StudentManager studentManager;
-    private CalenderMgr calendarMgr;
+    private CalendarMgr calendarMgr;
     private static StudentReader studentReader = new StudentReader("student_files/");
 
     public StudentSystem(Student student) {
         user = student;
-        calendarMgr = new CalenderMgr();
+        calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();
     }
@@ -55,8 +55,9 @@ public class StudentSystem implements Systems {
         /**
          * Checks if registered, then proceeds to drop. 1 for success. 0 for removed from waitlist. -1 else
          */
+        // TODO: Go through StudentMgr
         if (user.isRegistered(selectedCourse)){
-            user.removeCourse(selectedCourse.getCourseCode());
+            user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
             return 1;
         }
         else if (user.isWaitlisted(selectedCourse)){
@@ -93,7 +94,7 @@ public class StudentSystem implements Systems {
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.isSchool(school)){
-                toReturn += String.format(format, c.getCourseCode(), c.getCourseName());
+                toReturn += c.getInfo();
             }
         }
         return toReturn;
@@ -158,9 +159,9 @@ public class StudentSystem implements Systems {
          * Converts to printable format
          */
         String toReturn = "";
-        Iterator<String> indexes = selectedCourse.getIndexes().keySet().iterator();
+        Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
         while (indexes.hasNext()) { 
-            toReturn += String.format(format, indexes.next());
+            toReturn += String.format(format, indexes.next().getInfo());
         }
         return toReturn;
     }

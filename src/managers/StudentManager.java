@@ -1,5 +1,6 @@
 package managers;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import readers.*;
 import entities.*;
@@ -24,9 +25,23 @@ public class StudentManager implements EntityManager {
         return students.get(matricNo);
     }
 
+    public boolean createStudent(String userId, String name, String gender, String nationality,
+    String matricNo, Calendar[] accessPeriod){
+        // TODO: Does userId need to be unique
+        if (students.containsKey(matricNo)){
+            return false;
+        }
+        Student newStudent = new Student(userId, name, gender, nationality,
+                                        matricNo, accessPeriod, new HashMap<String, String>());
+        students.put(matricNo, newStudent);
+        saveState(newStudent);
+        return true;
+    }
+
     public boolean dropCourse(Course course, Student student) {
         if (student.isRegistered(course)){
             student.removeCourse(course.getCourseCode());
+            saveState(student);
             return true;
         }
         return false;
@@ -65,6 +80,17 @@ public class StudentManager implements EntityManager {
         s2.changeIndex(courseCode, i2, i1);
         saveState(s1);
         saveState(s2);
+    }
+
+    public boolean updateAccessPeriod(String matricNo, Calendar[] newAccessPeriod){
+        Student student = getStudent(matricNo);
+        Calendar[] accessPeriod = student.getAccessPeriod();
+		if (accessPeriod == newAccessPeriod){
+            // same/updated alr
+            return false;
+        }
+        student.changeAccessPeriod(newAccessPeriod);
+        return true;
     }
 
 	@Override

@@ -2,12 +2,13 @@ package entities.course_info;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import entities.*;
 
-public class Index implements Serializable{
+public class Index implements Serializable, Printable{
 
 	/**
 	 *
@@ -92,6 +93,59 @@ public class Index implements Serializable{
 	}
 	public void enqueueWaitlist(Student student){
 		waitlist.add(student);
+	}
+
+	@Override
+	public String getInfo() {
+		/**
+		 * Returns a string of information on the index
+		 * Eg.
+		 * Index: 20001
+		 * Slots available: 10 out of 20
+		 * LEC        | Mon   | 1130-1330 | LKC-LT
+		 * LEC/STUDIO | Tues  | 1430-1630 | LT28
+		 * TUT        | Thurs | 0930-1000 | LHN-TR+12
+		 */
+		String toReturn = String.format("Index: %s\nSlots available: %d out of %d\n", indexNo, slotsAvailable, slotsTotal);
+		String[] daysOfWeek = {"Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"};
+		
+		for (int i = 0; i < timeTable.length; i++){
+			List<LessonDetails> lessons = timeTable[i];
+			for (LessonDetails lesson:lessons){
+				toReturn += String.format("%10s | %5s | %02d%02d-%02d%02d | %15s\n", 
+					lesson.getLessonType(), 
+					daysOfWeek[i], 
+					lesson.getStartTime().get(Calendar.HOUR_OF_DAY), lesson.getStartTime().get(Calendar.MINUTE),
+					lesson.getEndTime().get(Calendar.HOUR_OF_DAY), lesson.getEndTime().get(Calendar.MINUTE), 
+					lesson.getLessonVenue());
+			}
+		}
+		return toReturn + "\n";
+	}
+
+	@Override
+	public String getMoreInfo() {
+		
+		/**
+		 * Returns a string of students registered/waitlisted
+		 * Eg.
+		 * Registered students:
+		 * 1. 
+		 * Waitlisted students:
+		 */
+		String toReturn = "Registered students: ";
+		int i = 1;
+		for (Student s: registeredStudents){
+			toReturn += i + ". " + s.getInfo() + "\n";
+			i++;
+		}
+		toReturn += "Waitlisted:\n";
+		i = 1;
+		for (Student s: waitlist){
+			toReturn += i + ". " + s.getInfo() + "\n";
+			i++;
+		}
+		return toReturn;
 	}
 }
 
