@@ -7,7 +7,7 @@ import entities.*;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class StaffSystem implements System {
+public class StaffSystem implements Systems {
     private static HashMap<String, Staff> staff = FileReader.loadStaff();
 
     FileReader fileReader;

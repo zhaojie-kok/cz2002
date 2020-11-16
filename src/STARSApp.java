@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-import managers.System;
+import managers.Systems;
 import managers.StaffSystem;
 import managers.StudentSystem;
 import managers.LoginMgr;
@@ -9,6 +9,7 @@ import boundaries.GeneralUI;
 public class STARSApp implements GeneralUI{
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
+    private static String userId;
 
     public static void main(String[] args) {
         int loginStatus;
@@ -28,17 +29,17 @@ public class STARSApp implements GeneralUI{
 
         // create and start up a system based on the loginStatus
         // at this point the login details have already been verified to the userId can be used to retrieve info
-        System system;
-        Switch(loginStatus) {
+        Systems system;
+        switch(loginStatus) {
             case 1:
-                system = new StudentSystem(student)
+                system = new StudentSystem(STARSApp.userId);
         }
     }
 
     @Override
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
-        String userId = scn.nextLine();
+        userId = scn.nextLine();
         displayOutput("Enter Password: ");
         String password = scn.nextLine();
 

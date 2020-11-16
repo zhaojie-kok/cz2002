@@ -10,7 +10,7 @@ import entities.*;
 import entities.course_info.*;
 import readers.StudentReader;
 
-public class StudentSystem implements System {
+public class StudentSystem implements Systems {
     private Student user;
     private Course selectedCourse;
     private Index selectedIndex;
