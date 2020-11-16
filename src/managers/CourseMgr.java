@@ -1,6 +1,5 @@
 package managers;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import entities.*;
@@ -19,10 +18,8 @@ public class CourseMgr implements EntityManager {
 
     public Course createCourse(String courseCode,
                             School school,
-                            int acadU, 
-                            Calendar examDate){
-        Course c = new Course(courseCode, school, acadU, examDate);
-        hashMap.put(courseCode, c);
+                            int acadU){
+        Course c = new Course(courseCode, school, acadU);
         saveState(c);
         return c;
     }
@@ -149,7 +146,7 @@ public class CourseMgr implements EntityManager {
     public void saveState(Object course) {
         Course c = (Course) course;
         cReader.writeData(c);
-        hashMap.replace(c.getCourseCode(), c);
+        hashMap.put(c.getCourseCode(), c);
     }
 
     private void informWaitlistSuccess(Student s, Course c, Index i){

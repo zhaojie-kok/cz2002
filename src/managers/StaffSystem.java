@@ -87,9 +87,8 @@ public class StaffSystem {
 
     public void addCourse(String courseCode,
                             School school,
-                            int acadU, 
-                            Calendar examDate){
-        courseMgr.createCourse(courseCode, school, acadU, examDate);
+                            int acadU){
+        courseMgr.createCourse(courseCode, school, acadU);
     }
 
     public int checkAvailableVacancies(){

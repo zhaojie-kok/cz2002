@@ -1,9 +1,7 @@
 package entities.course_info;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Queue;
 import entities.*;
 
 public class Course implements Serializable, Printable{
@@ -17,8 +15,7 @@ public class Course implements Serializable, Printable{
 
     public Course(String courseCode, 
                 School school,
-                int acadU, 
-                Calendar examDate){
+                int acadU){
         this.indexes = new HashMap<String,Index>();
         this.courseCode = courseCode;
         this.school = school;
