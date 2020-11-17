@@ -102,9 +102,17 @@ public class CourseMgr implements EntityManager {
             index.setRegisteredStudents(studentList);
             index.addSlotsAvailable();
             course.updateIndex(index);
+            dequeueWaitlist(course, index);
             saveState(course);
+            return true;
+        } else if (!studentList.contains(student)) { // check waitlist if unable to remove
+            index.removeFromWaitList(student);
+            course.updateIndex(index);
+            saveState(course);
+            return true;
         }
-        return removed;
+
+        return false;
     }
 
     public boolean addStudent(Student student, Index index, Course course){
@@ -112,7 +120,7 @@ public class CourseMgr implements EntityManager {
             return false;
         }
         List<Student> l = index.getRegisteredStudents();
-        if (!l.contains(student)){
+        if (!l.contains(student) && index.getSlotsAvailable() > 0){
             l.add(student);
             index.setRegisteredStudents(l);
             index.minusSlotsAvailable();
@@ -123,7 +131,43 @@ public class CourseMgr implements EntityManager {
         return false;
     }
 
-    public void dequeueWaitlist(Course course, Index index){
+    public int swopStudents (Student s1, Student s2, Course course) {
+        if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
+            return -1; // TODO: convert to exception
+        }
+
+        // get the indexes of each student
+        String indexNo1 = s1.getCourseIndex(course.getCourseCode());
+        Index i1 = course.getIndex(indexNo1);
+        String indexNo2 = s2.getCourseIndex(course.getCourseCode());
+        Index i2 = course.getIndex(indexNo2);
+
+        if (indexNo1.equals(indexNo2)) {
+            return -2; // TODO: convert to exception
+        }
+
+        // remove student s1 from index i1 and add to index i2
+        // then do the same for student s2 with i2 and i1 respectively
+        List<Student> list1 = i1.getRegisteredStudents();
+        List<Student> list2 = i2.getRegisteredStudents();
+        boolean removed1 = list1.remove(s1);
+        boolean removed2 = list2.remove(s1);
+        if (removed1 && removed2) {
+            list1.add(s2);
+            list2.add(s1);
+            i1.setRegisteredStudents(list1);
+            i2.setRegisteredStudents(list2);
+            course.updateIndex(i1);
+            course.updateIndex(i2);
+            saveState(course);
+            return 1;
+        } else  {
+            return -3; // TODO: convert to exception
+        }
+
+    }
+
+    private void dequeueWaitlist(Course course, Index index){
         if (index == null || course == null){
             return;
         }

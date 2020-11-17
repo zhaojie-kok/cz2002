@@ -3,11 +3,12 @@ package managers;
 import java.util.Calendar;
 import java.util.List;
 
-import entities.*;
 import entities.course_info.*;
 
 public class CalendarMgr {
     public boolean checkClash(Index i1, Index i2) {
+        // each timetable is a array of length 7, each slot for a day of the week
+        // the List of lessonDetails in each slot represents the lessons in each day
         List<LessonDetails>[] timetable1 = i1.getTimeTable();
         List<LessonDetails>[] timetable2 = i2.getTimeTable();
         int slot1, slot2;

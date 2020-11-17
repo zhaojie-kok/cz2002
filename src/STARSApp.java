@@ -67,6 +67,7 @@ public class STARSApp extends GeneralUI {
 
         int result = loginMgr.verifyLoginDetails(userId, password);
         switch(result) {
+            // TODO: change to try catch
             case -1:
                 displayOutput("Username not found");
                 break;

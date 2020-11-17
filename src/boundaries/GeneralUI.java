@@ -17,11 +17,11 @@ public abstract class GeneralUI {
     public abstract void run();
 
     // method to get choices from user
-    public int promptChoice(String prompt, String[] options) {
+    public int promptChoice(String prompt, Object[] options) {
         displayOutput(prompt);
 
         for (int i=0; i<options.length; i++) {
-            String option = i+1 + ". " + options[i];
+            String option = i+1 + ". " + options[i].toString();
             displayOutput(option);
         }
 

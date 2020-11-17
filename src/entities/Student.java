@@ -92,8 +92,8 @@ public class Student extends User implements Printable, Serializable{
         this.acadUnits -= acadUnits;
     }
 
-    public void changeIndex(String courseCode, String oldIndex, String newIndex){
-        this.courses.replace(courseCode, oldIndex, newIndex);
+    public void changeIndex(String courseCode, String newIndex){
+        this.courses.put(courseCode, newIndex);
     }
 
     public void addWaitlist(Course course, String indexNo) {
