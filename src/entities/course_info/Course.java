@@ -22,6 +22,10 @@ public class Course implements Serializable, Printable{
         this.acadU = acadU;
     }
 
+    public void setCourseCode(String courseCode){
+        this.courseCode = courseCode;
+    }
+
     public String getCourseCode(){
         return courseCode;
     }
@@ -49,16 +53,12 @@ public class Course implements Serializable, Printable{
     }
 
     public void updateIndex(Index index){
-        /**
-         * Can add new index or modify existing index (if another index with same index no exists)
-         */
-        Index prev = indexes.get(index.getIndexNo());
-        if (prev != null){
-            indexes.replace(index.getIndexNo(), prev, index);
-        }
-        else{
-            indexes.put(index.getIndexNo(), index);
-        }
+        indexes.put(index.getIndexNo(), index);
+    }
+
+    public void updateIndex(Index index, String oldIndexNo){
+        indexes.remove(oldIndexNo);
+        indexes.put(index.getIndexNo(), index);
     }
 
     public Index deleteIndex(String indexNo){

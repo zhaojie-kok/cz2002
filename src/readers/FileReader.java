@@ -1,5 +1,6 @@
 package readers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +17,11 @@ public abstract class FileReader {
 	public abstract Object getData(String params);
 
 	public abstract int writeData(Serializable o);
+
+	public boolean deleteObject(String filename){
+		File file = new File(filepath + filename);
+		return file.delete();
+	}
 
     protected static Object readSerializedObject(String filename){
 		Object o = null;

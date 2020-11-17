@@ -5,6 +5,7 @@ import entities.course_info.*;
 import entities.*;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class StaffSystem {
     private Staff user;
@@ -91,14 +92,22 @@ public class StaffSystem {
         return false;
     }
 
-    public void updateCourse(String courseCode, Object[] details){
-        // No idea
+    public void updateCourse(String courseCode,
+                            School school){
+        courseMgr.updateCourse(selectedCourse, courseCode, school);
+    }
+    public void updateIndex(Course course, String indexNo, int slotsTotal){
+        courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
     public void addCourse(String courseCode,
                             School school,
                             int acadU){
         courseMgr.createCourse(courseCode, school, acadU);
+    }
+
+    public void addIndex(String indexNo, int slotsTotal, List<LessonDetails>[] timeTable){
+        courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, timeTable);
     }
 
     public int checkAvailableVacancies(){
