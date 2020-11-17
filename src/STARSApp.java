@@ -6,7 +6,7 @@ import managers.StudentSystem;
 import managers.LoginMgr;
 import boundaries.*;
 
-public class STARSApp extends GeneralUI {
+public class STARSApp implements GeneralUI {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;

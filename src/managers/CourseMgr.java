@@ -70,6 +70,7 @@ public class CourseMgr implements EntityManager {
         int changeInSlots = slotsTotal - index.getSlotsTotal();
         if (changeInSlots != 0){
             if (index.getSlotsAvailable() < changeInSlots){
+                // Cannot have negative slots available
                 return false;
             }
         }   

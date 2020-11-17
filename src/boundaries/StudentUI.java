@@ -8,7 +8,7 @@ import entities.School;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
-public class StudentUI extends GeneralUI {
+public class StudentUI implements GeneralUI {
     private static Scanner scn;
     private static StudentSystem system;
 

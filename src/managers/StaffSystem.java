@@ -86,7 +86,8 @@ public class StaffSystem {
                             School school){
         courseMgr.updateCourse(selectedCourse, courseCode, school);
     }
-    public void updateIndex(Course course, String indexNo, int slotsTotal){
+    
+    public void updateIndex(String indexNo, int slotsTotal){
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
@@ -112,4 +113,5 @@ public class StaffSystem {
         return courseMgr.getCourse(courseCode).getMoreInfo();
     }
     
+    public void deleteIndex(Course course)
 }
