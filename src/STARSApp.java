@@ -35,7 +35,7 @@ public class STARSApp extends GeneralUI {
 
         // create and start up a system based on the loginStatus
         // at this point the login details have already been verified to the userId can be used to retrieve info
-        GeneralUI newUI;
+        GeneralUI newUI  = null;
         try {
             switch(loginStatus) {
                 case 1:

@@ -7,6 +7,8 @@ import entities.*;
 import java.util.Calendar;
 
 public class StaffSystem {
+    private Staff user;
+
     FileReader fileReader;
     String studentDetailsFilePath;
     String courseDetailsFilePath;
@@ -20,10 +22,17 @@ public class StaffSystem {
     Student selectedStudent;
 
     public StaffSystem(){
-        loginReader = new LoginReader("");
+        loginReader = new LoginReader(""); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();
+    }
+
+    public StaffSystem(String userId) {
+        calendarMgr = new CalendarMgr();
+        studentManager = new StudentManager();
+        courseMgr = new CourseMgr();
+        // user = 
     }
 
     public int selectCourse(String courseCode){
@@ -43,7 +52,7 @@ public class StaffSystem {
          * Returns 1 if index is selected, else 0
          */
         if (selectedCourse == null){
-            return 0;
+            return -1;
         }
         Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
         if (tmp == null){
@@ -65,8 +74,9 @@ public class StaffSystem {
         return 1;
     }
 
-    public boolean updateAccessPeriod(String userId, Calendar[] newAccessPeriod){
-        return studentManager.updateAccessPeriod(userId, newAccessPeriod);
+    public boolean updateAccessPeriod(Calendar[] newAccessPeriod){
+        // TODO: change to exceptions
+        return studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
     public boolean addStudent(String userId, String name, String gender, String nationality,

@@ -207,12 +207,21 @@ public class StudentSystem implements Systems {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
-    public int swopIndexWithStudent(String matricNo){
+    public int swopIndexWithStudent(String identifier){
         /** 
          * Returns 0 and does nothing if either students will havetimetable clash, 
          * else swaps indexes and returns 1
+         * -1: user or swopping student is not registered in the course
          */
-        Student toSwapWith = studentManager.getStudent(matricNo);
+        Student toSwapWith = studentManager.getStudent(identifier);
+
+        // TODO: change to exceptions
+        // first ensure that the swopping students both are enrolled in the course
+        if (!user.isRegistered(selectedCourse)) {
+            return -1;
+        } else if (!toSwapWith.isRegistered(selectedCourse)) {
+            return -1;
+        }
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
         Index toSwapTo = courseMgr.getCourseIndex(selectedCourse, strToSwapTo);
@@ -220,13 +229,18 @@ public class StudentSystem implements Systems {
         String strCurr = user.getCourseIndex(selectedCourse.getCourseCode());
         Index currentIndex = courseMgr.getCourseIndex(selectedCourse, strCurr);
 
+        // raise error if both are registered in same course
+        if (strToSwapTo.equals(strCurr)) {
+            return -2;
+        }
+
         if (!checkSwopClash(user, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
             studentManager.swopIndex(user, toSwapWith, selectedCourse.getCourseCode());
-            courseMgr.removeStudent(user, currentIndex, selectedCourse);
-            courseMgr.removeStudent(toSwapWith, toSwapTo, selectedCourse);
-            courseMgr.addStudent(user, toSwapTo, selectedCourse);
-            courseMgr.addStudent(toSwapWith, currentIndex, selectedCourse);
-            return 1;
+            int result = courseMgr.swopStudents(user, toSwapWith, selectedCourse);
+            if (result == 1) {
+                studentManager.swopIndex(user, toSwapWith, selectedCourse.getCourseCode());
+            }
+            return result;
         }
         return 0;
     }

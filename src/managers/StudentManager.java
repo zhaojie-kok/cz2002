@@ -93,14 +93,14 @@ public class StudentManager implements EntityManager {
         saveState(student);
     }
 
-    public boolean updateAccessPeriod(String matricNo, Calendar[] newAccessPeriod){
-        Student student = getStudent(matricNo);
+    public boolean updateAccessPeriod(Student student, Calendar[] newAccessPeriod){
         Calendar[] accessPeriod = student.getAccessPeriod();
 		if (accessPeriod == newAccessPeriod){
             // same/updated alr
-            return false;
+            return false; // TODO: change to exception
         }
         student.changeAccessPeriod(newAccessPeriod);
+        saveState(student);
         return true;
     }
 

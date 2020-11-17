@@ -77,7 +77,7 @@ public class StudentUI extends GeneralUI {
                 case 8:
                     break;
                 default:
-                    displayOutput("Choices must be between 0 and 7");
+                    displayOutput("Choices must be between 1 and ");
                     break;
             }
         }
@@ -90,12 +90,13 @@ public class StudentUI extends GeneralUI {
 
     private int promptCourseSelection() {
         int result;
-        String courseCode;
+        String courseCode = "";
         displayOutput("Please Enter Course Code: ");
         do {
-            courseCode = scn.nextLine().toUpperCase();
+            getUserInput(courseCode);
+            courseCode = courseCode.toUpperCase();
             result = system.selectCourse(courseCode);
-            // refer to error codes for StudentSystem.selectCourse
+            // TODO: change to try catch
             if (result != 1) {
                 displayOutput("Course code is wrong, please re-enter or type \"exit\" to return to main menu");
             }
@@ -110,13 +111,14 @@ public class StudentUI extends GeneralUI {
 
     private int promptIndexSelection() {
         int result;
-        String indexNo;
-        displayOutput("Please Select an Index");
+        String indexNo = "";
+        displayOutput("Please enter an Index");
         do {
-            indexNo = scn.nextLine().toUpperCase();
+            getUserInput(indexNo);
+            indexNo = indexNo.toUpperCase();
             result = system.selectIndex(indexNo);
 
-            // refer to error codes for StudentSystem.selectIndex
+            // TODO: change to try catch
             if (result == -1) {
                 displayOutput("Please select a course first");
                 return -1;
@@ -277,7 +279,7 @@ public class StudentUI extends GeneralUI {
     private void swopStudentIndex() {
         int result;
 
-        // prompt user for choice of course and index
+        // prompt user for choice of course
         result = promptCourseSelection();
         if (result == -1) {
             return;
@@ -319,8 +321,13 @@ public class StudentUI extends GeneralUI {
 
     }
 
+    private void shutDown() {
+        // TODO: run shut down procedure
+    }
+
     @Override
     public void run() {
         mainMenu();
+        shutDown();
     }
 }
