@@ -18,11 +18,7 @@ public class StudentSystem implements Systems {
     private CalendarMgr calendarMgr;
 
     public StudentSystem(String userId) {
-<<<<<<< HEAD
-        calendarMgr = new CalenderMgr();
-=======
         calendarMgr = new CalendarMgr();
->>>>>>> 32a4b1620f633682976e5c8a162851dcca734229
         studentManager = new StudentManager();
         studentManager.getStudent(userId);
         courseMgr = new CourseMgr();

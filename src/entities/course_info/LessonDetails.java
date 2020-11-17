@@ -1,9 +1,14 @@
 package entities.course_info;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class LessonDetails{
+public class LessonDetails implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7313328423766023263L;
 	private String lessonVenue;
 	private String lessonType;
 	private int lessonDay;

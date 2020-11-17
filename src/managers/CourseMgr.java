@@ -12,7 +12,7 @@ public class CourseMgr implements EntityManager {
     private CourseReader cReader;
 
     public CourseMgr(){
-        cReader = new CourseReader("courses/");
+        cReader = new CourseReader("data/courses/");
         hashMap = (HashMap<String, Course>) cReader.getData();
     }
 
@@ -24,35 +24,55 @@ public class CourseMgr implements EntityManager {
         return c;
     }
 
-    public Index createIndex(String courseCode,
+    public Index createIndex(Course course,
                             String indexNo,
                             int slotsTotal,
                             List<LessonDetails>[] timeTable){
         Index i = new Index(indexNo, slotsTotal, timeTable);
-        Course c = getCourse(courseCode);
-        c.updateIndex(i);
-        saveState(c);
+        course.updateIndex(i);
+        saveState(course);
         return i;
     }
-    
-    public void deleteCourse(){
 
-    }
-
-    public void deleteIndex(){
-        
-    }
-
-    public boolean updateIndexTotalSlots(Course course, Index index, int slotsTotal){
-        /**
-         * Returns boolean of whether the new slotsTotal is a valid change
-         * Eg. if there are only 2 available slots, reducing slotsTotal by more than 2
-         * will return false
-         */
-        int changeInSlots = slotsTotal - index.getSlotsTotal();
-        if (index.getSlotsAvailable() < changeInSlots){
-            return false;
+    public boolean updateCourse(Course course, String courseCode, School school){
+        if (courseCode != course.getCourseCode()){
+            // If courseCode is different,
+            if (hashMap.containsKey(courseCode)){
+                // If courseCode already exists, do not override
+                return false;
+            }
+            else{
+                // Delete file
+                cReader.deleteObject(course.getCourseCode());
+                // Remove from hashMap
+                hashMap.remove(course.getCourseCode());
+                // Change course code and save
+                course.setCourseCode(courseCode);
+                saveState(course);
+            }
         }
+        return true;
+    }
+
+    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal){
+        // Update indexNo
+        if (indexNo != index.getIndexNo()){
+            if (course.getIndex(indexNo) != null){
+                // Index already exists, cannot overwrite
+                return false;
+            }
+            String oldIndexNo = index.getIndexNo();
+            index.setIndexNo(indexNo);
+            course.updateIndex(index, oldIndexNo);
+        }
+
+        // Update slots Total
+        int changeInSlots = slotsTotal - index.getSlotsTotal();
+        if (changeInSlots != 0){
+            if (index.getSlotsAvailable() < changeInSlots){
+                return false;
+            }
+        }   
         index.setSlotsTotal(slotsTotal);
         index.setSlotsAvailable(index.getSlotsAvailable() - changeInSlots);
         course.updateIndex(index);

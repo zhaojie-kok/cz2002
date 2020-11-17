@@ -107,9 +107,10 @@ public class Student extends User implements Printable, Serializable{
     @Override
     public String getInfo() {
         /** Returns string with information on student
-         *  Eg. U1900000A - R19000 - John Doe
+         *  as specified in functional requirements (Admin 6.)
+         *  Eg. John Doe - Male - Singaporean
          */
-        return String.format("%s - %s - %s", this.matricNo, this.userId, this.name); 
+        return String.format("%s - %s - %s", this.name, this.gender, this.nationality); 
     }
 
     @Override
