@@ -1,6 +1,6 @@
 package managers;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import readers.*;
 import entities.*;
@@ -24,7 +24,7 @@ public class StudentManager implements EntityManager {
     }
 
     public boolean createStudent(String userId, String name, String gender, String nationality,
-    String matricNo, Calendar[] accessPeriod){
+    String matricNo, LocalDateTime[] accessPeriod){
         /**
          * Returns boolean for creating a student (true if created, false otherwise)
          */
@@ -93,8 +93,8 @@ public class StudentManager implements EntityManager {
         saveState(student);
     }
 
-    public boolean updateAccessPeriod(Student student, Calendar[] newAccessPeriod){
-        Calendar[] accessPeriod = student.getAccessPeriod();
+    public boolean updateAccessPeriod(Student student, LocalDateTime[] newAccessPeriod) {
+        LocalDateTime[] accessPeriod = student.getAccessPeriod();
 		if (accessPeriod == newAccessPeriod){
             // same/updated alr
             return false; // TODO: change to exception

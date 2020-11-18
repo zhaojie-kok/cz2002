@@ -1,6 +1,6 @@
 package managers;
 
-import java.util.Calendar;
+import java.time.LocalTime;
 import java.util.List;
 
 import entities.course_info.*;
@@ -36,7 +36,7 @@ public class CalendarMgr {
                 if (lesson1.getEndTime().equals(lesson2.getEndTime())) {
                     slot1++;
                     slot2++;
-                } else if (lesson1.getEndTime().before(lesson2.getEndTime())) {
+                } else if (lesson1.getEndTime().isBefore(lesson2.getEndTime())) {
                     slot1++;
                 } else {
                     slot2++;
@@ -47,16 +47,16 @@ public class CalendarMgr {
         return false;
     }
 
-    private boolean lessonClash(LessonDetails lesson1, LessonDetails lesson2) {
-        Calendar start1 = lesson1.getStartTime();
-        Calendar end1 = lesson1.getEndTime();
-        Calendar start2 = lesson2.getStartTime();
-        Calendar end2 = lesson2.getEndTime();
+    public boolean lessonClash(LessonDetails lesson1, LessonDetails lesson2) {
+        LocalTime start1 = lesson1.getStartTime();
+        LocalTime end1 = lesson1.getEndTime();
+        LocalTime start2 = lesson2.getStartTime();
+        LocalTime end2 = lesson2.getEndTime();
 
         // only check if there is no clash since it is easier
         if (start1.equals(end2) || start2.equals(end1)) {
             return false;
-        } else if (start1.after(end2) || start2.after(end1)) {
+        } else if (start1.isAfter(end2) || start2.isAfter(end1)) {
             return false;
         } else {
             return true;

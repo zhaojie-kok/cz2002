@@ -1,9 +1,12 @@
 package entities.course_info;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 
-public class LessonDetails implements Serializable{
+import entities.Printable;
+
+public class LessonDetails implements Serializable, Comparable, Printable {
 
 	/**
 	 *
@@ -11,23 +14,28 @@ public class LessonDetails implements Serializable{
 	private static final long serialVersionUID = 7313328423766023263L;
 	private String lessonVenue;
 	private String lessonType;
-	private int lessonDay;
-	private Calendar startTime;
-	private Calendar endTime;
+	private DayOfWeek lessonDay;
+	private int evenOdd;
+	private LocalTime startTime;
+	private LocalTime endTime;
 	
 	public LessonDetails(String lessonVenue, 
 							String lessonType, 
-							int lessonDay,
+							DayOfWeek lessonDay,
 							int evenOdd,
-							Calendar startTime,
-							Calendar endTime
+							LocalTime startTime,
+							LocalTime endTime
 							){
 		/**
 		 * 
 		 * @param evenOdd 0 if even, 1 if odd, 2 if both
 		 */
+		this.lessonVenue = lessonVenue;
+		this.lessonType = lessonType;
 		this.lessonDay = lessonDay;
+		this.evenOdd = evenOdd;
 		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 	
 	public String getLessonVenue() {
@@ -46,27 +54,56 @@ public class LessonDetails implements Serializable{
 		this.lessonType = lessonType;
 	}
 	
-	public int getLessonDay() {
+	public DayOfWeek getLessonDay() {
 		return lessonDay;
 	}
 	
-	public void setLessonDay(int lessonDay) {
+	public void setLessonDay(DayOfWeek lessonDay) {
 		this.lessonDay = lessonDay;
 	}
 	
-	public Calendar getStartTime() {
+	public LocalTime getStartTime() {
 		return startTime;
 	}
 	
-	public void setStartTime(Calendar startTime) {
+	public void setStartTime(LocalTime startTime) {
 		this.startTime = startTime;
 	}
 	
-	public Calendar getEndTime() {
+	public LocalTime getEndTime() {
 		return endTime;
 	}
 	
-	public void setEndTime(Calendar endTime) {
+	public void setEndTime(LocalTime endTime) {
 		this.endTime = endTime;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		LessonDetails compared = (LessonDetails) o;
+		return this.startTime.compareTo(compared.startTime);
+	}
+
+	@Override
+	public String getInfo() {
+		return this.startTime.toString() + " - " + this.endTime.toString();
+	}
+
+	@Override
+	public String getMoreInfo() {
+		String info = this.lessonVenue;
+		info += " | " + this.lessonType;
+		info += " | " + this.lessonDay.toString();
+		switch(this.evenOdd) {
+			case 0:
+				info += " | even weeks";
+			case 1:
+				info += " | odd weeks";
+			case 2:
+				info += " | all weeks";
+		}
+		info += " | " + getInfo();
+
+		return info;
 	}
 }

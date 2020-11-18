@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import entities.course_info.*;
 
@@ -11,7 +11,7 @@ public class Student extends User implements Printable, Serializable{
      */
     private static final long serialVersionUID = 7073083131568074880L;
     private String matricNo;
-    private Calendar[] accessPeriod;
+    private LocalDateTime[] accessPeriod;
     private HashMap<String, String> courses; // <Course Code, Index No>
     private int acadUnits;
     private int acadUnitsAllowed = 0;
@@ -19,7 +19,7 @@ public class Student extends User implements Printable, Serializable{
 
     public Student(
         String userId, String name, String gender, String nationality,
-        String matricNo, Calendar[] accessPeriod, HashMap<String, String> courses) {
+        String matricNo, LocalDateTime[] accessPeriod, HashMap<String, String> courses) {
         super(userId, "student", name, gender, nationality);
     
         this.acadUnits = 0;
@@ -33,7 +33,7 @@ public class Student extends User implements Printable, Serializable{
         return this.matricNo;
     }
 
-    public Calendar[] getAccessPeriod() {
+    public LocalDateTime[] getAccessPeriod() {
         return this.accessPeriod;
     }
 
@@ -78,7 +78,7 @@ public class Student extends User implements Printable, Serializable{
     }
 
     // mutator methods
-    public void changeAccessPeriod(Calendar[] newAccessPeriod) {
+    public void changeAccessPeriod(LocalDateTime[] newAccessPeriod) {
         this.accessPeriod = newAccessPeriod;
     }
 

@@ -8,12 +8,12 @@ import readers.CourseReader;
 import boundaries.NotifSender;
 
 public class CourseMgr implements EntityManager {
-    private HashMap<String, Course> hashMap;
+    private HashMap<String, Course> allCourses;
     private CourseReader cReader;
 
     public CourseMgr(){
         cReader = new CourseReader("data/courses/");
-        hashMap = (HashMap<String, Course>) cReader.getData();
+        allCourses = (HashMap<String, Course>) cReader.getData();
     }
 
     public Course createCourse(String courseCode,
@@ -34,10 +34,10 @@ public class CourseMgr implements EntityManager {
         return i;
     }
 
-    public boolean updateCourse(Course course, String courseCode, School school){
+    public boolean updateCourse(Course course, String courseCode, String courseName, School school){
         if (courseCode != course.getCourseCode()){
             // If courseCode is different,
-            if (hashMap.containsKey(courseCode)){
+            if (allCourses.containsKey(courseCode)){
                 // If courseCode already exists, do not override
                 return false;
             }
@@ -45,16 +45,18 @@ public class CourseMgr implements EntityManager {
                 // Delete file
                 cReader.deleteObject(course.getCourseCode());
                 // Remove from hashMap
-                hashMap.remove(course.getCourseCode());
-                // Change course code and save
+                allCourses.remove(course.getCourseCode());
+                // Change details and save
                 course.setCourseCode(courseCode);
+                course.setCourseName(courseName);
+                course.setCourseSchool(school);
                 saveState(course);
             }
         }
         return true;
     }
 
-    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal){
+    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutofrangeException {
         // Update indexNo
         if (indexNo != index.getIndexNo()){
             if (course.getIndex(indexNo) != null){
@@ -70,7 +72,7 @@ public class CourseMgr implements EntityManager {
         int changeInSlots = slotsTotal - index.getSlotsTotal();
         if (changeInSlots != 0){
             if (index.getSlotsAvailable() < changeInSlots){
-                return false;
+                throw new OutofrangeException("new total slots cannot be less than number of students registered");
             }
         }   
         index.setSlotsTotal(slotsTotal);
@@ -80,12 +82,12 @@ public class CourseMgr implements EntityManager {
         return true;
     }
 
-    public HashMap<String, Course> getHashMap(){
-        return hashMap;
+    public HashMap<String, Course> getAllCourses(){
+        return allCourses;
     }
     
     public Course getCourse(String courseCode){
-        return hashMap.get(courseCode);
+        return allCourses.get(courseCode);
     }
 
     public Index getCourseIndex(Course course, String indexNo){
@@ -218,7 +220,7 @@ public class CourseMgr implements EntityManager {
     public void saveState(Object course) {
         Course c = (Course) course;
         cReader.writeData(c);
-        hashMap.put(c.getCourseCode(), c);
+        allCourses.put(c.getCourseCode(), c);
     }
 
     private void informWaitlistSuccess(Student s, Course c, Index i){

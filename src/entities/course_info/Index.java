@@ -2,7 +2,6 @@ package entities.course_info;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import entities.*;
@@ -119,8 +118,8 @@ public class Index implements Serializable, Printable{
 				toReturn += String.format("%10s | %5s | %02d%02d-%02d%02d | %15s\n", 
 					lesson.getLessonType(), 
 					daysOfWeek[i], 
-					lesson.getStartTime().get(Calendar.HOUR_OF_DAY), lesson.getStartTime().get(Calendar.MINUTE),
-					lesson.getEndTime().get(Calendar.HOUR_OF_DAY), lesson.getEndTime().get(Calendar.MINUTE), 
+					lesson.getStartTime().getHour(), lesson.getStartTime().getMinute(),
+					lesson.getEndTime().getHour(), lesson.getEndTime().getMinute(), 
 					lesson.getLessonVenue());
 			}
 		}

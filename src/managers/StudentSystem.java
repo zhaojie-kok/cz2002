@@ -32,7 +32,7 @@ public class StudentSystem implements Systems {
         String toReturn = "";
         Course c;
 
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
         while (courses.hasNext()) { 
             c = courses.next();
             toReturn += c.getInfo();
@@ -47,7 +47,7 @@ public class StudentSystem implements Systems {
         String toReturn = "";
         Course c;
 
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.isSchool(school)){
@@ -64,7 +64,7 @@ public class StudentSystem implements Systems {
         String toReturn = "";
         Course c;
 
-        Iterator<Course> courses = courseMgr.getHashMap().values().iterator();
+        Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
         while (courses.hasNext()) { 
             c = courses.next();
             if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){

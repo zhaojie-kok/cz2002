@@ -4,36 +4,33 @@ import readers.*;
 import entities.course_info.*;
 import entities.*;
 
-import java.util.Calendar;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class StaffSystem {
     private Staff user;
 
-    FileReader fileReader;
-    String studentDetailsFilePath;
-    String courseDetailsFilePath;
-    CourseMgr courseMgr;
-    StudentManager studentManager;
-    CalendarMgr calendarMgr;
-    LoginReader loginReader;
+    private CourseMgr courseMgr;
+    private StudentManager studentManager;
+    private CalendarMgr calendarMgr;
+    private LoginReader loginReader;
+    private LessonDetailMaker lessonDetailMaker;
 
-    Course selectedCourse;
-    Index selectedIndex;
-    Student selectedStudent;
+    private Course selectedCourse;
+    private Index selectedIndex;
+    private Student selectedStudent;
+    private List<LessonDetails>[] timetable = new ArrayList[7];
 
-    public StaffSystem(){
+    public StaffSystem(String userId) {
         loginReader = new LoginReader(""); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();
-    }
-
-    public StaffSystem(String userId) {
-        calendarMgr = new CalendarMgr();
-        studentManager = new StudentManager();
-        courseMgr = new CourseMgr();
-        // user = 
+        lessonDetailMaker = new LessonDetailMaker();
     }
 
     public int selectCourse(String courseCode){
@@ -75,14 +72,53 @@ public class StaffSystem {
         return 1;
     }
 
-    public boolean updateAccessPeriod(Calendar[] newAccessPeriod){
+    public void selectLessonDetails(String lessonVenue, 
+							String lessonType, 
+							int lessonDay,
+							int evenOdd,
+							LocalTime startTime,
+							LocalTime endTime) throws MissingparametersException, OutofrangeException {
+        // for each argument, only update those that are not null
+        // this way user doesnt need to update everything in one go
+        if (lessonVenue != null) {
+            lessonDetailMaker.setLessonVenue(lessonVenue);
+        }
+        if (lessonType != null) {
+            lessonDetailMaker.setLessonType(lessonType);
+        }
+        if (lessonDay > 0) {
+            lessonDetailMaker.setLessonDay(lessonDay);
+        }
+        if (evenOdd >= 0) {
+            lessonDetailMaker.setEvenOdd(evenOdd);
+        }
+        if (startTime != null) {
+            lessonDetailMaker.setStartTime(startTime);
+        }
+        if (endTime != null) {
+            lessonDetailMaker.setEndTime(endTime);
+        }
+        
+        // add the new lesson detail to the time table
+        LessonDetails newLesson =  lessonDetailMaker.makeLessonDetails();
+        for (LessonDetails lesson: timetable[lessonDay-1]) {
+            if (calendarMgr.lessonClash(lesson, newLesson)) {
+                throw new OutofrangeException("Clashes with existing lesson at " + lesson.getInfo());
+            }
+        }
+        timetable[lessonDay-1].add(newLesson);
+        Collections.sort(timetable[lessonDay - 1]);
+        lessonDetailMaker.clearChoices();
+    }
+
+    public boolean updateAccessPeriod(LocalDateTime[] newAccessPeriod){
         // TODO: change to exceptions
         return studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
     public boolean addStudent(String userId, String name, String gender, String nationality,
-                            String matricNo, Calendar[] accessPeriod, String password){
-        // Call student manager
+                            String matricNo, LocalDateTime[] accessPeriod, String password){
+        // Call student manager TODO: exceptions
         if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
             // If student is created, then create login details
             Object[] data = new Object[]{userId, password, "student"};
@@ -92,12 +128,31 @@ public class StaffSystem {
         return false;
     }
 
-    public void updateCourse(String courseCode,
-                            School school){
-        courseMgr.updateCourse(selectedCourse, courseCode, school);
+    public void updateCourse(String courseCode, String courseName, School school) {
+        /**
+         * updates the courseCode, courseName and school of a course
+         * To change other details about the course, use the updateIndex, addIndex, or removeIndex method
+         */
+
+        // if any of the arguments are null then set them to the existing values
+        if (courseCode == null) {
+            courseCode = selectedCourse.getCourseCode();
+        }
+        if (courseName == null) {
+            courseName = selectedCourse.getCourseName();
+        }
+        if (school == null) {
+            school = selectedCourse.getSchool();
+        }
+        courseMgr.updateCourse(selectedCourse, courseCode, courseName, school);
     }
-    public void updateIndex(Course course, String indexNo, int slotsTotal){
+
+    public void updateIndex(String indexNo, int slotsTotal) throws OutofrangeException {
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
+    }
+
+    public void addIndex(String indexNo, int slotsTotal){
+        courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
     }
 
     public void addCourse(String courseCode,
@@ -106,20 +161,23 @@ public class StaffSystem {
         courseMgr.createCourse(courseCode, school, acadU);
     }
 
-    public void addIndex(String indexNo, int slotsTotal, List<LessonDetails>[] timeTable){
-        courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, timeTable);
-    }
 
     public int checkAvailableVacancies(){
         return selectedIndex.getSlotsAvailable();
     }
 
-    public String printStudentsbyIndex(String indexNo){
-        return courseMgr.getCourseIndex(selectedCourse, indexNo).getMoreInfo();
+    public String printStudentsbyIndex(){
+        if (selectedCourse == null) {
+            return null;
+        }
+        return selectedIndex.getMoreInfo();
     }
 
-    public String printStudentsbyCourse(String courseCode){
-        return courseMgr.getCourse(courseCode).getMoreInfo();
+    public String printStudentsbyCourse(){
+        return selectedCourse.getMoreInfo();
     }
     
+    public String getCourseInfo() {
+        return selectedCourse.getMoreInfo();
+    }
 }

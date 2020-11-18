@@ -26,11 +26,36 @@ public class Course implements Serializable, Printable{
         this.courseCode = courseCode;
     }
 
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public void setCourseSchool(School school) {
+        this.school = school;
+    }
+    
+    public void updateIndex(Index index){
+        indexes.put(index.getIndexNo(), index);
+    }
+
+    public void updateIndex(Index index, String oldIndexNo){
+        indexes.remove(oldIndexNo);
+        indexes.put(index.getIndexNo(), index);
+    }
+
+    public Index deleteIndex(String indexNo){
+        return indexes.remove(indexNo);
+    }
+
     public String getCourseCode(){
         return courseCode;
     }
     public String getCourseName(){
         return courseName;
+    }
+
+    public School getSchool() {
+        return this.school;
     }
 
     public boolean isSchool(School school){
@@ -52,18 +77,6 @@ public class Course implements Serializable, Printable{
         return null;
     }
 
-    public void updateIndex(Index index){
-        indexes.put(index.getIndexNo(), index);
-    }
-
-    public void updateIndex(Index index, String oldIndexNo){
-        indexes.remove(oldIndexNo);
-        indexes.put(index.getIndexNo(), index);
-    }
-
-    public Index deleteIndex(String indexNo){
-        return indexes.remove(indexNo);
-    }
 
     public HashMap<String, Index> getIndexes(){
         return indexes;
@@ -95,7 +108,7 @@ public class Course implements Serializable, Printable{
          * .....
          * (see index.getMoreInfo)
          */
-        String toReturn = String.format("%s - %s\n", courseCode, courseName);
+        String toReturn = String.format("%s - %s - %s\n", courseCode, courseName, school);
         for (Index index: indexes.values()){
             toReturn += index.getMoreInfo();
         }
