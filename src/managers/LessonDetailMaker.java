@@ -6,7 +6,7 @@ import java.time.LocalTime;
 
 import entities.course_info.LessonDetails;
 
-public class LessonDetailMaker {
+public class LessonDetailMaker implements Systems {
     private String lessonVenue;
     private String lessonType;
     private DayOfWeek lessonDay;
@@ -83,7 +83,8 @@ public class LessonDetailMaker {
         }
     }
 
-    public void clearChoices() {
+    @Override
+    public void clearSelections() {
         this.lessonVenue = null;
         this.lessonType = null;
         this.lessonDay = null;
@@ -91,5 +92,11 @@ public class LessonDetailMaker {
         this.startTime = null;
         this.endTime = null;
         this.lessonDetails = null;
+    }
+
+    @Override
+    public String getSystemStatus() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -3,16 +3,14 @@ package boundaries;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Scanner;
 
 import entities.School;
-import entities.course_info.LessonDetails;
 import managers.MissingparametersException;
 import managers.OutofrangeException;
 import managers.StaffSystem;
 
-public class StaffUI extends GeneralUI {
+public class StaffUI extends Promptable implements GeneralUI{
     private static Scanner scn;
     private static StaffSystem system;
 

@@ -9,13 +9,14 @@ import java.util.Map;
 import entities.*;
 import entities.course_info.*;
 
-public class StudentSystem implements Systems {
-    private Student user;
-    private Course selectedCourse = null;
-    private Index selectedIndex = null;
+public class StudentSystem implements CourseSystemInterface {
     private CourseMgr courseMgr;
     private StudentManager studentManager;
     private CalendarMgr calendarMgr;
+
+    private Student user;
+    private Course selectedCourse = null;
+    private Index selectedIndex = null;
 
     public StudentSystem(String userId) {
         calendarMgr = new CalendarMgr();
@@ -92,6 +93,7 @@ public class StudentSystem implements Systems {
     }
 
     /////////////// Select course/select index are necessary for the following functions
+    @Override
     public int selectCourse(String courseCode){
         Course tmp = courseMgr.getCourse(courseCode);
         if (tmp == null){
@@ -101,6 +103,7 @@ public class StudentSystem implements Systems {
         return 1;
     }
 
+    @Override
     public int selectIndex(String indexNo){
         if (selectedCourse == null){
             return -1;
@@ -113,10 +116,17 @@ public class StudentSystem implements Systems {
         return 1;
     }
 
+    @Override
     public String getSystemStatus(){
         String sc = selectedCourse == null ? "":"Selected course: " + selectedCourse.getCourseName();
         String si = selectedIndex == null ? "":"Selected index: " + selectedIndex.getIndexNo();
         return sc + "\n" + si;
+    }
+
+    @Override
+    public void clearSelections() {
+        selectedCourse = null;
+        selectedIndex = null;
     }
 
     // These are called AFTER selectCourse/selectIndex

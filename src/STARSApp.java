@@ -1,12 +1,9 @@
 import java.util.Scanner;
 
-import managers.Systems;
-import managers.StaffSystem;
-import managers.StudentSystem;
 import managers.LoginMgr;
 import boundaries.*;
 
-public class STARSApp extends GeneralUI {
+public class STARSApp extends Promptable {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StaffSystem {
+public class StaffSystem implements StudentSystemInterface, CourseSystemInterface {
     private Staff user;
 
     private CourseMgr courseMgr;
@@ -33,6 +33,7 @@ public class StaffSystem {
         lessonDetailMaker = new LessonDetailMaker();
     }
 
+    @Override
     public int selectCourse(String courseCode){
         /**
          * Returns 1 if course is selected, else 0
@@ -45,6 +46,7 @@ public class StaffSystem {
         return 1;
     }
 
+    @Override
     public int selectIndex(String indexNo){
         /**
          * Returns 1 if index is selected, else 0
@@ -60,6 +62,7 @@ public class StaffSystem {
         return 1;
     }
 
+    @Override
     public int selectStudent(String identifier){
         /**
          * Returns 1 if student is selected, else 0
@@ -70,6 +73,20 @@ public class StaffSystem {
         }
         selectedStudent = tmp;
         return 1;
+    }
+
+    @Override
+    public String getSystemStatus() {
+        String info = "";
+        return info; //TODO: complete method
+    }
+
+    @Override
+    public void clearSelections() {
+        selectedCourse = null;
+        selectedIndex = null;
+        selectedStudent = null;
+        timetable = new ArrayList[7];
     }
 
     public void selectLessonDetails(String lessonVenue, 
@@ -108,7 +125,7 @@ public class StaffSystem {
         }
         timetable[lessonDay-1].add(newLesson);
         Collections.sort(timetable[lessonDay - 1]);
-        lessonDetailMaker.clearChoices();
+        lessonDetailMaker.clearSelections();
     }
 
     public boolean updateAccessPeriod(LocalDateTime[] newAccessPeriod){
@@ -180,4 +197,5 @@ public class StaffSystem {
     public String getCourseInfo() {
         return selectedCourse.getMoreInfo();
     }
+    public void deleteIndex(Course course) {}
 }
