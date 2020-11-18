@@ -144,7 +144,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         // Call student manager TODO: exceptions
         if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
             // If student is created, then create login details
-            Object[] data = new Object[]{userId, password, "student"};
+            String[] data = {userId, password, "student"};
             loginReader.writeData(data);
             return true;
         }

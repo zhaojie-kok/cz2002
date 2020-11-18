@@ -137,19 +137,30 @@ public class Index implements Serializable, Printable{
 		 * Waitlisted students:
 		 * 1. 
 		 */
-		String toReturn = "Registered students: ";
+		String toReturn = "______________________________\nIndex: " + indexNo + "\nRegistered students:\n";
 		int i = 1;
-		for (Student s: registeredStudents){
-			toReturn += i + ". " + s.getInfo() + "\n";
-			i++;
+		if (registeredStudents.size() != 0){
+			for (Student s: registeredStudents){
+				toReturn += i + ". " + s.getInfo() + "\n";
+				i++;
+			}
 		}
+		else{
+			toReturn += "None\n";
+		}
+
 		toReturn += "\nWaitlisted:\n";
 		i = 1;
-		for (Student s: waitlist){
-			toReturn += i + ". " + s.getInfo() + "\n";
-			i++;
+		if (waitlist.size() != 0){
+			for (Student s: waitlist){
+				toReturn += i + ". " + s.getInfo() + "\n";
+				i++;
+			}
 		}
-		return toReturn;
+		else{
+			toReturn += "None\n";
+		}
+		return toReturn + "\n";
 	}
 }
 

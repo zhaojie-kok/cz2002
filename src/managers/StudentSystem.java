@@ -21,7 +21,6 @@ public class StudentSystem implements CourseSystemInterface {
 
     public StudentSystem(String userId) throws Filereadingexception{
         calendarMgr = new CalendarMgr();
-        studentManager.getStudent(userId);
         try {
             studentManager = new StudentManager();
             courseMgr = new CourseMgr();
@@ -287,6 +286,9 @@ public class StudentSystem implements CourseSystemInterface {
          * Returns false if no ADD clash. Else returns true.
          */
         HashMap<String, String> courses = student.getCourses();
+        if (courses.size() == 0){
+            return false;
+        }
         Course course;
         Index registered;
 

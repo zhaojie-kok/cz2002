@@ -19,13 +19,16 @@ public class Student extends User implements Printable{
 
     public Student(
         String userId, String name, String gender, String nationality,
-        String matricNo, LocalDateTime[] accessPeriod, HashMap<String, String> courses) {
+        String matricNo, LocalDateTime[] accessPeriod, HashMap<String, String> courses,
+        HashMap<String, String> waitlist) {
         super(userId, "student", name, gender, nationality);
     
         this.acadUnits = 0;
         this.acadUnitsAllowed = 21;
         this.matricNo = matricNo;
         this.accessPeriod = accessPeriod;
+        this.courses = courses;
+        this.waitlist = waitlist;
     }
 
     // accessor methods
