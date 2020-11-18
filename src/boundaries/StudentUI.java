@@ -8,7 +8,7 @@ import entities.School;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
-public class StudentUI implements GeneralUI {
+public class StudentUI extends Promptable {
     private static Scanner scn;
     private static StudentSystem system;
 
