@@ -1,4 +1,4 @@
-package managers;
+package exceptions;
 
 public class MissingparametersException extends Exception {
     private String message;

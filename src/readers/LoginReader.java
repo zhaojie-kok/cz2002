@@ -1,5 +1,6 @@
 package readers;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -10,17 +11,13 @@ public class LoginReader extends FileReader {
     }
 
     @Override
-    public Object getData(String userId) {
-        try {
-            // since the login details are saved hashMaps, the userId can be looked up directly
-            HashMap<String, String[]> allDetails = (HashMap<String, String[]>) readSerializedObject(filepath);
-            String[] defaultVal = {""};
-            String[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
-            return details;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Object getData(String userId) throws ClassNotFoundException, IOException {
+        // since the login details are saved hashMaps, the userId can be looked up directly
+        HashMap<String, String[]> allDetails;
+        allDetails = (HashMap<String, String[]>) readSerializedObject(filepath);
+        String[] defaultVal = {""};
+        String[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
+        return details;
     }
 
     @Override

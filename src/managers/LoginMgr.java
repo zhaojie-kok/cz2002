@@ -1,36 +1,46 @@
 package managers;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import readers.LoginReader;
 
-public class LoginMgr{
+public class LoginMgr {
     private static LoginReader loginReader;
 
     public LoginMgr() {
         loginReader = new LoginReader("data/loginDetails/"); // TODO: change to a default file path
     }
 
-    // overloaded for future upgrades, where the filepath will depend on the application design
-    public LoginMgr(String loginDetailsFilePath){
+    // overloaded for future upgrades, where the filepath will depend on the
+    // application design
+    public LoginMgr(String loginDetailsFilePath) {
         loginReader = new LoginReader(loginDetailsFilePath);
     }
 
-    private String hashPassword(String password){
+    private String hashPassword(String password) {
         return String.valueOf(password.hashCode());
     }
 
-    public int verifyLoginDetails(String userId, String password) {
-        /* CODES FOR LoginMgr.verifyLoginDetails:
-        2: successful & user is a staff
-        1: successful & user is a student
-        -1: username not found
-        -2: wrong password
-        -3: unknown error
-        */
-        Object data = loginReader.getData(userId);
+    public int verifyLoginDetails(String userId, String password) throws FileNotFoundException {
+        /*
+         * CODES FOR LoginMgr.verifyLoginDetails: 2: successful & user is a staff 1:
+         * successful & user is a student -1: username not found -2: wrong password -3:
+         * unknown error
+         */
+        Object data = null;
+        try {
+            data = loginReader.getData(userId);
+        } catch (FileNotFoundException f) {
+            throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
-        // TODO: change to exceptions
         if (data == null) {
-            return -3;
+            throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
         } else {
             String[] details = (String[]) data;
             if (details.length == 0) {

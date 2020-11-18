@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import entities.*;
 import entities.course_info.*;
+import exceptions.Filereadingexception;
+import exceptions.OutofrangeException;
 import readers.CourseReader;
 import boundaries.NotifSender;
 
@@ -11,9 +13,13 @@ public class CourseMgr implements EntityManager {
     private HashMap<String, Course> allCourses;
     private CourseReader cReader;
 
-    public CourseMgr(){
+    public CourseMgr() throws Filereadingexception {
         cReader = new CourseReader("data/courses/");
-        allCourses = (HashMap<String, Course>) cReader.getData();
+        try {
+            allCourses = (HashMap<String, Course>) cReader.getData();
+        } catch (Filereadingexception e) {
+            throw e;
+        }
     }
 
     public Course createCourse(String courseCode,

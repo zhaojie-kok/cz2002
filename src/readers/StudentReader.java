@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.Student;
+import exceptions.Filereadingexception;
 
 public class StudentReader extends FileReader {
     // student files are named by their user id inside a folder
@@ -13,11 +14,11 @@ public class StudentReader extends FileReader {
     }
 
     @Override
-    public Object getData(String params){
+    public Object getData(String params) throws Filereadingexception {
         return getData();
     }
 
-    public Object getData() {
+    public Object getData() throws Filereadingexception {
         /*
         Returns all students (HashMap where key is matric no of student) if the identifier is null
         Returns only a specific student if the student can be identified with the identifier (matricNo or userId)
@@ -26,13 +27,22 @@ public class StudentReader extends FileReader {
 
         // iterate through all files in the folder
 		File folder = new File(this.filepath);
-		File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles == null) {
+            return new HashMap<>(); // TODO: remove line
+            // throw new Filereadingexception("Student Details Folder inaccessible. Please contact system administrator");
+        }
 		HashMap<String, Student> students = new HashMap<>();
 		Student toAdd;
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
-				toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Student.class);
+                try {
+                    toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Student.class);
+                } catch (Exception e) {
+                    throw new Filereadingexception(
+                            "Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
+                }
 				if (toAdd != null){
                     // students can be identified using userId or with their matricNo, depending on context
                     // e.g: profs may identify by matric no, while admin staff may identify by userId

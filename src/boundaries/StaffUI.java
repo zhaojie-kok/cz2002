@@ -6,17 +6,45 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import entities.School;
-import managers.MissingparametersException;
-import managers.OutofrangeException;
+import exceptions.*;
 import managers.StaffSystem;
 
 public class StaffUI extends Promptable implements GeneralUI{
     private static Scanner scn;
+    private static String userId;
     private static StaffSystem system;
 
     public StaffUI(Scanner scn, String userId) {
         StaffUI.scn = scn;
-        StaffUI.system = new StaffSystem(userId);
+        StaffUI.userId = userId;
+    }
+
+    @Override
+    public void getUserInput(Object storageObject) {
+        storageObject = scn.nextLine();
+    }
+
+    @Override
+    public Object getUserInput() {
+        return scn.nextLine();
+    }
+
+    @Override
+    public void displayOutput(Object toDisplay) {
+        System.out.println(toDisplay.toString());
+    }
+
+    @Override
+    public void run() {
+        // set up the system
+        try {
+            StaffUI.system = new StaffSystem(userId);
+            mainMenu();
+        } catch (Filereadingexception e) {
+            e.printStackTrace();
+            displayOutput(e.getMessage());
+        }
+        shutDown();
     }
 
     private void mainMenu() {
@@ -256,21 +284,6 @@ public class StaffUI extends Promptable implements GeneralUI{
         } while (!(min >= 0 && min <= 59));
 
         return LocalTime.of(hr, min);
-    }
-
-    @Override
-    public void getUserInput(Object storageObject) {
-        storageObject = scn.nextLine();
-    }
-
-    @Override
-    public Object getUserInput() {
-        return scn.nextLine();
-    }
-
-    @Override
-    public void displayOutput(Object toDisplay) {
-        System.out.println(toDisplay.toString());
     }
 
     private void updateAccessPeriod() {
@@ -556,6 +569,7 @@ public class StaffUI extends Promptable implements GeneralUI{
                 case 4:
                     displayOutput("Enter student matriculation number");
                     getUserInput(matricNo);
+                    break;
                 case 5:
                     displayOutput("Student's access period - start");
                     startAccess = getDateInput();
@@ -580,12 +594,9 @@ public class StaffUI extends Promptable implements GeneralUI{
         } while (choice != 8);
     }
 
-    private void shutDown() {}
-
-    @Override
-    public void run() {
-        mainMenu();
-        shutDown();
+    private void shutDown() {
+        StaffUI.scn = null;
+        StaffUI.system = null;
+        StaffUI.userId = null;
     }
-    
 }

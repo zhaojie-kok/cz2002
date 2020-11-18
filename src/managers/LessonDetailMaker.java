@@ -1,10 +1,11 @@
 package managers;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import entities.course_info.LessonDetails;
+import exceptions.MissingparametersException;
+import exceptions.OutofrangeException;
 
 public class LessonDetailMaker implements Systems {
     private String lessonVenue;

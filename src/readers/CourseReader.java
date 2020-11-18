@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.course_info.Course;
+import exceptions.Filereadingexception;
 
 public class CourseReader extends FileReader {
     public CourseReader(String filedir) {
@@ -12,11 +13,11 @@ public class CourseReader extends FileReader {
     }
 
     @Override
-    public Object getData(String params){
+    public Object getData(String params) throws Filereadingexception {
         return getData();
     }
 
-    public Object getData() {
+    public Object getData() throws Filereadingexception {
         /**
 		Returns all courses (HashMap where key is courseCode) if the courseCode is null
         Returns only a specific course if the course can be identified with the courseCode
@@ -25,12 +26,21 @@ public class CourseReader extends FileReader {
 
         // iterate through all files in the folder
 		File folder = new File(this.filepath);
-		File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles == null) {
+            return new HashMap<>(); // TODO: remove line
+            // throw new Filereadingexception("Course Details Folder inaccessible. Please contact system administrator");
+        }
 		HashMap<String, Course> courses = new HashMap<>();
 		Course toAdd;
 		for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Course.class);
+                try {
+                    toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Course.class);
+                } catch (Exception e) {
+                    throw new Filereadingexception(
+                            "Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
+                }
 				if (toAdd != null){
                     courses.put(toAdd.getCourseCode(), toAdd);
 				}

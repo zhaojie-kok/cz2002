@@ -2,9 +2,11 @@ package managers;
 
 import readers.*;
 import entities.course_info.*;
+import exceptions.Filereadingexception;
+import exceptions.MissingparametersException;
+import exceptions.OutofrangeException;
 import entities.*;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -25,11 +27,15 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private Student selectedStudent;
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
-    public StaffSystem(String userId) {
-        loginReader = new LoginReader(""); // TODO:change to default folder path
+    public StaffSystem(String userId) throws Filereadingexception {
+        loginReader = new LoginReader("data/loginDetails/"); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
-        studentManager = new StudentManager();
-        courseMgr = new CourseMgr();
+        try {
+            studentManager = new StudentManager();
+            courseMgr = new CourseMgr();
+        } catch (Filereadingexception e) {
+            throw e;
+        }
         lessonDetailMaker = new LessonDetailMaker();
     }
 

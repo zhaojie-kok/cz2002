@@ -5,12 +5,13 @@ import java.util.HashMap;
 import readers.*;
 import entities.*;
 import entities.course_info.*;
+import exceptions.Filereadingexception;
 
 public class StudentManager implements EntityManager {
     private HashMap<String, Student> students;
     StudentReader sReader;
 
-    public StudentManager(){
+    public StudentManager() throws Filereadingexception {
         // TODO: filepath
         StudentReader sReader = new StudentReader("PLACEHOLDER");
         students = (HashMap<String, Student>) sReader.getData();

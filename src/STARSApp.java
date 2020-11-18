@@ -11,14 +11,15 @@ public class STARSApp extends Promptable {
 
     public static void main(String[] args) {
         STARSApp app = new STARSApp(); // to allow calling of non-static methods
-        
         app.run();
     }
 
     @Override
     public void run() {
         int choice = 0;
-        loginStatus = promptLogin();
+        int loginStatus;
+        // loginStatus = promptLogin();
+        loginStatus = 2;
 
         while (loginStatus <= 0) {
             String[] options= {"Yes", "No"};
@@ -46,12 +47,11 @@ public class STARSApp extends Promptable {
             // at this point, since the userId has been verified
             // any error in starting either system should be alerted to admin
             e.printStackTrace();
-            System.out.println("Unable to find user records in system. Please inform system admin");
+            displayOutput("Unable to find user records in system. Please inform system admin");
             return;
         }
 
-        // show the choices of what to do according to each system
-        // TODO: throw these into each system later on
+        // show UI for each respective type of user
         newUI.run();
 
     }
@@ -62,7 +62,13 @@ public class STARSApp extends Promptable {
         displayOutput("Enter Password: ");
         String password = scn.nextLine();
 
-        int result = loginMgr.verifyLoginDetails(userId, password);
+        int result = 0;
+        try {
+            result = loginMgr.verifyLoginDetails(userId, password);
+        } catch (Exception e) {
+            displayOutput(e.getMessage());
+            return -1;
+        }
         switch(result) {
             // TODO: change to try catch
             case -1:
