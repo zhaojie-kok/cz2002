@@ -143,7 +143,7 @@ public class Index implements Serializable, Printable{
 			toReturn += i + ". " + s.getInfo() + "\n";
 			i++;
 		}
-		toReturn += "Waitlisted:\n";
+		toReturn += "\nWaitlisted:\n";
 		i = 1;
 		for (Student s: waitlist){
 			toReturn += i + ". " + s.getInfo() + "\n";
