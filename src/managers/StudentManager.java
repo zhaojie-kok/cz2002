@@ -13,7 +13,7 @@ public class StudentManager implements EntityManager {
 
     public StudentManager() throws Filereadingexception {
         // TODO: filepath
-        StudentReader sReader = new StudentReader("PLACEHOLDER");
+        StudentReader sReader = new StudentReader("data/students/");
         students = (HashMap<String, Student>) sReader.getData();
     }
 
@@ -111,4 +111,8 @@ public class StudentManager implements EntityManager {
         sReader.writeData(s);
         students.replace(s.getMatricNo(), s);
     }
+
+	public HashMap<String, Student> getHashMap() {
+		return students;
+	}
 }

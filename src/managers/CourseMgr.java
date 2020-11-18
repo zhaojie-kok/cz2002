@@ -23,9 +23,10 @@ public class CourseMgr implements EntityManager {
     }
 
     public Course createCourse(String courseCode,
+                            String courseName,
                             School school,
                             int acadU){
-        Course c = new Course(courseCode, school, acadU);
+        Course c = new Course(courseCode, courseName, school, acadU);
         saveState(c);
         return c;
     }

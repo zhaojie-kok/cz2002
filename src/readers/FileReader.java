@@ -23,7 +23,7 @@ public abstract class FileReader {
 		return file.delete();
 	}
 
-    protected static Object readSerializedObject(String filename) throws IOException, ClassNotFoundException {
+    public static Object readSerializedObject(String filename) throws IOException, ClassNotFoundException {
 		Object o = null;
 		FileInputStream fis = null;
 		ObjectInputStream in = null;

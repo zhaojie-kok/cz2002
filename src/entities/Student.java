@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import entities.course_info.*;
 
-public class Student extends User implements Printable, Serializable{
+public class Student extends User implements Printable{
     /**
      *
      */

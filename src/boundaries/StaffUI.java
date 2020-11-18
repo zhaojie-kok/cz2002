@@ -219,7 +219,13 @@ public class StaffUI extends Promptable implements GeneralUI{
         int maxDay;
         switch(mth) {
             // months with 31 days
-            case 1, 3, 5, 7, 8, 10, 12:
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
                 maxDay = 31;
                 break;
             case 2:
@@ -349,7 +355,11 @@ public class StaffUI extends Promptable implements GeneralUI{
 
         // get the course code of the new course
         displayOutput("Enter new course code");
-        String courseCode = (String) getUserInput();
+        String courseCode = (String) getUserInput();        
+        
+        // get the course name of the new course
+        displayOutput("Enter new course name");
+        String courseName = (String) getUserInput();
 
         // get the number of AUs the course will carry
         displayOutput("How many academic units does this course carry?");
@@ -361,7 +371,7 @@ public class StaffUI extends Promptable implements GeneralUI{
             }
         } while (acadU <= 0);
 
-        system.addCourse(courseCode, school, acadU);
+        system.addCourse(courseCode, courseName, school, acadU);
     }
 
     private void updateCourse() {

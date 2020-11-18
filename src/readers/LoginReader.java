@@ -15,6 +15,9 @@ public class LoginReader extends FileReader {
         // since the login details are saved hashMaps, the userId can be looked up directly
         HashMap<String, String[]> allDetails;
         allDetails = (HashMap<String, String[]>) readSerializedObject(filepath);
+        if (allDetails == null){
+            return null; // return null if no file read
+        }
         String[] defaultVal = {""};
         String[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
         return details;
@@ -38,6 +41,10 @@ public class LoginReader extends FileReader {
         try {
             // read the entire file
             HashMap<String, String> allDetails = (HashMap<String, String>) readSerializedObject(filepath);
+            // In case allDetails is not created yet/cannot be read
+            if (allDetails == null){
+                allDetails = new HashMap<String, String>();
+            }
             allDetails.put(newDetails[0], newDetails[1]);
             writeSerializedObject(filepath, allDetails);
         } catch (Exception e) {

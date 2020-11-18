@@ -28,7 +28,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
     public StaffSystem(String userId) throws Filereadingexception {
-        loginReader = new LoginReader("data/loginDetails/"); // TODO:change to default folder path
+        loginReader = new LoginReader("data/loginDetails"); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
         try {
             studentManager = new StudentManager();
@@ -179,9 +179,10 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     public void addCourse(String courseCode,
+                            String courseName,
                             School school,
                             int acadU){
-        courseMgr.createCourse(courseCode, school, acadU);
+        courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
 
 
