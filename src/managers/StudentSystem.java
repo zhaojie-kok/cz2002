@@ -8,6 +8,7 @@ import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
+import exceptions.Filereadingexception;
 
 public class StudentSystem implements CourseSystemInterface {
     private CourseMgr courseMgr;
@@ -18,11 +19,15 @@ public class StudentSystem implements CourseSystemInterface {
     private Course selectedCourse = null;
     private Index selectedIndex = null;
 
-    public StudentSystem(String userId) {
+    public StudentSystem(String userId) throws Filereadingexception{
         calendarMgr = new CalendarMgr();
-        studentManager = new StudentManager();
         studentManager.getStudent(userId);
-        courseMgr = new CourseMgr();
+        try {
+            studentManager = new StudentManager();
+            courseMgr = new CourseMgr();
+        } catch (Filereadingexception e) {
+            throw e;
+        }
         user = studentManager.getStudent(userId);
     }
 

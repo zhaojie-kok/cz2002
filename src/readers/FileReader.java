@@ -14,29 +14,25 @@ public abstract class FileReader {
      */
 	protected String filepath;
 
-	public abstract Object getData(String params);
+	public abstract Object getData(String params) throws Exception;
 
-	public abstract int writeData(Serializable o);
+	public abstract int writeData(Serializable o) throws Exception;
 
 	public boolean deleteObject(String filename){
 		File file = new File(filepath + filename);
 		return file.delete();
 	}
 
-    protected static Object readSerializedObject(String filename){
+    protected static Object readSerializedObject(String filename) throws IOException, ClassNotFoundException {
 		Object o = null;
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
-		try {
-			fis = new FileInputStream(filename);
-			in = new ObjectInputStream(fis);
-			o = in.readObject();
-			in.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
+		
+		fis = new FileInputStream(filename);
+		in = new ObjectInputStream(fis);
+		o = in.readObject();
+		in.close();
+		
 		return o;
 	}
 

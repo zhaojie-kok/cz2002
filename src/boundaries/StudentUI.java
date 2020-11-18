@@ -1,20 +1,23 @@
 package boundaries;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
+import exceptions.Filereadingexception;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
 public class StudentUI extends Promptable {
     private static Scanner scn;
+    private static String userId;
     private static StudentSystem system;
 
     public StudentUI(Scanner scn, String userId) {
-        StudentUI.scn =  scn;
-        StudentUI.system = new StudentSystem(userId);
+        StudentUI.scn = scn;
+        StudentUI.userId = userId;
     }
 
     @Override
@@ -30,26 +33,30 @@ public class StudentUI extends Promptable {
     @Override
     public void displayOutput(Object toDisplay) {
         System.out.println(toDisplay.toString());
-    }    
+    }
+
+    @Override
+    public void run() {
+        // set up the system
+        try {
+            StudentUI.system = new StudentSystem(userId);
+            mainMenu();
+        } catch (Filereadingexception e) {
+            displayOutput(e.getMessage());
+        }
+        shutDown();
+    }
 
     public void mainMenu() {
         int choice = 0;
-        
-        String[] options = {
-            "Show System Status",
-            "Add Course", 
-            "Drop Course",
-            "Check Courses Registered",
-            "Check course vacancies",
-            "Print Courses",
-            "Swop to another Index",
-            "Swop index with another student",
-            "Exit"
-        };
-        
+
+        String[] options = { "Show System Status", "Add Course", "Drop Course", "Check Courses Registered",
+                "Check course vacancies", "Print Courses", "Swop to another Index", "Swop index with another student",
+                "Exit" };
+
         while (choice != 8) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
-            switch(choice) {
+            switch (choice) {
                 case 0:
                     checkSystemStatus();
                     break;
@@ -81,7 +88,7 @@ public class StudentUI extends Promptable {
                     break;
             }
         }
-        
+
     }
 
     private void checkSystemStatus() {
@@ -122,7 +129,7 @@ public class StudentUI extends Promptable {
             if (result == -1) {
                 displayOutput("Please select a course first");
                 return -1;
-            } else if (result !=1 && !indexNo.equals("exit")) {
+            } else if (result != 1 && !indexNo.equals("exit")) {
                 displayOutput("Index No. is wrong, please re-enter or type \"exit\" to return to main menu");
             }
         } while (result != 1 && !indexNo.equals("exit"));
@@ -134,7 +141,7 @@ public class StudentUI extends Promptable {
         }
     }
 
-    private void addCourse(){
+    private void addCourse() {
         int result;
         // prompt user for choice of course and index
         result = promptCourseSelection();
@@ -148,9 +155,9 @@ public class StudentUI extends Promptable {
         }
 
         // try to add course in the system
-        //TODO: Change to try catch
+        // TODO: Change to try catch
         result = system.addCourse();
-        switch(result) {
+        switch (result) {
             case 1:
                 displayOutput("Course Successfully registered");
                 break;
@@ -167,7 +174,7 @@ public class StudentUI extends Promptable {
                 displayOutput("Insufficient Academic Units, please speak to school administrator");
                 break;
         }
-        //TODO: Deselect course and index
+        // TODO: Deselect course and index
     }
 
     private void dropCourse() {
@@ -186,7 +193,7 @@ public class StudentUI extends Promptable {
         // try to remove the course in the system
         // TODO: Change to try catch
         result = system.dropCourse();
-        switch(result) {
+        switch (result) {
             case 1:
                 displayOutput("Course Successfully Dropped");
                 break;
@@ -197,32 +204,32 @@ public class StudentUI extends Promptable {
                 displayOutput("Error Occurred, Please contact system administrator");
                 break;
         }
-        //TODO: Deselect course and index
+        // TODO: Deselect course and index
     }
 
-    private void printRegisteredCourses(){
+    private void printRegisteredCourses() {
         displayOutput(system.checkRegisteredCourses("Course: %s\n Index: %s\n"));
     }
 
-    private void checkVacanciesAvailable(){
+    private void checkVacanciesAvailable() {
         int result = promptCourseSelection();
         if (result == -1) {
             return;
         }
 
         HashMap<String, Integer> compiled = system.checkVacanciesAvailable();
-        for (Map.Entry<String, Integer> index: compiled.entrySet()) {
+        for (Map.Entry<String, Integer> index : compiled.entrySet()) {
             System.out.println(index.getKey() + ": " + index.getValue());
         }
     }
 
     private void printCourses() {
         // print all, b sch, or by filter
-        String[] options = {"All courses", "By School", "By keywords"};
+        String[] options = { "All courses", "By School", "By keywords" };
 
         int choice = promptChoice("Select Printing Option", options);
         String result = "";
-        switch(choice) {
+        switch (choice) {
             case 0:
                 result = system.printAllCourses();
                 break;
@@ -250,7 +257,7 @@ public class StudentUI extends Promptable {
         if (result == -1) {
             return;
         }
-        
+
         displayOutput("Select new Index to swop to");
         result = promptIndexSelection();
         if (result == -1) {
@@ -293,7 +300,11 @@ public class StudentUI extends Promptable {
 
         // verify the login details of the other student
         LoginMgr loginMgr = new LoginMgr();
-        result = loginMgr.verifyLoginDetails(swopID, swopPassword);
+        try {
+            result = loginMgr.verifyLoginDetails(swopID, swopPassword);
+        } catch (FileNotFoundException e) {
+            result = -1;
+        }
         if (result != 1) { //  if the login details are not verified to be a student
             displayOutput("Swopping details invalid!");
             return;
@@ -322,12 +333,8 @@ public class StudentUI extends Promptable {
     }
 
     private void shutDown() {
-        // TODO: run shut down procedure
-    }
-
-    @Override
-    public void run() {
-        mainMenu();
-        shutDown();
+        StudentUI.scn = null;
+        StudentUI.userId = null;
+        StudentUI.system = null;
     }
 }

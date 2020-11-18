@@ -1,4 +1,4 @@
-package managers;
+package exceptions;
 
 public class OutofrangeException extends Exception {
     private String message;
