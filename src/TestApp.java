@@ -21,7 +21,7 @@ public class TestApp {
         staffSystem.addStudent("MARY001", "Mary Travers", "F", "American", "U1234003C", newAccessPeriod, "contralto");
 
         StudentManager sM = new StudentManager();
-        HashMap<String, Student> students = sM.getHashMap();
+        HashMap<String, Student> students = sM.getStudents();
         for (Student s: students.values()){
             System.out.printf("%s\n", s.getUserId());
         }

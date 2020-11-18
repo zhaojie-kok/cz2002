@@ -351,6 +351,10 @@ public class StaffUI extends Promptable implements GeneralUI{
         displayOutput("Enter new course code");
         String courseCode = (String) getUserInput();
 
+        // get the name of the new course
+        displayOutput("Enter new course name");
+        String courseName = (String) getUserInput();
+
         // get the number of AUs the course will carry
         displayOutput("How many academic units does this course carry?");
         int acadU;
@@ -361,7 +365,7 @@ public class StaffUI extends Promptable implements GeneralUI{
             }
         } while (acadU <= 0);
 
-        system.addCourse(courseCode, school, acadU);
+        system.addCourse(courseCode, courseName, school, acadU);
     }
 
     private void updateCourse() {

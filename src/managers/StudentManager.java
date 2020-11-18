@@ -24,6 +24,10 @@ public class StudentManager implements EntityManager {
         return students.get(identifier);
     }
 
+    public HashMap<String, Student> getStudents() {
+        return students;
+    }
+
     public boolean createStudent(String userId, String name, String gender, String nationality,
     String matricNo, LocalDateTime[] accessPeriod){
         /**

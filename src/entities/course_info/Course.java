@@ -13,11 +13,10 @@ public class Course implements Serializable, Printable{
     private HashMap<String, Index> indexes; // <indexNo, Index>
     private int acadU;
 
-    public Course(String courseCode, 
-                School school,
-                int acadU){
+    public Course(String courseCode, String courseName, School school, int acadU){
         this.indexes = new HashMap<String,Index>();
         this.courseCode = courseCode;
+        this.courseName = courseName;
         this.school = school;
         this.acadU = acadU;
     }

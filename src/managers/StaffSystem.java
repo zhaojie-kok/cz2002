@@ -178,12 +178,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
     }
 
-    public void addCourse(String courseCode,
-                            School school,
-                            int acadU){
-        courseMgr.createCourse(courseCode, school, acadU);
+    public void addCourse(String courseCode, String courseName, School school, int acadU){
+        courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
-
 
     public int checkAvailableVacancies(){
         return selectedIndex.getSlotsAvailable();
