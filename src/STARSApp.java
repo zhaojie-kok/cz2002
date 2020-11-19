@@ -18,8 +18,8 @@ public class STARSApp extends Promptable {
     public void run() {
         int choice = 0;
         int loginStatus;
-        // loginStatus = promptLogin();
-        loginStatus = 2;
+        loginStatus = promptLogin();
+        // loginStatus = 2;
 
         while (loginStatus <= 0) {
             String[] options= {"Yes", "No"};

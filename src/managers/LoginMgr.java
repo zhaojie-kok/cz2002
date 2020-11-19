@@ -9,17 +9,13 @@ public class LoginMgr {
     private static LoginReader loginReader;
 
     public LoginMgr() {
-        loginReader = new LoginReader("data/loginDetails/"); // TODO: change to a default file path
+        loginReader = new LoginReader("data/loginDetails"); // TODO: change to a default file path
     }
 
     // overloaded for future upgrades, where the filepath will depend on the
     // application design
     public LoginMgr(String loginDetailsFilePath) {
         loginReader = new LoginReader(loginDetailsFilePath);
-    }
-
-    private String hashPassword(String password) {
-        return String.valueOf(password.hashCode());
     }
 
     public int verifyLoginDetails(String userId, String password) throws FileNotFoundException {
@@ -45,11 +41,11 @@ public class LoginMgr {
             String[] details = (String[]) data;
             if (details.length == 0) {
                 return -1;
-            } else if (!hashPassword(password).equals(details[1])) {
+            } else if (!loginReader.hashPassword(password).equals(details[0])) {
                 return -2;
             } else {
                 // return positive numerics instead of just boolean for success to make it easy to add more classes
-                switch(details[2]) {
+                switch(details[1]) {
                     case "student":
                         return 1;
                     case "staff":

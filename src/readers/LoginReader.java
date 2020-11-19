@@ -1,5 +1,6 @@
 package readers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -8,6 +9,10 @@ public class LoginReader extends FileReader {
     // login details should be in format userId, password, userType
     public LoginReader(String filepath) {
         this.filepath = filepath;
+    }
+    
+    public String hashPassword(String password) {
+        return "" + String.valueOf(password.hashCode());
     }
 
     @Override
@@ -18,7 +23,7 @@ public class LoginReader extends FileReader {
         if (allDetails == null){
             return null; // return null if no file read
         }
-        String[] defaultVal = {""};
+        String[] defaultVal = {"", ""};
         String[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
         return details;
     }
@@ -38,20 +43,29 @@ public class LoginReader extends FileReader {
         // convert into proper format
         String[] newDetails = (String[]) o;
 
-        try {
-            // read the entire file
-            HashMap<String, String> allDetails = (HashMap<String, String>) readSerializedObject(filepath);
-            // In case allDetails is not created yet/cannot be read
-            if (allDetails == null){
-                allDetails = new HashMap<String, String>();
+        
+        File tempFile = new File(filepath);
+        if (tempFile.exists()){
+            try {
+                // read the entire file
+                HashMap<String, String[]> allDetails = (HashMap<String, String[]>) readSerializedObject(filepath);
+                // In case allDetails is not created yet/cannot be read
+                if (allDetails == null){
+                    allDetails = new HashMap<String, String[]>();
+                }
+                allDetails.put(newDetails[0], new String[]{hashPassword(newDetails[1]), newDetails[2]});
+                writeSerializedObject(filepath, allDetails);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
             }
-            allDetails.put(newDetails[0], newDetails[1]);
-            writeSerializedObject(filepath, allDetails);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
+            return 1;
         }
-
-        return 1;
+        else{
+            HashMap<String, String[]> allDetails = new HashMap<String, String[]>();
+            allDetails.put(newDetails[0], new String[]{hashPassword(newDetails[1]), newDetails[2]});
+            writeSerializedObject(filepath, allDetails);
+            return 1;
+        }
     }
 }
