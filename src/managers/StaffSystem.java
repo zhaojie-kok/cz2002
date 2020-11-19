@@ -3,6 +3,9 @@ package managers;
 import readers.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyClashException;
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
 import exceptions.MissingparametersException;
 import exceptions.OutofrangeException;
 import entities.*;
@@ -28,6 +31,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
     public StaffSystem(String userId) throws Filereadingexception {
+        for (int i = 0; i < 7; i++) {
+            timetable[i] = new ArrayList<LessonDetails>();
+        }
         loginReader = new LoginReader("data/loginDetails"); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
         try {
@@ -40,51 +46,30 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     @Override
-    public int selectCourse(String courseCode){
-        /**
-         * Returns 1 if course is selected, else 0
-         */
-        Course tmp = courseMgr.getCourse(courseCode);
-        if (tmp == null){
-            return 0;
-        }
-        selectedCourse = tmp;
-        return 1;
+    public void selectCourse(String courseCode) throws KeyNotFoundException {
+        selectedCourse = courseMgr.getCourse(courseCode);
     }
 
     @Override
-    public int selectIndex(String indexNo){
+    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
         /**
          * Returns 1 if index is selected, else 0
          */
-        if (selectedCourse == null){
-            return -1;
-        }
-        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
-        if (tmp == null){
-            return 0;
-        }
-        selectedIndex = tmp;
-        return 1;
+        selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
     @Override
-    public int selectStudent(String identifier){
+    public void selectStudent(String identifier) throws KeyNotFoundException {
         /**
          * Returns 1 if student is selected, else 0
          */
-        Student tmp = studentManager.getStudent(identifier);
-        if (tmp == null){
-            return 0;
-        }
-        selectedStudent = tmp;
-        return 1;
+        selectedStudent = studentManager.getStudent(identifier);
     }
 
     @Override
     public String getSystemStatus() {
         String info = "";
-        return info; //TODO: complete method
+        return info; // TODO: complete method
     }
 
     @Override
@@ -95,12 +80,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         timetable = new ArrayList[7];
     }
 
-    public void selectLessonDetails(String lessonVenue, 
-							String lessonType, 
-							int lessonDay,
-							int evenOdd,
-							LocalTime startTime,
-							LocalTime endTime) throws MissingparametersException, OutofrangeException {
+    public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
+            LocalTime startTime, LocalTime endTime) throws MissingparametersException, OutofrangeException {
         // for each argument, only update those that are not null
         // this way user doesnt need to update everything in one go
         if (lessonVenue != null) {
@@ -121,30 +102,30 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         if (endTime != null) {
             lessonDetailMaker.setEndTime(endTime);
         }
-        
+
         // add the new lesson detail to the time table
-        LessonDetails newLesson =  lessonDetailMaker.makeLessonDetails();
-        for (LessonDetails lesson: timetable[lessonDay-1]) {
+        LessonDetails newLesson = lessonDetailMaker.makeLessonDetails();
+        for (LessonDetails lesson : timetable[lessonDay - 1]) {
             if (calendarMgr.lessonClash(lesson, newLesson)) {
                 throw new OutofrangeException("Clashes with existing lesson at " + lesson.getInfo());
             }
         }
-        timetable[lessonDay-1].add(newLesson);
+        timetable[lessonDay - 1].add(newLesson);
         Collections.sort(timetable[lessonDay - 1]);
         lessonDetailMaker.clearSelections();
     }
 
-    public boolean updateAccessPeriod(LocalDateTime[] newAccessPeriod){
+    public boolean updateAccessPeriod(LocalDateTime[] newAccessPeriod) {
         // TODO: change to exceptions
         return studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
-    public boolean addStudent(String userId, String name, String gender, String nationality,
-                            String matricNo, LocalDateTime[] accessPeriod, String password){
+    public boolean addStudent(String userId, String name, String gender, String nationality, String matricNo,
+            LocalDateTime[] accessPeriod, String password) {
         // Call student manager TODO: exceptions
-        if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
+        if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)) {
             // If student is created, then create login details
-            String[] data = {userId, password, "student"};
+            String[] data = { userId, password, "student" };
             loginReader.writeData(data);
             return true;
         }
@@ -153,8 +134,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
 
     public void updateCourse(String courseCode, String courseName, School school) {
         /**
-         * updates the courseCode, courseName and school of a course
-         * To change other details about the course, use the updateIndex, addIndex, or removeIndex method
+         * updates the courseCode, courseName and school of a course To change other
+         * details about the course, use the updateIndex, addIndex, or removeIndex
+         * method
          */
 
         // if any of the arguments are null then set them to the existing values
@@ -174,14 +156,11 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
-    public void addIndex(String indexNo, int slotsTotal){
+    public void addIndex(String indexNo, int slotsTotal) throws KeyClashException {
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
     }
 
-    public void addCourse(String courseCode,
-                            String courseName,
-                            School school,
-                            int acadU){
+    public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException {
         courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
 

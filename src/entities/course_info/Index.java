@@ -114,6 +114,9 @@ public class Index implements Serializable, Printable{
 		
 		for (int i = 0; i < timeTable.length; i++){
 			List<LessonDetails> lessons = timeTable[i];
+			if (lessons == null){
+				continue;
+			}
 			for (LessonDetails lesson:lessons){
 				toReturn += String.format("%10s | %5s | %02d%02d-%02d%02d | %15s\n", 
 					lesson.getLessonType(), 

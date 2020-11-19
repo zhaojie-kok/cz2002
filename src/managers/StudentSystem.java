@@ -9,6 +9,8 @@ import java.util.Map;
 import entities.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
 
 public class StudentSystem implements CourseSystemInterface {
     private CourseMgr courseMgr;
@@ -19,18 +21,14 @@ public class StudentSystem implements CourseSystemInterface {
     private Course selectedCourse = null;
     private Index selectedIndex = null;
 
-    public StudentSystem(String userId) throws Filereadingexception{
+    public StudentSystem(String userId) throws Filereadingexception, KeyNotFoundException {
         calendarMgr = new CalendarMgr();
-        try {
-            studentManager = new StudentManager();
-            courseMgr = new CourseMgr();
-        } catch (Filereadingexception e) {
-            throw e;
-        }
+        studentManager = new StudentManager();
+        courseMgr = new CourseMgr();
         user = studentManager.getStudent(userId);
     }
 
-    public String printAllCourses(){
+    public String printAllCourses() {
         /**
          * Converts to printable format
          */
@@ -38,14 +36,14 @@ public class StudentSystem implements CourseSystemInterface {
         Course c;
 
         Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
-        while (courses.hasNext()) { 
+        while (courses.hasNext()) {
             c = courses.next();
             toReturn += c.getInfo();
         }
         return toReturn;
     }
 
-    public String printCoursesBySchool(School school, String format){
+    public String printCoursesBySchool(School school, String format) {
         /**
          * Converts to printable format
          */
@@ -53,16 +51,16 @@ public class StudentSystem implements CourseSystemInterface {
         Course c;
 
         Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
-        while (courses.hasNext()) { 
+        while (courses.hasNext()) {
             c = courses.next();
-            if (c.isSchool(school)){
+            if (c.isSchool(school)) {
                 toReturn += String.format(format, c.getInfo());
             }
         }
         return toReturn;
     }
 
-    public String printCoursesByStringFilter(String filter, String format){
+    public String printCoursesByStringFilter(String filter, String format) {
         /**
          * Searched course name and code for the filter
          */
@@ -70,9 +68,9 @@ public class StudentSystem implements CourseSystemInterface {
         Course c;
 
         Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
-        while (courses.hasNext()) { 
+        while (courses.hasNext()) {
             c = courses.next();
-            if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)){
+            if (c.getCourseName().contains(filter) || c.getCourseCode().contains(filter)) {
                 toReturn += String.format(format, c.getInfo());
             }
         }
@@ -96,28 +94,16 @@ public class StudentSystem implements CourseSystemInterface {
         return toReturn;
     }
 
-    /////////////// Select course/select index are necessary for the following functions
+    /////////////// Select course/select index are necessary for the following
+    /////////////// functions
     @Override
-    public int selectCourse(String courseCode){
-        Course tmp = courseMgr.getCourse(courseCode);
-        if (tmp == null){
-            return 0;
-        }
-        selectedCourse = tmp;
-        return 1;
+    public void selectCourse(String courseCode) throws KeyNotFoundException {
+        selectedCourse = courseMgr.getCourse(courseCode);
     }
 
     @Override
-    public int selectIndex(String indexNo){
-        if (selectedCourse == null){
-            return -1;
-        }
-        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
-        if (tmp == null){
-            return 0;
-        }
-        selectedIndex = tmp;
-        return 1;
+    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException{
+        selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
     @Override
@@ -136,7 +122,7 @@ public class StudentSystem implements CourseSystemInterface {
     // These are called AFTER selectCourse/selectIndex
     ////// ++++++++ START +++++++++
     // FUNCTIONAL REQUIREMENT - Student: 1. Add course
-    public int addCourse() {
+    public int addCourse() throws KeyNotFoundException, MissingSelectionException {
         /**
          * Returns 1 is successfully registered, 
          * 0 if waitlisted,
@@ -221,7 +207,7 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
-    public int swopIndexWithStudent(String identifier){
+    public int swopIndexWithStudent(String identifier) throws KeyNotFoundException, MissingSelectionException {
         /** 
          * Returns 0 and does nothing if either students will havetimetable clash, 
          * else swaps indexes and returns 1
@@ -239,7 +225,6 @@ public class StudentSystem implements CourseSystemInterface {
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
         Index toSwapTo = courseMgr.getCourseIndex(selectedCourse, strToSwapTo);
-
         String strCurr = user.getCourseIndex(selectedCourse.getCourseCode());
         Index currentIndex = courseMgr.getCourseIndex(selectedCourse, strCurr);
 
@@ -260,7 +245,7 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
-    public int swopToIndex(){
+    public int swopToIndex() throws KeyNotFoundException, MissingSelectionException {
         // TODO: convert into exceptions
         // already registered for index
         if (user.isRegistered(selectedIndex)){
@@ -281,7 +266,7 @@ public class StudentSystem implements CourseSystemInterface {
         return selectedIndex.getSlotsAvailable();
     }
 
-    private boolean checkAddClash(Student student) {
+    private boolean checkAddClash(Student student) throws KeyNotFoundException, MissingSelectionException {
         /**
          * Returns false if no ADD clash. Else returns true.
          */
@@ -303,7 +288,8 @@ public class StudentSystem implements CourseSystemInterface {
         return false;
     }
 
-    private boolean checkSwopClash(Student student, Index newIndex) {
+    private boolean checkSwopClash(Student student, Index newIndex) throws KeyNotFoundException,
+            MissingSelectionException {
         /**
          * Returns false if no SWOP clash. Else returns true.
          */

@@ -5,6 +5,8 @@ import java.util.List;
 import entities.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
 import exceptions.OutofrangeException;
 import readers.CourseReader;
 import boundaries.NotifSender;
@@ -93,12 +95,23 @@ public class CourseMgr implements EntityManager {
         return allCourses;
     }
     
-    public Course getCourse(String courseCode){
-        return allCourses.get(courseCode);
+    public Course getCourse(String courseCode) throws KeyNotFoundException {
+        Course toReturn = allCourses.get(courseCode);
+        if (toReturn == null){
+            throw new KeyNotFoundException(courseCode);
+        }
+        return toReturn;
     }
 
-    public Index getCourseIndex(Course course, String indexNo){
-        return course.getIndex(indexNo);
+    public Index getCourseIndex(Course course, String indexNo) throws KeyNotFoundException, MissingSelectionException {
+        if (course == null){
+            throw new MissingSelectionException(Course.class);
+        }
+        Index toReturn = course.getIndex(indexNo);
+        if (toReturn == null){
+            throw new KeyNotFoundException(indexNo);
+        }
+        return toReturn;
     }
 
     public boolean removeStudent(Student student, Index index, Course course){
@@ -140,7 +153,7 @@ public class CourseMgr implements EntityManager {
         return false;
     }
 
-    public int swopStudents (Student s1, Student s2, Course course) {
+    public int swopStudents (Student s1, Student s2, Course course) throws KeyNotFoundException {
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
             return -1; // TODO: convert to exception
         }

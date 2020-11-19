@@ -9,7 +9,7 @@ import entities.School;
 import exceptions.*;
 import managers.StaffSystem;
 
-public class StaffUI extends Promptable implements GeneralUI{
+public class StaffUI extends Promptable {
     private static Scanner scn;
     private static String userId;
     private static StaffSystem system;
@@ -17,11 +17,6 @@ public class StaffUI extends Promptable implements GeneralUI{
     public StaffUI(Scanner scn, String userId) {
         StaffUI.scn = scn;
         StaffUI.userId = userId;
-    }
-
-    @Override
-    public void getUserInput(Object storageObject) {
-        storageObject = scn.nextLine();
     }
 
     @Override
@@ -50,17 +45,9 @@ public class StaffUI extends Promptable implements GeneralUI{
     private void mainMenu() {
         int choice = 0;
 
-        String[] options = {
-            "Change student access period",
-            "Add Student to system",
-            "Add course to system",
-            "Update course information",
-            "Add index to a course",
-            "Update index information",
-            "Print Students in a course index",
-            "Print Students in a course",
-            "Exit"
-        };
+        String[] options = { "Change student access period", "Add Student to system", "Add course to system",
+                "Update course information", "Add index to a course", "Update index information",
+                "Print Students in a course index", "Print Students in a course", "Exit" };
 
         while (choice != 8) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
@@ -99,72 +86,60 @@ public class StaffUI extends Promptable implements GeneralUI{
     }
 
     private int promptCourseSelection() {
-        int result;
         String courseCode = "";
         displayOutput("Please Enter Course Code: ");
-        do {
-            getUserInput(courseCode);
+        while (true) {
+            courseCode = (String) getUserInput();;
             courseCode = courseCode.toUpperCase();
-            result = system.selectCourse(courseCode);
-            // TODO: change to try catch
-            if (result != 1) {
-                displayOutput("Course code is wrong, please re-enter or type \"exit\" to return to main menu");
+            if (courseCode.equals("EXIT")){
+                return -1;
             }
-        } while (result != 1 && !courseCode.equals("exit"));
-
-        if (courseCode.equals("exit")) {
-            return -1;
-        } else {
-            return 1;
+            try {
+                system.selectCourse(courseCode);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput(e.getMessage());
+                ;
+            }
         }
     }
 
     private int promptIndexSelection() {
-        int result;
-        String indexNo= "";
+        String indexNo = "";
         displayOutput("Please enter an Index");
-        do {
-            getUserInput(indexNo);
+        while (true) {
+            indexNo = (String) getUserInput();
             indexNo = indexNo.toUpperCase();
-            result = system.selectIndex(indexNo);
-
-            // TODO: change to try catch
-            if (result == -1) {
-                displayOutput("Please select a course first");
+            if (indexNo.equals("EXIT")){
                 return -1;
-            } else if (result !=1 && !indexNo.equals("exit")) {
-                displayOutput("Index No. is wrong, please re-enter or type \"exit\" to return to main menu");
             }
-        } while (result != 1 && !indexNo.equals("exit"));
-
-        if (indexNo.equals("exit")) {
-            return -1;
-        } else {
-            return 1;
+            try {
+                system.selectIndex(indexNo);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput("Index No. could not be found, please re-enter or type \"exit\" to return to main menu");
+            } catch (MissingSelectionException e) {
+                displayOutput("Please select a course first");
+            }
         }
     }
 
     private int promptStudentSelection() {
-        int result;
         String identifier = "";
         displayOutput("Please enter a student's user ID or matriculation number");
-        do {
-            getUserInput(identifier);
+        while (true) {
+            identifier = (String) getUserInput();;
             identifier = identifier.toUpperCase();
-            result = system.selectStudent(identifier);
-
-            // TODO: change to try catch
-            if (result != 1) {
+            if (identifier.equals("EXIT")) {
+                return -1;
+            }
+            try {
+                system.selectStudent(identifier);
+                return 1;
+            } catch (KeyNotFoundException e) {
                 displayOutput("Unable to identify student. Please re-enter or type \"exit\" for return to main menu");
             }
-        } while (result != 1 && !identifier.equals("exit"));
-
-        if (identifier.equals("exit")) {
-            return -1;
-        } else {
-            return 1;
         }
-
     }
 
     private int promptIntegerInput() {
@@ -184,7 +159,7 @@ public class StaffUI extends Promptable implements GeneralUI{
         while (true) {
             try {
                 response = Integer.parseInt((String) getUserInput());
-                if (response>upperLim || response<lowerLim) {
+                if (response > upperLim || response < lowerLim) {
                     displayOutput("Must be from " + lowerLim + " to " + upperLim);
                 } else {
                     return response;
@@ -202,22 +177,22 @@ public class StaffUI extends Promptable implements GeneralUI{
         displayOutput("Enter new year");
         do {
             yr = promptIntegerInput();
-            if (yr<ldt.getYear() || yr>(ldt.getYear() + 1)) {
+            if (yr < ldt.getYear() || yr > (ldt.getYear() + 1)) {
                 displayOutput("Year must be current year or up to 1 year in advance");
             }
-        } while (yr<ldt.getYear() || yr>(ldt.getYear() + 1));
+        } while (yr < ldt.getYear() || yr > (ldt.getYear() + 1));
 
         // get new mth
         displayOutput("Enter new month:");
         do {
             mth = promptIntegerInput();
-            if (!(mth>=1 && mth<=12)) {
+            if (!(mth >= 1 && mth <= 12)) {
                 displayOutput("Month must be integer from 1 to 12");
             }
-        } while (!(mth>=1 && mth<=12));
+        } while (!(mth >= 1 && mth <= 12));
 
         int maxDay;
-        switch(mth) {
+        switch (mth) {
             // months with 31 days
             case 1:
             case 3:
@@ -229,7 +204,7 @@ public class StaffUI extends Promptable implements GeneralUI{
                 maxDay = 31;
                 break;
             case 2:
-                boolean isLeapYear = yr%4 == 0 && (yr%100 != 0 || yr%400 == 0);
+                boolean isLeapYear = yr % 4 == 0 && (yr % 100 != 0 || yr % 400 == 0);
                 maxDay = isLeapYear ? 29 : 28;
                 break;
             default:
@@ -240,28 +215,28 @@ public class StaffUI extends Promptable implements GeneralUI{
         displayOutput("Enter day of month");
         do {
             day = promptIntegerInput();
-            if (!(day>=1 && day<=maxDay)) {
+            if (!(day >= 1 && day <= maxDay)) {
                 displayOutput("Day must be integer from 1 to " + maxDay);
             }
-        } while (!(day>=1 && day<=maxDay));
+        } while (!(day >= 1 && day <= maxDay));
 
         // get new hour
         displayOutput("Enter new hour of day (24 hour format)");
         do {
             hr = promptIntegerInput();
-            if (!(hr>=0 && hr<=23)) {
+            if (!(hr >= 0 && hr <= 23)) {
                 displayOutput("Hour must be integer from 1 to 23");
             }
-        } while (!(hr>=0 && hr<=23));
+        } while (!(hr >= 0 && hr <= 23));
 
         // get new minute
         displayOutput("Enter new minute");
         do {
             min = promptIntegerInput();
-            if (!(min>=0 && min<=59)) {
+            if (!(min >= 0 && min <= 59)) {
                 displayOutput("Minute must be integer from 1 to 59");
             }
-        } while (!(min>=0 && min<=59));
+        } while (!(min >= 0 && min <= 59));
 
         // set the date and time
         ldt = LocalDateTime.of(yr, mth, day, hr, min);
@@ -305,13 +280,14 @@ public class StaffUI extends Promptable implements GeneralUI{
         LocalDateTime start = getDateInput();
         displayOutput("End time for new access Period");
         LocalDateTime end = getDateInput();
-        LocalDateTime[] newAccessPeriod = {start, end};
+        LocalDateTime[] newAccessPeriod = { start, end };
 
         if (system.updateAccessPeriod(newAccessPeriod)) {
             displayOutput("Access Period changed successfully");
         } else {
             displayOutput("Error occured, please inform system administrator");
-        };
+        }
+        ;
     }
 
     private void printCourseStudents() {
@@ -355,8 +331,8 @@ public class StaffUI extends Promptable implements GeneralUI{
 
         // get the course code of the new course
         displayOutput("Enter new course code");
-        String courseCode = (String) getUserInput();        
-        
+        String courseCode = (String) getUserInput();
+
         // get the course name of the new course
         displayOutput("Enter new course name");
         String courseName = (String) getUserInput();
@@ -371,7 +347,11 @@ public class StaffUI extends Promptable implements GeneralUI{
             }
         } while (acadU <= 0);
 
-        system.addCourse(courseCode, courseName, school, acadU);
+        try {
+            system.addCourse(courseCode, courseName, school, acadU);
+        } catch (KeyClashException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     private void updateCourse() {
@@ -386,7 +366,8 @@ public class StaffUI extends Promptable implements GeneralUI{
         String newCourseCode = null;
         String newCourseName = null;
         School newSchool = null;
-        String[] options = {"Change course code", "Change name of course", "Change school of course", "No further changes"};
+        String[] options = { "Change course code", "Change name of course", "Change school of course",
+                "No further changes" };
         int choice;
 
         // prompt user for which detail of course to be changed
@@ -394,14 +375,14 @@ public class StaffUI extends Promptable implements GeneralUI{
             displayOutput("Current course information:");
             displayOutput(system.getCourseInfo());
             choice = promptChoice("Which detail of the course needs to be changed", options);
-            switch(choice) {
+            switch (choice) {
                 case 0:
                     displayOutput("Enter new course code");
-                    getUserInput(newCourseCode);
+                    newCourseCode = (String) getUserInput();
                     break;
                 case 1:
                     displayOutput("Enter new name");
-                    getUserInput(newCourseName);
+                    newCourseName = (String) getUserInput();
                     break;
                 case 2:
                     int schChoice = promptChoice("Choose the new school", School.values());
@@ -428,24 +409,26 @@ public class StaffUI extends Promptable implements GeneralUI{
         LocalTime start = null;
         LocalTime end = null;
 
-        String[] options = {"Venue", "Lesson Type", "Day of week", "Even or Odd week", "Start Time", "End Time", "No further Changes"};
+        String[] options = { "Venue", "Lesson Type", "Day of week", "Even or Odd week", "Start Time", "End Time",
+                "No further Changes" };
         do {
             choice = promptChoice("Which detail of the lesson to edit", options);
-            switch(choice) {
+            switch (choice) {
                 case 0:
                     displayOutput("Enter venue name");
-                    getUserInput(venue);
+                    venue = (String) getUserInput();;
                     break;
                 case 1:
                     displayOutput("Enter class type");
-                    getUserInput(type);
+                    type = (String) getUserInput();;
                     break;
                 case 2:
                     dayOfWk = promptChoice("Choose day of week (1 is Monday, 7 is Sunday)", DayOfWeek.values());
                     dayOfWk++; // since the prompt choice starts at 0 instead of 1
                     break;
                 case 3:
-                    evenOdd = promptChoice("Choose if lesson is even or odd type", new String[] {"Even", "Odd", "Both"});
+                    evenOdd = promptChoice("Choose if lesson is even or odd type",
+                            new String[] { "Even", "Odd", "Both" });
                     break;
                 case 4:
                     start = getTimeInput();
@@ -487,14 +470,18 @@ public class StaffUI extends Promptable implements GeneralUI{
         // create the new timetable
         int choice;
         do {
-            choice = promptChoice("Would you like to add lessons to the index (lessons cannot be added after creation)", 
-            new String[] {"Yes", "No"});
+            choice = promptChoice("Would you like to add lessons to the index (lessons cannot be added after creation)",
+                    new String[] { "Yes", "No" });
             if (choice == 0) {
                 createLessonDetails();
             }
         } while (choice != 1);
 
-        system.addIndex(indexNo, slots);
+        try {
+            system.addIndex(indexNo, slots);
+        } catch (KeyClashException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     private void updateIndex() {
@@ -525,7 +512,7 @@ public class StaffUI extends Promptable implements GeneralUI{
             switch(choice) {
                 case 0:
                     displayOutput("Enter new index number");
-                    getUserInput(indexNo);
+                    indexNo = (String) getUserInput();;
                     break;
                 case 1:
                     displayOutput("Enter new total capacity (from 1 to 50)");
@@ -562,23 +549,23 @@ public class StaffUI extends Promptable implements GeneralUI{
             switch (choice) {
                 case 0:
                     displayOutput("Enter userID");
-                    getUserInput(userId);
+                    userId = (String) getUserInput();
                     break;
                 case 1:
                     displayOutput("Enter student name");
-                    getUserInput(name);
+                    name = (String) getUserInput();
                     break;
                 case 2:
                     displayOutput("Enter student gender");
-                    getUserInput(gender);
+                    gender = (String) getUserInput();
                     break;
                 case 3:
                     displayOutput("Enter student nationality");
-                    getUserInput(nationality);
+                    nationality = (String) getUserInput();
                     break;
                 case 4:
                     displayOutput("Enter student matriculation number");
-                    getUserInput(matricNo);
+                    matricNo = (String) getUserInput();
                     break;
                 case 5:
                     displayOutput("Student's access period - start");
@@ -590,7 +577,7 @@ public class StaffUI extends Promptable implements GeneralUI{
                     break;
                 case 7:
                     displayOutput("Enter password for student account");
-                    getUserInput(password);
+                    password = (String) getUserInput();
                     break;
                 case 8:
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};

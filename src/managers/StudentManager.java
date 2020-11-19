@@ -6,6 +6,7 @@ import readers.*;
 import entities.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyNotFoundException;
 
 public class StudentManager implements EntityManager {
     private HashMap<String, Student> students;
@@ -17,25 +18,28 @@ public class StudentManager implements EntityManager {
         students = (HashMap<String, Student>) sReader.getData();
     }
 
-    public Student getStudent(String identifier){
+    public Student getStudent(String identifier) throws KeyNotFoundException {
         /**
          * Returns student based on identifier (either matricNo or userId)
          */
-        return students.get(identifier);
+        Student toReturn = students.get(identifier);
+        if (toReturn == null){
+            throw new KeyNotFoundException(identifier);
+        }
+        return toReturn;
     }
 
-    public boolean createStudent(String userId, String name, String gender, String nationality,
-    String matricNo, LocalDateTime[] accessPeriod){
+    public boolean createStudent(String userId, String name, String gender, String nationality, String matricNo,
+            LocalDateTime[] accessPeriod) {
         /**
          * Returns boolean for creating a student (true if created, false otherwise)
          */
-        if (students.containsKey(matricNo) || students.containsKey(userId)){
+        if (students.containsKey(matricNo) || students.containsKey(userId)) {
             // If another student exists with the matricNo or userId, no student is created
             return false;
         }
-        Student newStudent = new Student(userId, name, gender, nationality,
-                                        matricNo, accessPeriod, new HashMap<String, String>(),
-                                        new HashMap<String, String>());
+        Student newStudent = new Student(userId, name, gender, nationality, matricNo, accessPeriod,
+                new HashMap<String, String>(), new HashMap<String, String>());
         students.put(matricNo, newStudent);
         saveState(newStudent);
         return true;
@@ -46,7 +50,7 @@ public class StudentManager implements EntityManager {
          * Returns boolean for dropping a course (true if successful, false otherwise)
          */
         // Check if student is registered
-        if (student.isRegistered(course)){
+        if (student.isRegistered(course)) {
             student.removeCourse(course.getCourseCode(), course.getAcadU());
             saveState(student);
             return true;
@@ -56,8 +60,8 @@ public class StudentManager implements EntityManager {
 
     public int addCourse(Course course, Index index, Student student) {
         /**
-         * Returns int. 1=successful registration, 0=waitlisted, negative if other results (Fail)
-         * Note: error code -1 is returnedby student system
+         * Returns int. 1=successful registration, 0=waitlisted, negative if other
+         * results (Fail) Note: error code -1 is returnedby student system
          */
         if (student.isRegistered(course) || student.isWaitlisted(course)) {
             // already registered
@@ -80,7 +84,7 @@ public class StudentManager implements EntityManager {
         }
     }
 
-    public void swopIndex(Student s1, Student s2, String courseCode) {
+    public void swopIndex(Student s1, Student s2, String courseCode) throws KeyNotFoundException {
         // update the student info only
         String i1 = s1.getCourseIndex(courseCode);
         String i2 = s2.getCourseIndex(courseCode);

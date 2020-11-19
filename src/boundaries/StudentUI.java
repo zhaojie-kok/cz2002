@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 import entities.School;
 import exceptions.Filereadingexception;
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
@@ -18,11 +20,6 @@ public class StudentUI extends Promptable {
     public StudentUI(Scanner scn, String userId) {
         StudentUI.scn = scn;
         StudentUI.userId = userId;
-    }
-
-    @Override
-    public void getUserInput(Object storageObject) {
-        storageObject = scn.nextLine();
     }
 
     @Override
@@ -41,7 +38,7 @@ public class StudentUI extends Promptable {
         try {
             StudentUI.system = new StudentSystem(userId);
             mainMenu();
-        } catch (Filereadingexception e) {
+        } catch (Exception e) {
             displayOutput(e.getMessage());
         }
         shutDown();
@@ -96,48 +93,41 @@ public class StudentUI extends Promptable {
     }
 
     private int promptCourseSelection() {
-        int result;
         String courseCode = "";
         displayOutput("Please Enter Course Code: ");
-        do {
-            getUserInput(courseCode);
+        while (true) {
+            courseCode = (String) getUserInput();
             courseCode = courseCode.toUpperCase();
-            result = system.selectCourse(courseCode);
-            // TODO: change to try catch
-            if (result != 1) {
-                displayOutput("Course code is wrong, please re-enter or type \"exit\" to return to main menu");
+            if (courseCode.equals("EXIT")){
+                return -1;
             }
-        } while (result != 1 && !courseCode.equals("exit"));
-
-        if (courseCode.equals("exit")) {
-            return -1;
-        } else {
-            return 1;
+            try {
+                system.selectCourse(courseCode);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput("No such course code exists, please re-enter or type \"exit\" to return to main menu");
+            }
         }
     }
 
     private int promptIndexSelection() {
-        int result;
         String indexNo = "";
         displayOutput("Please enter an Index");
-        do {
-            getUserInput(indexNo);
+        while (true) {
+            indexNo = (String) getUserInput();
             indexNo = indexNo.toUpperCase();
-            result = system.selectIndex(indexNo);
-
-            // TODO: change to try catch
-            if (result == -1) {
+            if (indexNo.equals("EXIT")) {
+                return -1;
+            }
+            try {
+                system.selectIndex(indexNo);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput("No such index no. exists, please re-enter or type \"exit\" to return to main menu");
+            } catch (MissingSelectionException e) {
                 displayOutput("Please select a course first");
                 return -1;
-            } else if (result != 1 && !indexNo.equals("exit")) {
-                displayOutput("Index No. is wrong, please re-enter or type \"exit\" to return to main menu");
             }
-        } while (result != 1 && !indexNo.equals("exit"));
-
-        if (indexNo.equals("exit")) {
-            return -1;
-        } else {
-            return 1;
         }
     }
 
@@ -156,7 +146,12 @@ public class StudentUI extends Promptable {
 
         // try to add course in the system
         // TODO: Change to try catch
-        result = system.addCourse();
+        try {
+            result = system.addCourse();
+        } catch (Exception e){
+            displayOutput(e.getMessage());
+            return;
+        }
         switch (result) {
             case 1:
                 displayOutput("Course Successfully registered");
@@ -266,7 +261,12 @@ public class StudentUI extends Promptable {
 
         // try to swop index
         // TODO: change to try catch
-        result = system.swopToIndex();
+        try {
+            result = system.swopToIndex();
+        } catch (Exception e){
+            displayOutput(e.getMessage());
+            return;
+        }
         switch (result) {
             case -1:
                 displayOutput("You are already registered in this index");
@@ -309,7 +309,12 @@ public class StudentUI extends Promptable {
             displayOutput("Swopping details invalid!");
             return;
         } else {
-            result = system.swopIndexWithStudent(swopID);
+            try {
+                result = system.swopIndexWithStudent(swopID);
+            } catch (Exception e){
+                displayOutput(e.getMessage());
+                return;
+            }
             // TODO: change to try catch
             switch(result) {
                 case 1:

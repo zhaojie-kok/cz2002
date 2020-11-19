@@ -84,13 +84,6 @@ public class STARSApp extends Promptable {
 
         return result;
     }
-
-    // use this method to get user inputs and store in specific object
-	@Override
-	public void getUserInput(Object storageObject) {
-        String userInput = scn.nextLine();
-        storageObject = userInput;		
-	}
     
     // use this method to get and return inputs from the user
     @Override

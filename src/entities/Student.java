@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import entities.course_info.*;
+import exceptions.KeyNotFoundException;
 
 public class Student extends User implements Printable{
     /**
@@ -44,11 +45,11 @@ public class Student extends User implements Printable{
         return this.courses;
     }
 
-    public String getCourseIndex(String courseCode) {
+    public String getCourseIndex(String courseCode) throws KeyNotFoundException {
         if (this.courses.containsKey(courseCode)) {
             return this.courses.get(courseCode);
         } else {
-            return null;
+            throw new KeyNotFoundException(courseCode);
         }
     }
 
