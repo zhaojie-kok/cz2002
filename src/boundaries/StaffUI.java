@@ -35,7 +35,7 @@ public class StaffUI extends Promptable {
         try {
             StaffUI.system = new StaffSystem(userId);
             mainMenu();
-        } catch (Filereadingexception e) {
+        } catch (FileReadingException e) {
             e.printStackTrace();
             displayOutput(e.getMessage());
         }
@@ -99,7 +99,6 @@ public class StaffUI extends Promptable {
                 return 1;
             } catch (KeyNotFoundException e) {
                 displayOutput(e.getMessage());
-                ;
             }
         }
     }
@@ -154,7 +153,7 @@ public class StaffUI extends Promptable {
         }
     }
 
-    private int promptIntegerInput(int upperLim, int lowerLim) {
+    private int promptIntegerInput(int lowerLim, int upperLim) {
         int response;
         while (true) {
             try {
@@ -439,9 +438,9 @@ public class StaffUI extends Promptable {
                 case 6:
                     try {
                         system.selectLessonDetails(venue, type, dayOfWk, evenOdd, start, end);
-                    } catch (MissingparametersException m) {
+                    } catch (MissingParametersException m) {
                         displayOutput(m.getMessage());
-                    } catch (OutofrangeException o) {
+                    } catch (OutOfRangeException o) {
                         displayOutput(o.getMessage());
                     }
                     break;
@@ -465,6 +464,7 @@ public class StaffUI extends Promptable {
         String indexNo = (String) getUserInput();
 
         // get the number of slots for the course
+        displayOutput("Enter the number of vacancies");
         int slots = promptIntegerInput(1, 50); // each index can only have up to 50 people due to covid restrictions
 
         // create the new timetable
@@ -527,7 +527,7 @@ public class StaffUI extends Promptable {
 
         try {
             system.updateIndex(indexNo, slots);
-        } catch (OutofrangeException e) {
+        } catch (OutOfRangeException e) {
             displayOutput(e.getMessage());
         }
     }

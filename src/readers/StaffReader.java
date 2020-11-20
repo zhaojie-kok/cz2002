@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import entities.Staff;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 
 public class StaffReader extends FileReader {
     // staff files are named by their user id inside a folder
@@ -12,12 +12,12 @@ public class StaffReader extends FileReader {
         this.filepath = filedir;
     }
 
-    public Object getData() throws Filereadingexception {
+    public Object getData() throws FileReadingException {
         return getData("");
     }
 
     @Override
-    public Object getData(String params) throws Filereadingexception {
+    public Object getData(String params) throws FileReadingException {
         /*
          * Returns all staff (HashMap where key is matric no of student) if the
          * identifier is null Returns only a specific staff if the staff can be
@@ -36,7 +36,7 @@ public class StaffReader extends FileReader {
                 try {
                     toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Staff.class);
                 } catch (Exception e) {
-                    throw new Filereadingexception("Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
+                    throw new FileReadingException("Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
                 }
                 if (toAdd != null) {
                     // Staff can be identified using userId or with their staffNo, depending on

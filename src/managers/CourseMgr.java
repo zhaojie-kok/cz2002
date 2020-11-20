@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import entities.*;
 import entities.course_info.*;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
-import exceptions.OutofrangeException;
+import exceptions.OutOfRangeException;
 import readers.CourseReader;
 import boundaries.NotifSender;
 
@@ -15,11 +15,11 @@ public class CourseMgr implements EntityManager {
     private HashMap<String, Course> allCourses;
     private CourseReader cReader;
 
-    public CourseMgr() throws Filereadingexception {
+    public CourseMgr() throws FileReadingException {
         cReader = new CourseReader("data/courses/");
         try {
             allCourses = (HashMap<String, Course>) cReader.getData();
-        } catch (Filereadingexception e) {
+        } catch (FileReadingException e) {
             throw e;
         }
     }
@@ -65,7 +65,7 @@ public class CourseMgr implements EntityManager {
         return true;
     }
 
-    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutofrangeException {
+    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutOfRangeException {
         // Update indexNo
         if (indexNo != index.getIndexNo()){
             if (course.getIndex(indexNo) != null){
@@ -81,7 +81,7 @@ public class CourseMgr implements EntityManager {
         int changeInSlots = slotsTotal - index.getSlotsTotal();
         if (changeInSlots != 0){
             if (index.getSlotsAvailable() < changeInSlots){
-                throw new OutofrangeException("new total slots cannot be less than number of students registered");
+                throw new OutOfRangeException("new total slots cannot be less than number of students registered");
             }
         }   
         index.setSlotsTotal(slotsTotal);

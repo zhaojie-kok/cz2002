@@ -5,14 +5,14 @@ import java.util.HashMap;
 import readers.*;
 import entities.*;
 import entities.course_info.*;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 
 public class StudentManager implements EntityManager {
     private HashMap<String, Student> students;
     StudentReader sReader;
 
-    public StudentManager() throws Filereadingexception {
+    public StudentManager() throws FileReadingException {
         // TODO: filepath
         sReader = new StudentReader("data/students/");
         students = (HashMap<String, Student>) sReader.getData();

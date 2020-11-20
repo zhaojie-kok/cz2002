@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.Student;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 
 public class StudentReader extends FileReader {
     // student files are named by their user id inside a folder
@@ -14,11 +14,11 @@ public class StudentReader extends FileReader {
     }
 
     @Override
-    public Object getData(String params) throws Filereadingexception {
+    public Object getData(String params) throws FileReadingException {
         return getData();
     }
 
-    public Object getData() throws Filereadingexception {
+    public Object getData() throws FileReadingException {
         /*
         Returns all students (HashMap where key is matric no of student) if the identifier is null
         Returns only a specific student if the student can be identified with the identifier (matricNo or userId)
@@ -40,7 +40,7 @@ public class StudentReader extends FileReader {
                 try {
                     toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Student.class);
                 } catch (Exception e) {
-                    throw new Filereadingexception(
+                    throw new FileReadingException(
                             "Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
                 }
 				if (toAdd != null){

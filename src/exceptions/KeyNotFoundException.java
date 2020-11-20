@@ -10,7 +10,7 @@ public class KeyNotFoundException extends Exception {
         this.key = key;
     }
 
-    public String toString(){
+    public String getMessage(){
         return "Key " + key + " does not exist in map";
     }
 

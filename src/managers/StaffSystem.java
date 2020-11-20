@@ -2,12 +2,12 @@ package managers;
 
 import readers.*;
 import entities.course_info.*;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
-import exceptions.MissingparametersException;
-import exceptions.OutofrangeException;
+import exceptions.MissingParametersException;
+import exceptions.OutOfRangeException;
 import entities.*;
 
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private Student selectedStudent;
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
-    public StaffSystem(String userId) throws Filereadingexception {
+    public StaffSystem(String userId) throws FileReadingException {
         for (int i = 0; i < 7; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
         }
@@ -39,7 +39,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         try {
             studentManager = new StudentManager();
             courseMgr = new CourseMgr();
-        } catch (Filereadingexception e) {
+        } catch (FileReadingException e) {
             throw e;
         }
         lessonDetailMaker = new LessonDetailMaker();
@@ -81,7 +81,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
-            LocalTime startTime, LocalTime endTime) throws MissingparametersException, OutofrangeException {
+            LocalTime startTime, LocalTime endTime) throws MissingParametersException, OutOfRangeException {
         // for each argument, only update those that are not null
         // this way user doesnt need to update everything in one go
         if (lessonVenue != null) {
@@ -107,7 +107,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         LessonDetails newLesson = lessonDetailMaker.makeLessonDetails();
         for (LessonDetails lesson : timetable[lessonDay - 1]) {
             if (calendarMgr.lessonClash(lesson, newLesson)) {
-                throw new OutofrangeException("Clashes with existing lesson at " + lesson.getInfo());
+                throw new OutOfRangeException("Clashes with existing lesson at " + lesson.getInfo());
             }
         }
         timetable[lessonDay - 1].add(newLesson);
@@ -152,7 +152,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateCourse(selectedCourse, courseCode, courseName, school);
     }
 
-    public void updateIndex(String indexNo, int slotsTotal) throws OutofrangeException {
+    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException {
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 

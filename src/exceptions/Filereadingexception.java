@@ -1,9 +1,9 @@
 package exceptions;
 
-public class Filereadingexception extends Exception {
+public class FileReadingException extends Exception {
     private String message;
     
-    public Filereadingexception(String message) {
+    public FileReadingException(String message) {
         this.message = message;
     }
 

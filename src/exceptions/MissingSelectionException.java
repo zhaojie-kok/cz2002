@@ -10,7 +10,7 @@ public class MissingSelectionException extends Exception {
         cName = c.getSimpleName();
     }
 
-    public String toString(){
+    public String getMessage(){
         return "Object of class " + cName + " not yet selected";
     }
 

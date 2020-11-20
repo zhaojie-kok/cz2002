@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
-import exceptions.Filereadingexception;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
 import managers.LoginMgr;
@@ -264,7 +263,7 @@ public class StudentUI extends Promptable {
         try {
             result = system.swopToIndex();
         } catch (Exception e){
-            displayOutput(e.getMessage());
+            e.printStackTrace();
             return;
         }
         switch (result) {

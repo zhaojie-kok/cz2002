@@ -8,7 +8,7 @@ import entities.School;
 import entities.Staff;
 import entities.Student;
 import entities.course_info.LessonDetails;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
 import managers.CourseMgr;

@@ -8,7 +8,7 @@ import java.util.Map;
 
 import entities.*;
 import entities.course_info.*;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
 
@@ -21,7 +21,7 @@ public class StudentSystem implements CourseSystemInterface {
     private Course selectedCourse = null;
     private Index selectedIndex = null;
 
-    public StudentSystem(String userId) throws Filereadingexception, KeyNotFoundException {
+    public StudentSystem(String userId) throws FileReadingException, KeyNotFoundException {
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
         courseMgr = new CourseMgr();
