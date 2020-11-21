@@ -219,7 +219,13 @@ public class StaffUI extends Promptable implements GeneralUI{
         int maxDay;
         switch(mth) {
             // months with 31 days
-            case 1, 3, 5, 7, 8, 10, 12:
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
                 maxDay = 31;
                 break;
             case 2:
@@ -349,9 +355,9 @@ public class StaffUI extends Promptable implements GeneralUI{
 
         // get the course code of the new course
         displayOutput("Enter new course code");
-        String courseCode = (String) getUserInput();
-
-        // get the name of the new course
+        String courseCode = (String) getUserInput();        
+        
+        // get the course name of the new course
         displayOutput("Enter new course name");
         String courseName = (String) getUserInput();
 
@@ -590,9 +596,12 @@ public class StaffUI extends Promptable implements GeneralUI{
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};
                     try {
                         system.addStudent(userId, name, gender, nationality, matricNo, accessPeriod, password);
-                    } catch (Exception e) {
-                        //TODO: handle exception
-                        choice = -1;
+                    } catch (KeyClashException k) {
+                        displayOutput(k.getMessage());
+                    } catch (Filereadingexception f) {
+                        // in the event of a filereadingexception, there is a fatal error thus the method needs to exit
+                        displayOutput(f.getMessage());
+                        return;
                     }
             }
         } while (choice != 8);

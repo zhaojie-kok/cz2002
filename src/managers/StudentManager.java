@@ -6,6 +6,7 @@ import readers.*;
 import entities.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyClashException;
 
 public class StudentManager implements EntityManager {
     private HashMap<String, Student> students;
@@ -13,7 +14,7 @@ public class StudentManager implements EntityManager {
 
     public StudentManager() throws Filereadingexception {
         // TODO: filepath
-        StudentReader sReader = new StudentReader("PLACEHOLDER");
+        sReader = new StudentReader("data/students/");
         students = (HashMap<String, Student>) sReader.getData();
     }
 
@@ -28,20 +29,22 @@ public class StudentManager implements EntityManager {
         return students;
     }
 
-    public boolean createStudent(String userId, String name, String gender, String nationality,
-    String matricNo, LocalDateTime[] accessPeriod){
+    public void createStudent(String userId, String name, String gender, String nationality,
+    String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException {
         /**
-         * Returns boolean for creating a student (true if created, false otherwise)
+         * creates a new student based on information provided
          */
-        if (students.containsKey(matricNo) || students.containsKey(userId)){
+        if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
-            return false;
+            throw new KeyClashException("Matric Number already exists");
+        } else if (students.containsKey(userId)) {
+            throw new KeyClashException("UserID already exists");
         }
         Student newStudent = new Student(userId, name, gender, nationality,
-                                        matricNo, accessPeriod, new HashMap<String, String>());
+                                        matricNo, accessPeriod, new HashMap<String, String>(),
+                                        new HashMap<String, String>());
         students.put(matricNo, newStudent);
         saveState(newStudent);
-        return true;
     }
 
     public boolean dropCourse(Course course, Student student) {

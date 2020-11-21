@@ -1,8 +1,6 @@
 package entities;
 
-import java.io.Serializable;
-
-public class Staff extends User implements Serializable{
+public class Staff extends User{
     /**
      *
      */

@@ -3,6 +3,7 @@ package managers;
 import readers.*;
 import entities.course_info.*;
 import exceptions.Filereadingexception;
+import exceptions.KeyClashException;
 import exceptions.MissingparametersException;
 import exceptions.OutofrangeException;
 import entities.*;
@@ -28,7 +29,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
     public StaffSystem(String userId) throws Filereadingexception {
-        loginReader = new LoginReader("data/loginDetails/"); // TODO:change to default folder path
+        loginReader = new LoginReader("data/loginDetails"); // TODO:change to default folder path
         calendarMgr = new CalendarMgr();
         try {
             studentManager = new StudentManager();
@@ -139,16 +140,20 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         return studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
-    public boolean addStudent(String userId, String name, String gender, String nationality,
-                            String matricNo, LocalDateTime[] accessPeriod, String password){
-        // Call student manager TODO: exceptions
-        if (studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod)){
+    public void addStudent(String userId, String name, String gender, String nationality,
+                            String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, Filereadingexception {
+        // Call student manager to create the student
+        try {
+            studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod);
+
             // If student is created, then create login details
-            Object[] data = new Object[]{userId, password, "student"};
+            String[] data = {userId, password, "student"};
             loginReader.writeData(data);
-            return true;
+        } catch (KeyClashException e) {
+            throw e;
+        } catch (Filereadingexception f) {
+            throw f;
         }
-        return false;
     }
 
     public void updateCourse(String courseCode, String courseName, School school) {

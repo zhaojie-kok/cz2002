@@ -9,7 +9,7 @@ public class LoginMgr {
     private static LoginReader loginReader;
 
     public LoginMgr() {
-        loginReader = new LoginReader("data/loginDetails/"); // TODO: change to a default file path
+        loginReader = new LoginReader("data/loginDetails/");
     }
 
     // overloaded for future upgrades, where the filepath will depend on the
