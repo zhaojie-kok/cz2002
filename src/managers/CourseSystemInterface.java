@@ -1,8 +1,11 @@
 package managers;
 
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
+
 public interface CourseSystemInterface extends Systems {
     
-    public int selectCourse(String courseCode);
+    public void selectCourse(String courseCode) throws KeyNotFoundException;
 
-    public int selectIndex(String indexNo);
+    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException;
 }

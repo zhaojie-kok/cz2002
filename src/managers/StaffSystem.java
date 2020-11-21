@@ -2,10 +2,12 @@ package managers;
 
 import readers.*;
 import entities.course_info.*;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 import exceptions.KeyClashException;
-import exceptions.MissingparametersException;
-import exceptions.OutofrangeException;
+import exceptions.KeyNotFoundException;
+import exceptions.MissingSelectionException;
+import exceptions.MissingParametersException;
+import exceptions.OutOfRangeException;
 import entities.*;
 
 import java.time.LocalDateTime;
@@ -15,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class StaffSystem implements StudentSystemInterface, CourseSystemInterface {
-    private Staff user;
-
     private CourseMgr courseMgr;
     private StudentManager studentManager;
     private CalendarMgr calendarMgr;
@@ -28,64 +28,44 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private Student selectedStudent;
     private List<LessonDetails>[] timetable = new ArrayList[7];
 
-    public StaffSystem(String userId) throws Filereadingexception {
-        loginReader = new LoginReader("data/loginDetails"); // TODO:change to default folder path
+    public StaffSystem(String userId) throws FileReadingException {
+        for (int i = 0; i < 7; i++) {
+            timetable[i] = new ArrayList<LessonDetails>();
+        }
+        loginReader = new LoginReader("data/loginDetails");
         calendarMgr = new CalendarMgr();
         try {
             studentManager = new StudentManager();
             courseMgr = new CourseMgr();
-        } catch (Filereadingexception e) {
+        } catch (FileReadingException e) {
             throw e;
         }
         lessonDetailMaker = new LessonDetailMaker();
     }
 
     @Override
-    public int selectCourse(String courseCode){
-        /**
-         * Returns 1 if course is selected, else 0
-         */
-        Course tmp = courseMgr.getCourse(courseCode);
-        if (tmp == null){
-            return 0;
-        }
-        selectedCourse = tmp;
-        return 1;
+    public void selectCourse(String courseCode) throws KeyNotFoundException {
+        selectedCourse = courseMgr.getCourse(courseCode);
+        this.selectedIndex = null;
     }
 
     @Override
-    public int selectIndex(String indexNo){
-        /**
-         * Returns 1 if index is selected, else 0
-         */
-        if (selectedCourse == null){
-            return -1;
-        }
-        Index tmp = courseMgr.getCourseIndex(selectedCourse, indexNo);
-        if (tmp == null){
-            return 0;
-        }
-        selectedIndex = tmp;
-        return 1;
+    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
+        selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
     @Override
-    public int selectStudent(String identifier){
-        /**
-         * Returns 1 if student is selected, else 0
-         */
-        Student tmp = studentManager.getStudent(identifier);
-        if (tmp == null){
-            return 0;
-        }
-        selectedStudent = tmp;
-        return 1;
+    public void selectStudent(String identifier) throws KeyNotFoundException {
+        selectedStudent = studentManager.getStudent(identifier);
     }
 
     @Override
     public String getSystemStatus() {
         String info = "";
-        return info; //TODO: complete method
+        info += String.format("\n%20s", "Selected course:") + (selectedCourse != null ? selectedCourse.getCourseCode() : "");
+        info += String.format("\n%20s", "Selected index:") + (selectedIndex != null ? selectedIndex.getIndexNo() : "");
+        info += String.format("\n%20s", "Selected student:") + (selectedStudent != null ? selectedStudent.getUserId() : "");
+        return info;
     }
 
     @Override
@@ -96,12 +76,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         timetable = new ArrayList[7];
     }
 
-    public void selectLessonDetails(String lessonVenue, 
-							String lessonType, 
-							int lessonDay,
-							int evenOdd,
-							LocalTime startTime,
-							LocalTime endTime) throws MissingparametersException, OutofrangeException {
+    public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
+            LocalTime startTime, LocalTime endTime) throws MissingParametersException, OutOfRangeException {
         // for each argument, only update those that are not null
         // this way user doesnt need to update everything in one go
         if (lessonVenue != null) {
@@ -122,44 +98,44 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         if (endTime != null) {
             lessonDetailMaker.setEndTime(endTime);
         }
-        
+
         // add the new lesson detail to the time table
-        LessonDetails newLesson =  lessonDetailMaker.makeLessonDetails();
-        for (LessonDetails lesson: timetable[lessonDay-1]) {
+        LessonDetails newLesson = lessonDetailMaker.makeLessonDetails();
+        for (LessonDetails lesson : timetable[lessonDay - 1]) {
             if (calendarMgr.lessonClash(lesson, newLesson)) {
-                throw new OutofrangeException("Clashes with existing lesson at " + lesson.getInfo());
+                throw new OutOfRangeException("Clashes with existing lesson at " + lesson.getInfo());
             }
         }
-        timetable[lessonDay-1].add(newLesson);
+        timetable[lessonDay - 1].add(newLesson);
         Collections.sort(timetable[lessonDay - 1]);
         lessonDetailMaker.clearSelections();
     }
 
-    public boolean updateAccessPeriod(LocalDateTime[] newAccessPeriod){
-        // TODO: change to exceptions
-        return studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
+    public void updateAccessPeriod(LocalDateTime[] newAccessPeriod) throws FileReadingException {
+        studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
     public void addStudent(String userId, String name, String gender, String nationality,
-                            String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, Filereadingexception {
+                            String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, FileReadingException {
         // Call student manager to create the student
         try {
             studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod);
 
             // If student is created, then create login details
-            String[] data = {userId, password, "student"};
+            String[] data = { userId, password, "student" };
             loginReader.writeData(data);
         } catch (KeyClashException e) {
             throw e;
-        } catch (Filereadingexception f) {
+        } catch (FileReadingException f) {
             throw f;
         }
     }
 
     public void updateCourse(String courseCode, String courseName, School school) {
         /**
-         * updates the courseCode, courseName and school of a course
-         * To change other details about the course, use the updateIndex, addIndex, or removeIndex method
+         * updates the courseCode, courseName and school of a course To change other
+         * details about the course, use the updateIndex, addIndex, or removeIndex
+         * method
          */
 
         // if any of the arguments are null then set them to the existing values
@@ -175,35 +151,52 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateCourse(selectedCourse, courseCode, courseName, school);
     }
 
-    public void updateIndex(String indexNo, int slotsTotal) throws OutofrangeException {
+    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException {
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
-    public void addIndex(String indexNo, int slotsTotal){
+    public void addIndex(String indexNo, int slotsTotal) throws KeyClashException {
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
     }
 
-    public void addCourse(String courseCode, String courseName, School school, int acadU){
+    public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException {
         courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
 
-    public int checkAvailableVacancies(){
+    public int checkAvailableVacancies() throws MissingSelectionException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Course not yet selected");
+        }
+
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Index not yet selected");
+        }
+        
         return selectedIndex.getSlotsAvailable();
     }
 
-    public String printStudentsbyIndex(){
+    public String printStudentsbyIndex() throws MissingSelectionException {
         if (selectedCourse == null) {
-            return null;
+            throw new MissingSelectionException("Course not yet selected");
+        }
+
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Index not yet selected");
         }
         return selectedIndex.getMoreInfo();
     }
 
-    public String printStudentsbyCourse(){
+    public String printStudentsbyCourse() throws MissingSelectionException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Course not yet selected");
+        }
         return selectedCourse.getMoreInfo();
     }
     
-    public String getCourseInfo() {
+    public String getCourseInfo() throws MissingSelectionException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Course not yet selected");
+        }
         return selectedCourse.getMoreInfo();
     }
-    public void deleteIndex(Course course) {}
 }

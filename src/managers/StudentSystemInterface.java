@@ -1,5 +1,7 @@
 package managers;
 
+import exceptions.KeyNotFoundException;
+
 public interface StudentSystemInterface extends Systems {
-    public int selectStudent(String identifier);
+    public void selectStudent(String identifier) throws KeyNotFoundException;
 }

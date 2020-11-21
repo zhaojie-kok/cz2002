@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import entities.course_info.Course;
-import exceptions.Filereadingexception;
+import exceptions.FileReadingException;
 
 public class CourseReader extends FileReader {
     public CourseReader(String filedir) {
@@ -13,11 +13,11 @@ public class CourseReader extends FileReader {
     }
 
     @Override
-    public Object getData(String params) throws Filereadingexception {
+    public Object getData(String params) throws FileReadingException {
         return getData();
     }
 
-    public Object getData() throws Filereadingexception {
+    public Object getData() throws FileReadingException {
         /**
 		Returns all courses (HashMap where key is courseCode) if the courseCode is null
         Returns only a specific course if the course can be identified with the courseCode
@@ -38,7 +38,7 @@ public class CourseReader extends FileReader {
                 try {
                     toAdd = cast(readSerializedObject(this.filepath + listOfFiles[i].getName()), Course.class);
                 } catch (Exception e) {
-                    throw new Filereadingexception(
+                    throw new FileReadingException(
                             "Error in retrieving data from " + listOfFiles[i] + " Please contact system administrator");
                 }
 				if (toAdd != null){

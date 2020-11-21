@@ -1,13 +1,13 @@
 package exceptions;
 
-public class Filereadingexception extends Exception {
+public class FileReadingException extends Exception {
     /**
-     *
-     */
-    private static final long serialVersionUID = 5350034780950150931L;
-    private String message;
+	 *
+	 */
+	private static final long serialVersionUID = -2789031215092909435L;
+	private String message;
     
-    public Filereadingexception(String message) {
+    public FileReadingException(String message) {
         this.message = message;
     }
 

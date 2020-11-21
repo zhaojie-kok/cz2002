@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import entities.*;
 
 public class Index implements Serializable, Printable{
@@ -87,7 +89,12 @@ public class Index implements Serializable, Printable{
 	}
 
 	public Student dequeueWaitlist(){
-		return waitlist.remove();
+		try{
+			return waitlist.remove();
+		}
+		catch(NoSuchElementException e){
+			return null;
+		}
 	}
 
 	public void enqueueWaitlist(Student student){
@@ -114,6 +121,9 @@ public class Index implements Serializable, Printable{
 		
 		for (int i = 0; i < timeTable.length; i++){
 			List<LessonDetails> lessons = timeTable[i];
+			if (lessons == null){
+				continue;
+			}
 			for (LessonDetails lesson:lessons){
 				toReturn += String.format("%10s | %5s | %02d%02d-%02d%02d | %15s\n", 
 					lesson.getLessonType(), 

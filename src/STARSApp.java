@@ -7,7 +7,6 @@ public class STARSApp extends Promptable {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
-    private int loginStatus;
 
     public static void main(String[] args) {
         STARSApp app = new STARSApp(); // to allow calling of non-static methods
@@ -18,8 +17,8 @@ public class STARSApp extends Promptable {
     public void run() {
         int choice = 0;
         int loginStatus;
-        // loginStatus = promptLogin();
-        loginStatus = 2;
+        loginStatus = promptLogin();
+        // loginStatus = 2;
 
         while (loginStatus <= 0) {
             String[] options= {"Yes", "No"};
@@ -69,28 +68,9 @@ public class STARSApp extends Promptable {
             displayOutput(e.getMessage());
             return -1;
         }
-        switch(result) {
-            // TODO: change to try catch
-            case -1:
-                displayOutput("Username not found");
-                break;
-            case -2:
-                displayOutput("Wrong password");
-                break;
-            case -3:
-                displayOutput("System error, please contact administrator");
-                break;
-        }
 
         return result;
     }
-
-    // use this method to get user inputs and store in specific object
-	@Override
-	public void getUserInput(Object storageObject) {
-        String userInput = scn.nextLine();
-        storageObject = userInput;		
-	}
     
     // use this method to get and return inputs from the user
     @Override
