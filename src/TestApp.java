@@ -29,24 +29,24 @@ public class TestApp {
             
             staffSystem.selectCourse("BU8201");
             for (int i = 0; i < 14; i++) {
-                staffSystem.timetable[i] = new ArrayList<LessonDetails>();
+                // staffSystem.timetable[i] = new ArrayList<LessonDetails>();
             }
             
             staffSystem.selectLessonDetails("LT28", "LEC", 4, 3,
                 LocalTime.of(10, 30), LocalTime.of(11, 30));
         
 
-            for (List<LessonDetails> l : staffSystem.timetable) {
-                System.out.println(l.size());
-                for (LessonDetails ll : l){
-                    if (ll != null){
-                        System.out.println(ll.getLessonType());
-                    }
-                    else{
-                        System.out.println("OOPS");
-                    }
-                }
-            };
+            // for (List<LessonDetails> l : staffSystem.timetable) {
+            //     System.out.println(l.size());
+            //     for (LessonDetails ll : l){
+            //         if (ll != null){
+            //             System.out.println(ll.getLessonType());
+            //         }
+            //         else{
+            //             System.out.println("OOPS");
+            //         }
+            //     }
+            // };
         } catch (Exception e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
