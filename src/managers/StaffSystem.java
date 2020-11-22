@@ -26,10 +26,10 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private Course selectedCourse;
     private Index selectedIndex;
     private Student selectedStudent;
-    private List<LessonDetails>[] timetable = new ArrayList[7];
+    private List<LessonDetails>[] timetable = new ArrayList[14];
 
     public StaffSystem(String userId) throws FileReadingException {
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 14; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
         }
         loginReader = new LoginReader("data/loginDetails");
@@ -166,6 +166,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
 
     public void addIndex(String indexNo, int slotsTotal) throws KeyClashException {
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
+        for (int i = 0; i < 14; i++) {
+            timetable[i] = new ArrayList<LessonDetails>();
+        }
     }
 
     public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException {
