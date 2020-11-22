@@ -38,6 +38,7 @@ public class LessonDetailMaker implements Systems {
         }
 
         lessonDetails = new LessonDetails(lessonVenue, lessonType, lessonDay, evenOdd, startTime, endTime);
+        clearSelections();
         return lessonDetails;
     }
 
