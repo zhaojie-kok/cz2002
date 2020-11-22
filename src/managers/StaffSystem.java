@@ -73,7 +73,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         selectedCourse = null;
         selectedIndex = null;
         selectedStudent = null;
-        timetable = new ArrayList[7];
+        timetable = new ArrayList[14];
     }
 
     public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
@@ -105,6 +105,15 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
             if (calendarMgr.lessonClash(lesson, newLesson)) {
                 throw new OutOfRangeException("Clashes with existing lesson at " + lesson.getInfo());
             }
+        }
+
+        // add to timetable, based on even or odd week
+        if (evenOdd == 1) {
+            lessonDay = lessonDay + 7;
+        } else if (evenOdd == 2) { // if both even and odd then add to even weeks first then to odd weeks
+            timetable[lessonDay - 1].add(newLesson);
+            Collections.sort(timetable[lessonDay - 1]);
+            lessonDay = lessonDay + 7;
         }
         timetable[lessonDay - 1].add(newLesson);
         Collections.sort(timetable[lessonDay - 1]);

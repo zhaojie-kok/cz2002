@@ -279,7 +279,11 @@ public class StudentUI extends Promptable {
     }
 
     private void viewTimeTable() {
-        displayOutput(system.getTimeTable());
+        try {
+            displayOutput(system.getTimeTable());
+        } catch (Exception e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     private void shutDown() {

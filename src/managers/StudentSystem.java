@@ -1,5 +1,6 @@
 package managers;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -123,15 +124,48 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     public String getTimeTable() throws FileReadingException {
-        String[][] tableForm = new String[14][12]; // for 2 weeks, 8 am to 8pm in 30 min intervals
+        String[][] tableForm = new String[12][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
         Course course;
         Index ind;
+        List<LessonDetails>[] lessons;
         for (Map.Entry<String, String> entry: courses.entrySet()) {
             try {
                 course = courseMgr.getCourse(entry.getKey());
                 ind = courseMgr.getCourseIndex(course, entry.getValue());
-                //TODO: make timetable
+                lessons = ind.getTimeTable();
+                for (int i=0; i<lessons.length; i++) {
+                    for (LessonDetails ld: lessons[i]) {
+                        int startRow = (ld.getStartTime().getHour()-8) * 2 + (ld.getStartTime().getMinute() / 30);
+                        int endRow = (ld.getEndTime().getHour() - 8) * 2 + (ld.getEndTime().getMinute() / 30);
+                        for (int j=startRow; j<=endRow; j++) {
+                            tableForm[j][i] = String.format("%15s", course.getCourseCode() + " " + ind.getIndexNo());
+                        }
+                    }
+                }
+
+                String output = "\nEVEN WEEKS\n|     |";
+                for (int i=0; i<DayOfWeek.values().length; i++) {
+                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
+                }
+                for (int i=0; i<tableForm.length; i++) {
+                    output += String.format("\n|%2d:%2d|", ((int) (i/2)) + 8, i%2 * 30);
+                    for (int j=0; j<7; j++) {
+                        output += String.format("%s|", tableForm[i][j]);
+                    }
+                }
+                output += "\nODD WEEKS\n|     |";
+                for (int i = 0; i < DayOfWeek.values().length; i++) {
+                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
+                }
+                for (int i = 0; i < tableForm.length; i++) {
+                    output += String.format("\n|%2d:%2d|", ((int) (i / 2)) + 8, i % 2 * 30);
+                    for (int j = 7; j < tableForm[0].length; j++) {
+                        output += String.format("%s|", tableForm[i][j]);
+                    }
+                }
+
+                return output;
             } catch (KeyNotFoundException e) {
                 throw new FileReadingException("inconsistencies found in student data. Please contact system administrator");
             }
