@@ -142,7 +142,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         }
     }
 
-    public void updateCourse(String courseCode, String courseName, School school) {
+    public void updateCourse(String courseCode, String courseName, School school) throws KeyClashException {
         /**
          * updates the courseCode, courseName and school of a course To change other
          * details about the course, use the updateIndex, addIndex, or removeIndex
