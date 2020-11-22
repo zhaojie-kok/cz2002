@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
 import managers.LoginMgr;
@@ -359,7 +360,8 @@ public class StudentUI extends Promptable {
     private void viewTimeTable() {
         try {
             displayOutput(system.getTimeTable());
-        } catch (Exception e) {
+        } catch (FileReadingException e) {
+            // TODO Auto-generated catch block
             displayOutput(e.getMessage());
         }
     }

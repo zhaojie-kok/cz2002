@@ -41,9 +41,9 @@ public class StudentManager implements EntityManager {
          */
         if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
-            throw new KeyClashException("Matric Number already exists");
+            throw new KeyClashException("Matric Number " + matricNo);
         } else if (students.containsKey(userId)) {
-            throw new KeyClashException("UserID already exists");
+            throw new KeyClashException("UserID " + userId);
         }
         Student newStudent = new Student(userId, name, gender, nationality, email, matricNo, accessPeriod,
                 new HashMap<String, String>(), new HashMap<String, String>());

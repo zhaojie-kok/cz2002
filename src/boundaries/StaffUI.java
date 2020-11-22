@@ -139,6 +139,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 return 1;
             } catch (KeyNotFoundException e) {
                 displayOutput(e.getMessage());
+                return -1;
             }
         }
     }
@@ -314,7 +315,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } while (!(hr >= 0 && hr <= 23));
 
         // get new minute
-        String[] options = {hr + ":00", hr + ":30"};
+        String[] options = { hr + ":00", hr + ":30" };
         min = promptChoice("Select options for minute", options) * 30;
 
         return LocalTime.of(hr, min);
@@ -479,7 +480,11 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } while (choice != 3);
 
         // pass the new values to the system to update
-        system.updateCourse(newCourseCode, newCourseName, newSchool);
+        try {
+            system.updateCourse(newCourseCode, newCourseName, newSchool);
+        } catch (KeyClashException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     /**
@@ -574,6 +579,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } catch (Exception e) {
             displayOutput(e.getMessage());
         }
+        system.clearSelections();
     }
 
     /**

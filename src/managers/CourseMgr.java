@@ -79,17 +79,20 @@ public class CourseMgr implements EntityManager {
      * Method to update details regarding existing course
      * 
      * @param course     Course to change details
-     * @param courseCode New course code to change to. Must be unique from other courses
+     * @param courseCode New course code to change to. Must be unique from other
+     *                   courses
      * @param courseName New name of course
      * @param school     School hosting the course
      * @return true if change was successful, false if otherwise
+     * @throws KeyClashException
      */
-    public boolean updateCourse(Course course, String courseCode, String courseName, School school){
+    public boolean updateCourse(Course course, String courseCode, String courseName, School school)
+            throws KeyClashException {
         if (courseCode != course.getCourseCode()){
             // If courseCode is different,
             if (allCourses.containsKey(courseCode)){
                 // If courseCode already exists, do not override
-                return false;
+                throw new KeyClashException(courseCode);
             }
             else{
                 // Delete file
@@ -348,6 +351,30 @@ public class CourseMgr implements EntityManager {
      */
     public List<Student> checkStudentsRegistered(Index index){
         return index.getRegisteredStudents();
+    }
+
+    /**
+     * Method to check the waitlists for all indexes under a given course
+     * @param course course to check
+     * @return       HashMap of index numebrs mapping to List of students waitlisted
+     */
+    public HashMap<String, List<Student>> checkStudentsWaitlisted(Course course){
+        HashMap<String, Index> indexes = course.getIndexes();
+        HashMap<String, List<Student>> sHashMap = new HashMap<String, List<Student>>();
+        for (Index ind: indexes.values()){
+            sHashMap.put(ind.getIndexNo(), ind.getWaitlistedStudents());
+        }
+        return sHashMap;
+    }
+
+    /**
+     * Method to check the students waitlisted under a given index
+     * 
+     * @param index Index to be checked
+     * @return      List of students waitlisted
+     */
+    public List<Student> checkStudentsWaitlisted(Index index){
+        return index.getWaitlistedStudents();
     }
 
     /**

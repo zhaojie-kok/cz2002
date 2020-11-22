@@ -102,6 +102,10 @@ public class Index implements Serializable, Printable{
 	public List<Student> getRegisteredStudents() {
 		return registeredStudents;
 	}
+
+	public List<Student> getWaitlistedStudents() {
+		return new ArrayList<Student>(waitlist);
+	}
 	
 	/**
 	 * Setter for the list of registered students for a course

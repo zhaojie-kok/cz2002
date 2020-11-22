@@ -59,7 +59,8 @@ public class STARSApp extends Promptable {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
         displayOutput("Enter Password: ");
-        String password = scn.nextLine();
+        char[] passString = System.console().readPassword();
+        String password = new String(passString );
 
         int result = 0;
         try {
