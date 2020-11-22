@@ -46,12 +46,13 @@ public class CourseMgr implements EntityManager {
         return i;
     }
 
-    public boolean updateCourse(Course course, String courseCode, String courseName, School school){
+    public boolean updateCourse(Course course, String courseCode, String courseName, School school)
+            throws KeyClashException {
         if (courseCode != course.getCourseCode()){
             // If courseCode is different,
             if (allCourses.containsKey(courseCode)){
                 // If courseCode already exists, do not override
-                return false;
+                throw new KeyClashException(courseCode);
             }
             else{
                 // Delete file
@@ -228,8 +229,21 @@ public class CourseMgr implements EntityManager {
         return sHashMap;
     }
 
+    public HashMap<String, List<Student>> checkStudentsWaitlisted(Course course){
+        HashMap<String, Index> indexes = course.getIndexes();
+        HashMap<String, List<Student>> sHashMap = new HashMap<String, List<Student>>();
+        for (Index ind: indexes.values()){
+            sHashMap.put(ind.getIndexNo(), ind.getWaitlistedStudents());
+        }
+        return sHashMap;
+    }
+
+
     public List<Student> checkStudentsRegistered(Index index){
         return index.getRegisteredStudents();
+    }
+    public List<Student> checkStudentsWaitlisted(Index index){
+        return index.getWaitlistedStudents();
     }
 
     public HashMap<String, Integer> checkVacanciesAvailable(Course course){
