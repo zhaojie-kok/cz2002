@@ -15,7 +15,6 @@ public abstract class Promptable implements GeneralUI{
             try {
                 choice = Integer.parseInt((String) getUserInput());
             } catch (NumberFormatException e) {
-                e.printStackTrace();
                 choice = -1;
             }
 

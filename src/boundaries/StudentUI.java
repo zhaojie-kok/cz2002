@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
 import managers.LoginMgr;
@@ -99,7 +100,7 @@ public class StudentUI extends Promptable {
         while (true) {
             courseCode = (String) getUserInput();
             courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")){
+            if (courseCode.equals("EXIT")) {
                 return -1;
             }
             try {
@@ -237,7 +238,7 @@ public class StudentUI extends Promptable {
         try {
             system.swopToIndex();
             displayOutput("Index Succesfully Changed");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -263,16 +264,18 @@ public class StudentUI extends Promptable {
         try {
             result = loginMgr.verifyLoginDetails(swopID, swopPassword);
         } catch (Exception e) {
-            displayOutput(e.getMessage());;
+            displayOutput(e.getMessage());
+            ;
+            return;
         }
-        if (result != 1) { //  if the login details are not verified to be a student
+        if (result != 1) { // if the login details are not verified to be a student
             displayOutput("Swopping details invalid!");
             return;
         } else {
             try {
                 system.swopIndexWithStudent(swopID);
                 displayOutput("Swop Successful");
-            } catch (Exception e){
+            } catch (Exception e) {
                 displayOutput(e.getMessage());
             }
         }
@@ -281,8 +284,14 @@ public class StudentUI extends Promptable {
     private void viewTimeTable() {
         try {
             displayOutput(system.getTimeTable());
+<<<<<<< HEAD
         } catch (Exception e) {
             displayOutput(e.getMessage());
+=======
+        } catch (FileReadingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+>>>>>>> ab0be1a9caa95e91bcead216158e0a0fd585073f
         }
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
+import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
@@ -62,12 +63,13 @@ public class CourseMgr implements EntityManager {
         return true;
     }
 
-    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutOfRangeException {
+    public void updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutOfRangeException,
+            KeyClashException {
         // Update indexNo
         if (indexNo != index.getIndexNo()){
             if (course.getIndex(indexNo) != null){
                 // Index already exists, cannot overwrite
-                return false;
+                throw new KeyClashException(indexNo);
             }
             String oldIndexNo = index.getIndexNo();
             index.setIndexNo(indexNo);
@@ -85,7 +87,6 @@ public class CourseMgr implements EntityManager {
         index.setSlotsAvailable(index.getSlotsAvailable() - changeInSlots);
         course.updateIndex(index);
         saveState(course);
-        return true;
     }
 
     public HashMap<String, Course> getAllCourses(){

@@ -160,7 +160,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateCourse(selectedCourse, courseCode, courseName, school);
     }
 
-    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException {
+    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException, KeyClashException {
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
