@@ -34,7 +34,7 @@ public class StudentManager implements EntityManager {
         return students;
     }
 
-    public void createStudent(String userId, String name, String gender, String nationality,
+    public void createStudent(String userId, String name, String gender, String nationality, String email,
     String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException {
         /**
          * creates a new student based on information provided
@@ -45,7 +45,7 @@ public class StudentManager implements EntityManager {
         } else if (students.containsKey(userId)) {
             throw new KeyClashException("UserID already exists");
         }
-        Student newStudent = new Student(userId, name, gender, nationality, matricNo, accessPeriod,
+        Student newStudent = new Student(userId, name, gender, nationality, email, matricNo, accessPeriod,
                 new HashMap<String, String>(), new HashMap<String, String>());
         students.put(matricNo, newStudent);
         saveState(newStudent);
@@ -77,7 +77,7 @@ public class StudentManager implements EntityManager {
          */
         // Check if student is registered or waitlisted
         if (student.isRegistered(course)) {
-            student.removeCourse(course.getCourseCode(), course.getAcadU());
+            student.removeCourse(course);
             saveState(student);
         } else if (student.isWaitlisted(course)) {
             student.removeWaitlist(course);

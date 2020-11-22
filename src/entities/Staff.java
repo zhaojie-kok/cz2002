@@ -12,13 +12,13 @@ public class Staff extends User{
      * 
      * @param staffNo     String identifier for the staff user. Must be unique for
      *                    each staff user
-     * @param userId      UserID for the staff. Must be unique for each staff user\
+     * @param userId      UserID for the staff. Must be unique for each user
      * @param name        Name of the staff user
      * @param gender      Gender of the staff user
      * @param nationality Nationality of the staff user
      */
-    public Staff(String staffNo, String userId, String name, String gender, String nationality) {
-        super(userId, "staff", name, gender, nationality);
+    public Staff(String staffNo, String userId, String name, String gender, String nationality, String email) {
+        super(userId, "staff", name, gender, nationality, email);
         this.staffNo = staffNo;
     }
 

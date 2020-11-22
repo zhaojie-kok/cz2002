@@ -126,12 +126,12 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
-    public void addStudent(String userId, String name, String gender, String nationality,
+    public void addStudent(String userId, String name, String gender, String nationality, String email,
                             String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, FileReadingException {
         // Call student manager to create the student
         try {
-            studentManager.createStudent(userId, name, gender, nationality, matricNo, accessPeriod);
-
+            studentManager.createStudent(userId, name, gender, nationality, email, matricNo, accessPeriod);
+            // TODO: check validity of email
             // If student is created, then create login details
             String[] data = { userId, password, "student" };
             loginReader.writeData(data);

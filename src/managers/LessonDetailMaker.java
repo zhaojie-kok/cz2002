@@ -7,6 +7,9 @@ import entities.course_info.LessonDetails;
 import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
 
+/**
+ * Controller used to create lesson details to be used by other controllers/entities
+ */
 public class LessonDetailMaker implements Systems {
     private String lessonVenue;
     private String lessonType;

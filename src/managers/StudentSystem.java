@@ -10,6 +10,7 @@ import java.util.Map;
 import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
+import exceptions.InvalidInputException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingParametersException;
 import exceptions.MissingSelectionException;
@@ -186,7 +187,7 @@ public class StudentSystem implements CourseSystemInterface {
     ////// ++++++++ START +++++++++
     // FUNCTIONAL REQUIREMENT - Student: 1. Add course
     public int addCourse() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
-            MissingParametersException {
+            MissingParametersException, InvalidInputException {
 
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course");
@@ -215,7 +216,7 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-    public void dropCourse() throws OutOfRangeException, MissingParametersException {
+    public void dropCourse() throws InvalidInputException, MissingParametersException, OutOfRangeException {
         /**
          * 
          */
@@ -253,7 +254,7 @@ public class StudentSystem implements CourseSystemInterface {
 
     // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
     public void swopIndexWithStudent(String identifier) throws KeyNotFoundException, MissingSelectionException,
-            OutOfRangeException {
+            OutOfRangeException, InvalidInputException {
         /** 
          * Returns 0 and does nothing if either students will havetimetable clash, 
          * else swaps indexes and returns 1
@@ -292,7 +293,7 @@ public class StudentSystem implements CourseSystemInterface {
 
     // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
     public void swopToIndex() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
-            MissingParametersException {
+            MissingParametersException, InvalidInputException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a Course for swopping index");
         } else if (user.isRegistered(selectedCourse)) {
@@ -301,7 +302,7 @@ public class StudentSystem implements CourseSystemInterface {
         
         if (selectedIndex == null) {
             throw new MissingSelectionException("Please select an Index to swop to");
-        } else if (user.isRegistered(selectedIndex)){
+        } else if (user.isRegistered(selectedCourse, selectedIndex)){
             throw new OutOfRangeException("You are already in this index");
         }
         // no more slots

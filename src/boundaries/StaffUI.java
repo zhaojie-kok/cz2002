@@ -632,17 +632,17 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
      * Users will need to input arguments for the {@link managers.StudentManager#createStudent(String, String, String, String, String, LocalDateTime[])} method
      */
     private void addStudent() {
-        // TODO: email
         String userId = null;
         String name = null;
         String gender = null;
         String nationality = null;
+        String email = null;
         String matricNo = null;
         LocalDateTime startAccess = null;
         LocalDateTime endAccess = null;
         String password = null;
 
-        String[] options = {"userID", "name", "gender", "nationality", "matriculation number", "Access Period Start", "Access Period End", "Password", "No further changes"};
+        String[] options = {"userID", "name", "gender", "nationality", "email addresss", "matriculation number", "Access Period Start", "Access Period End", "Password", "No further changes"};
         int choice;
         do {
             choice = promptChoice("Select student info to edit", options);
@@ -664,25 +664,29 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                     nationality = (String) getUserInput();
                     break;
                 case 4:
+                    displayOutput("Enter email address of user");
+                    email = (String) getUserInput();
+                    break; // TODO: check email validity
+                case 5:
                     displayOutput("Enter student matriculation number");
                     matricNo = (String) getUserInput();
                     break;
-                case 5:
+                case 6:
                     displayOutput("Student's access period - start");
                     startAccess = getDateInput();
                     break;
-                case 6:
+                case 7:
                     displayOutput("Student's access period - end");
                     endAccess = getDateInput();
                     break;
-                case 7:
+                case 8:
                     displayOutput("Enter password for student account");
                     password = (String) getUserInput();
                     break;
-                case 8:
+                case 9:
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};
                     try {
-                        system.addStudent(userId, name, gender, nationality, matricNo, accessPeriod, password);
+                        system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password);
                     } catch (KeyClashException k) {
                         displayOutput(k.getMessage());
                     } catch (FileReadingException f) {
@@ -691,7 +695,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                         return;
                     }
             }
-        } while (choice != 8);
+        } while (choice != 9);
     }
 
     /**
