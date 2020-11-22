@@ -1,5 +1,6 @@
 package managers;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,7 +11,9 @@ import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
+import exceptions.MissingParametersException;
 import exceptions.MissingSelectionException;
+import exceptions.OutOfRangeException;
 
 public class StudentSystem implements CourseSystemInterface {
     private CourseMgr courseMgr;
@@ -99,17 +102,18 @@ public class StudentSystem implements CourseSystemInterface {
     @Override
     public void selectCourse(String courseCode) throws KeyNotFoundException {
         selectedCourse = courseMgr.getCourse(courseCode);
+        this.selectedIndex = null;
     }
 
     @Override
-    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException{
+    public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
         selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
     @Override
-    public String getSystemStatus(){
-        String sc = selectedCourse == null ? "":"Selected course: " + selectedCourse.getCourseName();
-        String si = selectedIndex == null ? "":"Selected index: " + selectedIndex.getIndexNo();
+    public String getSystemStatus() {
+        String sc = selectedCourse == null ? "" : "Selected course: " + selectedCourse.getCourseName();
+        String si = selectedIndex == null ? "" : "Selected index: " + selectedIndex.getIndexNo();
         return sc + "\n" + si;
     }
 
@@ -119,64 +123,104 @@ public class StudentSystem implements CourseSystemInterface {
         selectedIndex = null;
     }
 
+    public String getTimeTable() throws FileReadingException {
+        String[][] tableForm = new String[12][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
+        HashMap<String, String> courses = user.getCourses();
+        Course course;
+        Index ind;
+        List<LessonDetails>[] lessons;
+        for (Map.Entry<String, String> entry: courses.entrySet()) {
+            try {
+                course = courseMgr.getCourse(entry.getKey());
+                ind = courseMgr.getCourseIndex(course, entry.getValue());
+                lessons = ind.getTimeTable();
+                for (int i=0; i<lessons.length; i++) {
+                    for (LessonDetails ld: lessons[i]) {
+                        int startRow = (ld.getStartTime().getHour()-8) * 2 + (ld.getStartTime().getMinute() / 30);
+                        int endRow = (ld.getEndTime().getHour() - 8) * 2 + (ld.getEndTime().getMinute() / 30);
+                        for (int j=startRow; j<=endRow; j++) {
+                            tableForm[j][i] = String.format("%15s", course.getCourseCode() + " " + ind.getIndexNo());
+                        }
+                    }
+                }
+
+                String output = "\nEVEN WEEKS\n|     |";
+                for (int i=0; i<DayOfWeek.values().length; i++) {
+                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
+                }
+                for (int i=0; i<tableForm.length; i++) {
+                    output += String.format("\n|%2d:%2d|", ((int) (i/2)) + 8, i%2 * 30);
+                    for (int j=0; j<7; j++) {
+                        output += String.format("%s|", tableForm[i][j]);
+                    }
+                }
+                output += "\nODD WEEKS\n|     |";
+                for (int i = 0; i < DayOfWeek.values().length; i++) {
+                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
+                }
+                for (int i = 0; i < tableForm.length; i++) {
+                    output += String.format("\n|%2d:%2d|", ((int) (i / 2)) + 8, i % 2 * 30);
+                    for (int j = 7; j < tableForm[0].length; j++) {
+                        output += String.format("%s|", tableForm[i][j]);
+                    }
+                }
+
+                return output;
+            } catch (KeyNotFoundException e) {
+                throw new FileReadingException("inconsistencies found in student data. Please contact system administrator");
+            }
+        }
+
+        String timetable = "";
+        for (int i=0; i<tableForm.length; i++) {
+            for (int j=0; j<tableForm[0].length; j++) {
+                timetable += tableForm[i][j];
+            }
+            timetable += "\n";
+        }
+        return timetable;
+    }
+
     // These are called AFTER selectCourse/selectIndex
     ////// ++++++++ START +++++++++
     // FUNCTIONAL REQUIREMENT - Student: 1. Add course
-    public int addCourse() throws KeyNotFoundException, MissingSelectionException {
+    public void addCourse() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
+            MissingParametersException {
         /**
-         * Returns 1 is successfully registered, 
-         * 0 if waitlisted,
-         * negative if not possible
-         * to add.
-         *  
-         * -1 : Timetable clash
-         * -2 : Already registered
-         * -3 : Exceeds AU
+         * 
          */
 
-        // Check timing clash
-        if (checkAddClash(user)){
-            return -1;
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Please select a course");
         }
-        
-        // TODO: throw exceptions for negative results
-        int result = studentManager.addCourse(selectedCourse, selectedIndex, user);
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Please select an index");
+        }
 
-        // in the event that student has been successfully added or waitlisted,
-        // the course needs to be updated
-        switch(result) {
+        // Check timing clash
+        if (checkAddClash(user)) {
+            throw new OutOfRangeException("Timetable class detected. Course registration not allowed");
+        }
+
+        int result = studentManager.addCourse(selectedCourse, selectedIndex, user);
+        switch (result) {
             case 1:
                 courseMgr.addStudent(user, selectedIndex, selectedCourse);
                 break;
-            case 2:
+            case 0:
                 courseMgr.enqueueWaitlist(user, selectedIndex, selectedCourse);
                 break;
         }
-
-        return result;
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-    public int dropCourse() {
+    public void dropCourse() throws OutOfRangeException, MissingParametersException {
         /**
-         * Checks if registered, then proceeds to drop. 
-         * 1 for success. 
-         * 0 for removed from waitlist. 
-         * -1 else
+         * 
          */
-        // TODO: Go through StudentMgr
-        int result = -1;
-        if (user.isRegistered(selectedCourse)){
-            user.removeCourse(selectedCourse.getCourseCode(), selectedCourse.getAcadU());
-            result = 1;
-        } else if (user.isWaitlisted(selectedCourse)){
-            user.removeWaitlist(selectedCourse);
-            result = 0;
-        }
-        
-        // remove the student from the course after
+        studentManager.dropCourse(selectedCourse, user);
         courseMgr.removeStudent(user, selectedIndex, selectedCourse);
-        return result;
+        clearSelections();
     }
     
     public String getIndexesOfCourse(String format) {
@@ -207,20 +251,24 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
-    public int swopIndexWithStudent(String identifier) throws KeyNotFoundException, MissingSelectionException {
+    public void swopIndexWithStudent(String identifier) throws KeyNotFoundException, MissingSelectionException,
+            OutOfRangeException {
         /** 
          * Returns 0 and does nothing if either students will havetimetable clash, 
          * else swaps indexes and returns 1
          * -1: user or swopping student is not registered in the course
          */
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Please select a course first");
+        }
+        
         Student toSwapWith = studentManager.getStudent(identifier);
 
-        // TODO: change to exceptions
         // first ensure that the swopping students both are enrolled in the course
         if (!user.isRegistered(selectedCourse)) {
-            return -1;
+            throw new OutOfRangeException("you are not registered in this course");
         } else if (!toSwapWith.isRegistered(selectedCourse)) {
-            return -1;
+            throw new OutOfRangeException(identifier + " is not registered in this course");
         }
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
@@ -228,42 +276,45 @@ public class StudentSystem implements CourseSystemInterface {
         String strCurr = user.getCourseIndex(selectedCourse.getCourseCode());
         Index currentIndex = courseMgr.getCourseIndex(selectedCourse, strCurr);
 
-        // raise error if both are registered in same course
+        // do nothing if both are registered in same course
         if (strToSwapTo.equals(strCurr)) {
-            return -2;
+            return;
         }
 
         if (!checkSwopClash(user, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
-            studentManager.swopIndex(user, toSwapWith, selectedCourse.getCourseCode());
-            int result = courseMgr.swopStudents(user, toSwapWith, selectedCourse);
-            if (result == 1) {
-                studentManager.swopIndex(user, toSwapWith, selectedCourse.getCourseCode());
-            }
-            return result;
+            courseMgr.swopStudents(user, toSwapWith, selectedCourse);
+            studentManager.swopIndex(user, toSwapWith, selectedCourse);
+        } else {
+            throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
         }
-        return 0;
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
-    public int swopToIndex() throws KeyNotFoundException, MissingSelectionException {
-        // TODO: convert into exceptions
-        // already registered for index
-        if (user.isRegistered(selectedIndex)){
-            return -1;
+    public void swopToIndex() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
+            MissingParametersException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Please select a Course for swopping index");
+        } else if (user.isRegistered(selectedCourse)) {
+            throw new OutOfRangeException("You are not registered for this course");
+        }
+        
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Please select an Index to swop to");
+        } else if (user.isRegistered(selectedIndex)){
+            throw new OutOfRangeException("You are already in this index");
         }
         // no more slots
         if (selectedIndex.getSlotsAvailable() <= 0){
-            return -2;
+            throw new OutOfRangeException("The chosen index is full");
         }
+
         String current = user.getCourseIndex(selectedCourse.getCourseCode());
         if (checkSwopClash(user, selectedIndex)){
-            // clashes with current timetable, not including current index
-            return -3;
+            throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
         }
         courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
         courseMgr.addStudent(user, selectedIndex, selectedCourse);
         studentManager.swopIndex(user, selectedCourse, selectedIndex);
-        return selectedIndex.getSlotsAvailable();
     }
 
     private boolean checkAddClash(Student student) throws KeyNotFoundException, MissingSelectionException {

@@ -6,14 +6,15 @@ import readers.*;
 import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
+import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
+import exceptions.OutOfRangeException;
 
 public class StudentManager implements EntityManager {
     private HashMap<String, Student> students;
     StudentReader sReader;
 
     public StudentManager() throws FileReadingException {
-        // TODO: filepath
         sReader = new StudentReader("data/students/");
         students = (HashMap<String, Student>) sReader.getData();
     }
@@ -29,23 +30,28 @@ public class StudentManager implements EntityManager {
         return toReturn;
     }
 
-    public boolean createStudent(String userId, String name, String gender, String nationality, String matricNo,
-            LocalDateTime[] accessPeriod) {
+    public HashMap<String, Student> getStudents() {
+        return students;
+    }
+
+    public void createStudent(String userId, String name, String gender, String nationality,
+    String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException {
         /**
-         * Returns boolean for creating a student (true if created, false otherwise)
+         * creates a new student based on information provided
          */
-        if (students.containsKey(matricNo) || students.containsKey(userId)) {
+        if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
-            return false;
+            throw new KeyClashException("Matric Number already exists");
+        } else if (students.containsKey(userId)) {
+            throw new KeyClashException("UserID already exists");
         }
         Student newStudent = new Student(userId, name, gender, nationality, matricNo, accessPeriod,
                 new HashMap<String, String>(), new HashMap<String, String>());
         students.put(matricNo, newStudent);
         saveState(newStudent);
-        return true;
     }
 
-    public boolean dropCourse(Course course, Student student) {
+    public void dropCourse(Course course, Student student) throws OutOfRangeException {
         /**
          * Returns boolean for dropping a course (true if successful, false otherwise)
          */
@@ -53,22 +59,22 @@ public class StudentManager implements EntityManager {
         if (student.isRegistered(course)) {
             student.removeCourse(course.getCourseCode(), course.getAcadU());
             saveState(student);
-            return true;
+        } else if (student.isWaitlisted(course)) {
+            student.removeWaitlist(course);
+            saveState(student);
+        } else {
+            throw new OutOfRangeException(student.getUserId() + " is not registered for " + course.getCourseCode());
         }
-        return false;
     }
 
-    public int addCourse(Course course, Index index, Student student) {
+    public int addCourse(Course course, Index index, Student student) throws OutOfRangeException {
         /**
-         * Returns int. 1=successful registration, 0=waitlisted, negative if other
-         * results (Fail) Note: error code -1 is returnedby student system
+         * 
          */
         if (student.isRegistered(course) || student.isWaitlisted(course)) {
-            // already registered
-            return -2;
+            throw new OutOfRangeException("Cannot register for a course already registered");
         } else if (student.getAcadUnits() + course.getAcadU() > student.getAcadUnitsAllowed()) {
-            // overload
-            return -3;
+            throw new OutOfRangeException("Insufficient Academic Units to take this course");
         }
 
         if (index.getSlotsAvailable() > 0) {
@@ -84,10 +90,21 @@ public class StudentManager implements EntityManager {
         }
     }
 
-    public void swopIndex(Student s1, Student s2, String courseCode) throws KeyNotFoundException {
+    public void swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException, OutOfRangeException {
+        if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
+            throw new OutOfRangeException("Both Students must be registered for the course");
+        }
+
+        String courseCode = course.getCourseCode();
         // update the student info only
         String i1 = s1.getCourseIndex(courseCode);
         String i2 = s2.getCourseIndex(courseCode);
+
+        // do nothing if indexes are the same
+        if (i1 == i2) {
+            return;
+        }
+
         s1.changeIndex(courseCode, i2);
         s2.changeIndex(courseCode, i1);
         saveState(s1);
@@ -99,15 +116,19 @@ public class StudentManager implements EntityManager {
         saveState(student);
     }
 
-    public boolean updateAccessPeriod(Student student, LocalDateTime[] newAccessPeriod) {
+    public void updateAccessPeriod(Student student, LocalDateTime[] newAccessPeriod) throws FileReadingException {
         LocalDateTime[] accessPeriod = student.getAccessPeriod();
 		if (accessPeriod == newAccessPeriod){
-            // same/updated alr
-            return false; // TODO: change to exception
+            // same/updated already
+            return;
         }
-        student.changeAccessPeriod(newAccessPeriod);
-        saveState(student);
-        return true;
+
+        try {
+            student.changeAccessPeriod(newAccessPeriod);
+            saveState(student);
+        } catch (Exception e) {
+            throw new FileReadingException("Error in changing accesss period. Please contact system administrator");
+        }
     }
 
 	@Override
@@ -116,8 +137,4 @@ public class StudentManager implements EntityManager {
         sReader.writeData(s);
         students.replace(s.getMatricNo(), s);
     }
-
-	public HashMap<String, Student> getHashMap() {
-		return students;
-	}
 }

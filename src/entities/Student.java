@@ -1,6 +1,5 @@
 package entities;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import entities.course_info.*;
@@ -49,7 +48,7 @@ public class Student extends User implements Printable{
         if (this.courses.containsKey(courseCode)) {
             return this.courses.get(courseCode);
         } else {
-            throw new KeyNotFoundException(courseCode);
+            throw new KeyNotFoundException(this.userId + " is not registered for " + courseCode);
         }
     }
 

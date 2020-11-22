@@ -12,6 +12,6 @@ public class KeyClashException extends Exception{
     }
 
     public String getMessage(){
-        return "Key " + key + " already exists in map";
+        return key + " already exists";
     }
 }

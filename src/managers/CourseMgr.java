@@ -5,8 +5,9 @@ import java.util.List;
 import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
+import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
-import exceptions.MissingSelectionException;
+import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
 import readers.CourseReader;
 import boundaries.NotifSender;
@@ -24,10 +25,7 @@ public class CourseMgr implements EntityManager {
         }
     }
 
-    public Course createCourse(String courseCode,
-                            String courseName,
-                            School school,
-                            int acadU){
+    public Course createCourse(String courseCode, String courseName, School school, int acadU){
         Course c = new Course(courseCode, courseName, school, acadU);
         saveState(c);
         return c;
@@ -65,12 +63,13 @@ public class CourseMgr implements EntityManager {
         return true;
     }
 
-    public boolean updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutOfRangeException {
+    public void updateIndex(Course course, Index index, String indexNo, int slotsTotal) throws OutOfRangeException,
+            KeyClashException {
         // Update indexNo
         if (indexNo != index.getIndexNo()){
             if (course.getIndex(indexNo) != null){
                 // Index already exists, cannot overwrite
-                return false;
+                throw new KeyClashException(indexNo);
             }
             String oldIndexNo = index.getIndexNo();
             index.setIndexNo(indexNo);
@@ -88,7 +87,6 @@ public class CourseMgr implements EntityManager {
         index.setSlotsAvailable(index.getSlotsAvailable() - changeInSlots);
         course.updateIndex(index);
         saveState(course);
-        return true;
     }
 
     public HashMap<String, Course> getAllCourses(){
@@ -103,10 +101,7 @@ public class CourseMgr implements EntityManager {
         return toReturn;
     }
 
-    public Index getCourseIndex(Course course, String indexNo) throws KeyNotFoundException, MissingSelectionException {
-        if (course == null){
-            throw new MissingSelectionException(Course.class);
-        }
+    public Index getCourseIndex(Course course, String indexNo) throws KeyNotFoundException {
         Index toReturn = course.getIndex(indexNo);
         if (toReturn == null){
             throw new KeyNotFoundException(indexNo);
@@ -114,9 +109,10 @@ public class CourseMgr implements EntityManager {
         return toReturn;
     }
 
-    public boolean removeStudent(Student student, Index index, Course course){
+    public void removeStudent(Student student, Index index, Course course) throws MissingParametersException,
+            OutOfRangeException {
         if (student == null || index == null || course == null){
-            return false;
+            throw new MissingParametersException("Invalid Parameters provided, please check inputs");
         }
         List<Student> studentList = index.getRegisteredStudents();
         boolean removed = studentList.remove(student);
@@ -126,20 +122,19 @@ public class CourseMgr implements EntityManager {
             course.updateIndex(index);
             dequeueWaitlist(course, index);
             saveState(course);
-            return true;
-        } else if (!studentList.contains(student)) { // check waitlist if unable to remove
+        } else if (!studentList.contains(student)) { // check waitlist if not in the list of registered students
             index.removeFromWaitList(student);
             course.updateIndex(index);
             saveState(course);
-            return true;
+        } else {
+            throw new OutOfRangeException(student.getUserId() + " is not registered for " + index.getIndexNo());
         }
-
-        return false;
     }
 
-    public boolean addStudent(Student student, Index index, Course course){
+    public boolean addStudent(Student student, Index index, Course course) throws MissingParametersException,
+            OutOfRangeException {
         if (student == null || index == null){
-            return false;
+            throw new MissingParametersException("Invalid Parameters provided, please check inputs");
         }
         List<Student> l = index.getRegisteredStudents();
         if (!l.contains(student) && index.getSlotsAvailable() > 0){
@@ -149,13 +144,16 @@ public class CourseMgr implements EntityManager {
             course.updateIndex(index);
             saveState(course);
             return true;
+        } else if (l.contains(student)) {
+            throw new OutOfRangeException("Cannot register for a course already registered");
+        } else {
+            throw new OutOfRangeException("Cannot add to an index that is full");
         }
-        return false;
     }
 
-    public int swopStudents (Student s1, Student s2, Course course) throws KeyNotFoundException {
+    public void swopStudents (Student s1, Student s2, Course course) throws KeyNotFoundException, OutOfRangeException {
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
-            return -1; // TODO: convert to exception
+            throw new OutOfRangeException("Both Students must be registered for the course");
         }
 
         // get the indexes of each student
@@ -165,7 +163,7 @@ public class CourseMgr implements EntityManager {
         Index i2 = course.getIndex(indexNo2);
 
         if (indexNo1.equals(indexNo2)) {
-            return -2; // TODO: convert to exception
+            return;
         }
 
         // remove student s1 from index i1 and add to index i2
@@ -182,9 +180,8 @@ public class CourseMgr implements EntityManager {
             course.updateIndex(i1);
             course.updateIndex(i2);
             saveState(course);
-            return 1;
-        } else  {
-            return -3; // TODO: convert to exception
+        } else {
+            throw new KeyNotFoundException("Inconsistencies found for student data. Please contact system administrator");
         }
 
     }
@@ -194,17 +191,24 @@ public class CourseMgr implements EntityManager {
             return;
         }
         Student student = index.dequeueWaitlist();
-        if (student != null && addStudent(student, index, course)){
-            informWaitlistSuccess(student, course, index);
-            course.updateIndex(index);
-            saveState(course);
+        try {
+            if (student != null && addStudent(student, index, course)) {
+                informWaitlistSuccess(student, course, index);
+                course.updateIndex(index);
+                saveState(course);
+            }
+        } catch (OutOfRangeException e) {
+            if (index.getSlotsAvailable() == 0) {
+                return;
+            } else {
+                dequeueWaitlist(course, index);
+            }
+        } catch (MissingParametersException m) {
+            m.printStackTrace();
         }
     }
 
     public void enqueueWaitlist(Student student, Index index, Course course){
-        if (student != null && index != null){
-            return;
-        }
         index.enqueueWaitlist(student);
         course.updateIndex(index);
         saveState(course);

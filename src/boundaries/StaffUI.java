@@ -9,7 +9,7 @@ import entities.School;
 import exceptions.*;
 import managers.StaffSystem;
 
-public class StaffUI extends Promptable {
+public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     private static Scanner scn;
     private static String userId;
     private static StaffSystem system;
@@ -89,9 +89,10 @@ public class StaffUI extends Promptable {
         String courseCode = "";
         displayOutput("Please Enter Course Code: ");
         while (true) {
-            courseCode = (String) getUserInput();;
+            courseCode = (String) getUserInput();
+            ;
             courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")){
+            if (courseCode.equals("EXIT")) {
                 return -1;
             }
             try {
@@ -109,7 +110,7 @@ public class StaffUI extends Promptable {
         while (true) {
             indexNo = (String) getUserInput();
             indexNo = indexNo.toUpperCase();
-            if (indexNo.equals("EXIT")){
+            if (indexNo.equals("EXIT")) {
                 return -1;
             }
             try {
@@ -127,7 +128,8 @@ public class StaffUI extends Promptable {
         String identifier = "";
         displayOutput("Please enter a student's user ID or matriculation number");
         while (true) {
-            identifier = (String) getUserInput();;
+            identifier = (String) getUserInput();
+            ;
             identifier = identifier.toUpperCase();
             if (identifier.equals("EXIT")) {
                 return -1;
@@ -141,7 +143,8 @@ public class StaffUI extends Promptable {
         }
     }
 
-    private int promptIntegerInput() {
+    @Override
+    public int promptIntegerInput() {
         int response;
         while (true) {
             try {
@@ -153,7 +156,8 @@ public class StaffUI extends Promptable {
         }
     }
 
-    private int promptIntegerInput(int lowerLim, int upperLim) {
+    @Override
+    public int promptIntegerInput(int lowerLim, int upperLim) {
         int response;
         while (true) {
             try {
@@ -169,8 +173,9 @@ public class StaffUI extends Promptable {
         }
     }
 
-    private LocalDateTime getDateInput() {
-        int day, mth, yr, hr, min;
+    @Override
+    public LocalDateTime getDateInput() {
+        int day, mth, yr;
         LocalDateTime ldt = LocalDateTime.now();
         // get new year;
         displayOutput("Enter new year");
@@ -219,30 +224,15 @@ public class StaffUI extends Promptable {
             }
         } while (!(day >= 1 && day <= maxDay));
 
-        // get new hour
-        displayOutput("Enter new hour of day (24 hour format)");
-        do {
-            hr = promptIntegerInput();
-            if (!(hr >= 0 && hr <= 23)) {
-                displayOutput("Hour must be integer from 1 to 23");
-            }
-        } while (!(hr >= 0 && hr <= 23));
-
-        // get new minute
-        displayOutput("Enter new minute");
-        do {
-            min = promptIntegerInput();
-            if (!(min >= 0 && min <= 59)) {
-                displayOutput("Minute must be integer from 1 to 59");
-            }
-        } while (!(min >= 0 && min <= 59));
+        LocalTime time = getTimeInput();
 
         // set the date and time
-        ldt = LocalDateTime.of(yr, mth, day, hr, min);
+        ldt = LocalDateTime.of(yr, mth, day, time.getHour(), time.getMinute());
         return ldt;
     }
 
-    private LocalTime getTimeInput() {
+    @Override
+    public LocalTime getTimeInput() {
         int hr;
         int min;
         // get new hour
@@ -250,18 +240,13 @@ public class StaffUI extends Promptable {
         do {
             hr = promptIntegerInput();
             if (!(hr >= 0 && hr <= 23)) {
-                displayOutput("Hour must be integer from 1 to 23");
+                displayOutput("Hour must be integer from 0 to 23");
             }
         } while (!(hr >= 0 && hr <= 23));
 
         // get new minute
-        displayOutput("Enter new minute");
-        do {
-            min = promptIntegerInput();
-            if (!(min >= 0 && min <= 59)) {
-                displayOutput("Minute must be integer from 1 to 59");
-            }
-        } while (!(min >= 0 && min <= 59));
+        String[] options = {hr + ":00", hr + ":30"};
+        min = promptChoice("Select options for minute", options) * 30;
 
         return LocalTime.of(hr, min);
     }
@@ -281,10 +266,11 @@ public class StaffUI extends Promptable {
         LocalDateTime end = getDateInput();
         LocalDateTime[] newAccessPeriod = { start, end };
 
-        if (system.updateAccessPeriod(newAccessPeriod)) {
+        try {
+            system.updateAccessPeriod(newAccessPeriod);
             displayOutput("Access Period changed successfully");
-        } else {
-            displayOutput("Error occured, please inform system administrator");
+        } catch (FileReadingException e) {
+            displayOutput(e.getMessage());
         }
         ;
     }
@@ -298,9 +284,12 @@ public class StaffUI extends Promptable {
             return;
         }
 
-        // TODO: make try catch
-        String toPrint = system.printStudentsbyCourse();
-        displayOutput(toPrint);
+        try {
+            String toPrint = system.printStudentsbyCourse();
+            displayOutput(toPrint);
+        } catch (MissingSelectionException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     private void printIndexStudents() {
@@ -318,9 +307,12 @@ public class StaffUI extends Promptable {
             return;
         }
 
-        // TODO: make try catch
-        String toPrint = system.printStudentsbyIndex();
-        displayOutput(toPrint);
+        try {
+            String toPrint = system.printStudentsbyIndex();
+            displayOutput(toPrint);
+        } catch (MissingSelectionException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     private void addCourse() {
@@ -372,7 +364,11 @@ public class StaffUI extends Promptable {
         // prompt user for which detail of course to be changed
         do {
             displayOutput("Current course information:");
-            displayOutput(system.getCourseInfo());
+            try {
+                displayOutput(system.getCourseInfo());
+            } catch (MissingSelectionException e) {
+                displayOutput(e.getMessage());
+            }
             choice = promptChoice("Which detail of the course needs to be changed", options);
             switch (choice) {
                 case 0:
@@ -529,6 +525,8 @@ public class StaffUI extends Promptable {
             system.updateIndex(indexNo, slots);
         } catch (OutOfRangeException e) {
             displayOutput(e.getMessage());
+        } catch (KeyClashException e) {
+            displayOutput(e.getMessage());
         }
     }
 
@@ -583,9 +581,12 @@ public class StaffUI extends Promptable {
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};
                     try {
                         system.addStudent(userId, name, gender, nationality, matricNo, accessPeriod, password);
-                    } catch (Exception e) {
-                        //TODO: handle exception
-                        choice = -1;
+                    } catch (KeyClashException k) {
+                        displayOutput(k.getMessage());
+                    } catch (FileReadingException f) {
+                        // in the event of a filereadingexception, there is a fatal error thus the method needs to exit
+                        displayOutput(f.getMessage());
+                        return;
                     }
             }
         } while (choice != 8);

@@ -1,11 +1,11 @@
 package boundaries;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import entities.School;
+import exceptions.FileReadingException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
 import managers.LoginMgr;
@@ -48,9 +48,9 @@ public class StudentUI extends Promptable {
 
         String[] options = { "Show System Status", "Add Course", "Drop Course", "Check Courses Registered",
                 "Check course vacancies", "Print Courses", "Swop to another Index", "Swop index with another student",
-                "Exit" };
+                "View TimeTable", "Exit" };
 
-        while (choice != 8) {
+        while (choice != 9) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
             switch (choice) {
                 case 0:
@@ -78,9 +78,12 @@ public class StudentUI extends Promptable {
                     swopStudentIndex();
                     break;
                 case 8:
+                    viewTimeTable();
+                    break;
+                case 9:
                     break;
                 default:
-                    displayOutput("Choices must be between 1 and ");
+                    displayOutput("Choices must be between 1 and 8");
                     break;
             }
         }
@@ -97,7 +100,7 @@ public class StudentUI extends Promptable {
         while (true) {
             courseCode = (String) getUserInput();
             courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")){
+            if (courseCode.equals("EXIT")) {
                 return -1;
             }
             try {
@@ -144,31 +147,12 @@ public class StudentUI extends Promptable {
         }
 
         // try to add course in the system
-        // TODO: Change to try catch
         try {
-            result = system.addCourse();
-        } catch (Exception e){
+            system.addCourse();
+        } catch (Exception e) {
             displayOutput(e.getMessage());
             return;
         }
-        switch (result) {
-            case 1:
-                displayOutput("Course Successfully registered");
-                break;
-            case 0:
-                displayOutput("No available vacancies, registered for waitlist");
-                break;
-            case -1:
-                displayOutput("Timetable clash! Please choose another index");
-                break;
-            case -2:
-                displayOutput("You have already registered for this course");
-                break;
-            case -3:
-                displayOutput("Insufficient Academic Units, please speak to school administrator");
-                break;
-        }
-        // TODO: Deselect course and index
     }
 
     private void dropCourse() {
@@ -185,20 +169,12 @@ public class StudentUI extends Promptable {
         }
 
         // try to remove the course in the system
-        // TODO: Change to try catch
-        result = system.dropCourse();
-        switch (result) {
-            case 1:
-                displayOutput("Course Successfully Dropped");
-                break;
-            case 0:
-                displayOutput("Removed from course waitlist");
-                break;
-            case -1:
-                displayOutput("Error Occurred, Please contact system administrator");
-                break;
+        try {
+            system.dropCourse();
+            displayOutput("Successfully dropped course");
+        } catch (Exception e) {
+            displayOutput(e.getMessage());
         }
-        // TODO: Deselect course and index
     }
 
     private void printRegisteredCourses() {
@@ -259,26 +235,12 @@ public class StudentUI extends Promptable {
         }
 
         // try to swop index
-        // TODO: change to try catch
         try {
-            result = system.swopToIndex();
-        } catch (Exception e){
+            system.swopToIndex();
+            displayOutput("Index Succesfully Changed");
+        } catch (Exception e) {
             e.printStackTrace();
             return;
-        }
-        switch (result) {
-            case -1:
-                displayOutput("You are already registered in this index");
-                break;
-            case -2:
-                displayOutput("This index is full");
-                break;
-            case -3:
-                displayOutput("New index clashes with existing timetable");
-                break;
-            default:
-                displayOutput("Index Succesfully Changed");
-                break;
         }
     }
 
@@ -301,39 +263,36 @@ public class StudentUI extends Promptable {
         LoginMgr loginMgr = new LoginMgr();
         try {
             result = loginMgr.verifyLoginDetails(swopID, swopPassword);
-        } catch (FileNotFoundException e) {
-            result = -1;
+        } catch (Exception e) {
+            displayOutput(e.getMessage());
+            ;
+            return;
         }
-        if (result != 1) { //  if the login details are not verified to be a student
+        if (result != 1) { // if the login details are not verified to be a student
             displayOutput("Swopping details invalid!");
             return;
         } else {
             try {
-                result = system.swopIndexWithStudent(swopID);
-            } catch (Exception e){
+                system.swopIndexWithStudent(swopID);
+                displayOutput("Swop Successful");
+            } catch (Exception e) {
                 displayOutput(e.getMessage());
-                return;
-            }
-            // TODO: change to try catch
-            switch(result) {
-                case 1:
-                    displayOutput("Swop Successful");
-                    break;
-                case 0:
-                    displayOutput("Swop Unsuccessful due to timetable clash");
-                    break;
-                case -1:
-                    displayOutput("One of the students is not registered for this course");
-                    break;
-                case -2:
-                    displayOutput("Both students are in the same index");
-                    break;
-                case -3:
-                    displayOutput("Unknown error, please contact system administrator");
-                    break;
             }
         }
+    }
 
+    private void viewTimeTable() {
+        try {
+            displayOutput(system.getTimeTable());
+<<<<<<< HEAD
+        } catch (Exception e) {
+            displayOutput(e.getMessage());
+=======
+        } catch (FileReadingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+>>>>>>> ab0be1a9caa95e91bcead216158e0a0fd585073f
+        }
     }
 
     private void shutDown() {

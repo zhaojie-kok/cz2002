@@ -7,7 +7,6 @@ public class STARSApp extends Promptable {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
-    private int loginStatus;
 
     public static void main(String[] args) {
         STARSApp app = new STARSApp(); // to allow calling of non-static methods
@@ -68,18 +67,6 @@ public class STARSApp extends Promptable {
         } catch (Exception e) {
             displayOutput(e.getMessage());
             return -1;
-        }
-        switch(result) {
-            // TODO: change to try catch
-            case -1:
-                displayOutput("Username not found");
-                break;
-            case -2:
-                displayOutput("Wrong password");
-                break;
-            case -3:
-                displayOutput("System error, please contact administrator");
-                break;
         }
 
         return result;

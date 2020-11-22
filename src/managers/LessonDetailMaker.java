@@ -38,6 +38,7 @@ public class LessonDetailMaker implements Systems {
         }
 
         lessonDetails = new LessonDetails(lessonVenue, lessonType, lessonDay, evenOdd, startTime, endTime);
+        clearSelections();
         return lessonDetails;
     }
 
@@ -97,7 +98,27 @@ public class LessonDetailMaker implements Systems {
 
     @Override
     public String getSystemStatus() {
-        // TODO Auto-generated method stub
-        return null;
+        String info = "";
+        info += String.format("%20s", "Venue") + (lessonVenue != null ? lessonVenue : "");
+        info += String.format("\n%20s", "Type") + (lessonType != null ? lessonType : "");
+        info += String.format("\n%20s", "Day") + (lessonDay != null ? lessonDay.toString() : "");
+        info += String.format("\n%20s", "Even or Odd weeks");
+        switch(evenOdd) {
+            case 0:
+                info += "even weeks";
+                break;
+            case 1:
+                info += "odd weeks";
+                break;
+            case 2:
+                info += "all weeks";
+                break;
+            default:
+                break;
+        }
+        info += String.format("\n%20s", "Start Time") + (startTime != null ? startTime.toString() : "");
+        info += String.format("\n%20s", "End Time") + (endTime != null ? endTime.toString() : "");
+
+        return info;
     }
 }

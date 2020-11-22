@@ -3,13 +3,15 @@ package managers;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import exceptions.FileReadingException;
+import exceptions.InvalidInputException;
 import readers.LoginReader;
 
 public class LoginMgr {
     private static LoginReader loginReader;
 
     public LoginMgr() {
-        loginReader = new LoginReader("data/loginDetails"); // TODO: change to a default file path
+        loginReader = new LoginReader("data/loginDetails/");
     }
 
     // overloaded for future upgrades, where the filepath will depend on the
@@ -18,7 +20,8 @@ public class LoginMgr {
         loginReader = new LoginReader(loginDetailsFilePath);
     }
 
-    public int verifyLoginDetails(String userId, String password) throws FileNotFoundException {
+    public int verifyLoginDetails(String userId, String password) throws FileNotFoundException, InvalidInputException,
+            FileReadingException {
         /*
          * CODES FOR LoginMgr.verifyLoginDetails: 2: successful & user is a staff 1:
          * successful & user is a student -1: username not found -2: wrong password -3:
@@ -42,7 +45,7 @@ public class LoginMgr {
             if (details.length == 0) {
                 return -1;
             } else if (!loginReader.hashPassword(password).equals(details[0])) {
-                return -2;
+                throw new InvalidInputException("Wrong Password");
             } else {
                 // return positive numerics instead of just boolean for success to make it easy to add more classes
                 switch(details[1]) {
@@ -51,7 +54,7 @@ public class LoginMgr {
                     case "staff":
                         return 2;
                     default: // the default case would imply an error in the data from the file, meaning an unknown error
-                        return -3;
+                        throw new FileReadingException("Unknown error in reading login details. Please contact system administrator");
                 }
             }
         }

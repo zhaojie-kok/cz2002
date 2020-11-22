@@ -5,13 +5,13 @@ public class MissingSelectionException extends Exception {
      *
      */
     private static final long serialVersionUID = -7358761558962669134L;
-    String cName;
-    public MissingSelectionException(Class c){
-        cName = c.getSimpleName();
+    String message;
+    public MissingSelectionException(String message){
+        this.message = message;
     }
 
     public String getMessage(){
-        return "Object of class " + cName + " not yet selected";
+        return message;
     }
 
 }

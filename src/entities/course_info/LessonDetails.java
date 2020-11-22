@@ -91,18 +91,20 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 
 	@Override
 	public String getMoreInfo() {
-		String info = this.lessonVenue;
-		info += " | " + this.lessonType;
-		info += " | " + this.lessonDay.toString();
-		switch(this.evenOdd) {
-			case 0:
-				info += " | even weeks";
-			case 1:
-				info += " | odd weeks";
-			case 2:
-				info += " | all weeks";
+		String info = String.format("|%10s|", this.lessonType);
+		String[] daysOfWeek = {"Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"};
+		String evenOddWk;
+		if (this.evenOdd == 0) {
+			evenOddWk = "Even Weeks";
+		} else if (this.evenOdd == 1) {
+			evenOddWk = "Odd Weeks";
+		} else {
+			evenOddWk = "All Weeks";
 		}
-		info += " | " + getInfo();
+		info += String.format(" %5s (10%s) |", daysOfWeek[this.lessonDay.getValue()], evenOddWk);
+		info += String.format(" %02d%02d-%02d%02d |", this.startTime.getHour(), this.startTime.getMinute(),
+					this.endTime.getHour(), this.endTime.getMinute());
+		info += String.format(" %15s\n", this.lessonVenue);
 
 		return info;
 	}

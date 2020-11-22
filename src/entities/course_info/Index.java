@@ -117,7 +117,6 @@ public class Index implements Serializable, Printable{
 		 * TUT        | Thurs | 0930-1000 | LHN-TR+12
 		 */
 		String toReturn = String.format("Index: %s\nSlots available: %d out of %d\n", indexNo, slotsAvailable, slotsTotal);
-		String[] daysOfWeek = {"Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"};
 		
 		for (int i = 0; i < timeTable.length; i++){
 			List<LessonDetails> lessons = timeTable[i];
@@ -125,12 +124,7 @@ public class Index implements Serializable, Printable{
 				continue;
 			}
 			for (LessonDetails lesson:lessons){
-				toReturn += String.format("%10s | %5s | %02d%02d-%02d%02d | %15s\n", 
-					lesson.getLessonType(), 
-					daysOfWeek[i], 
-					lesson.getStartTime().getHour(), lesson.getStartTime().getMinute(),
-					lesson.getEndTime().getHour(), lesson.getEndTime().getMinute(), 
-					lesson.getLessonVenue());
+				toReturn += lesson.getMoreInfo();
 			}
 		}
 		return toReturn + "\n";
@@ -147,7 +141,7 @@ public class Index implements Serializable, Printable{
 		 * Waitlisted students:
 		 * 1. 
 		 */
-		String toReturn = "______________________________\nIndex: " + indexNo + "\nRegistered students:\n";
+		String toReturn = getInfo() + "\nRegistered students:\n";
 		int i = 1;
 		if (registeredStudents.size() != 0){
 			for (Student s: registeredStudents){
