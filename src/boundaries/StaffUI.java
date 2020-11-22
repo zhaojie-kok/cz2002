@@ -240,7 +240,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         do {
             hr = promptIntegerInput();
             if (!(hr >= 0 && hr <= 23)) {
-                displayOutput("Hour must be integer from 1 to 23");
+                displayOutput("Hour must be integer from 0 to 23");
             }
         } while (!(hr >= 0 && hr <= 23));
 
