@@ -1,7 +1,16 @@
 package boundaries;
 
+/**
+ * Parent class for UI types that need to get a choice from user
+ */
 public abstract class Promptable implements GeneralUI{
-    // method to get choices from user
+    /**
+     * Method to get the choice from the user based on a list of options
+     * 
+     * @param prompt String displayed to user to prompt user to choose
+     * @param options Options presented to user for user to choose from
+     * @return User's choice (corresponding to index of choice in options)
+     */
     public int promptChoice(String prompt, Object[] options) {
         displayOutput(prompt);
 

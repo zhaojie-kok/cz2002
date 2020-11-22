@@ -73,7 +73,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         selectedCourse = null;
         selectedIndex = null;
         selectedStudent = null;
-        timetable = new ArrayList[14];
+        for (int i = 0; i < 14; i++) {
+            timetable[i] = new ArrayList<LessonDetails>();
+        }
     }
 
     public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
@@ -164,14 +166,16 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
-    public void addIndex(String indexNo, int slotsTotal) throws KeyClashException {
+    public void addIndex(String indexNo, int slotsTotal) throws KeyClashException, MissingParametersException,
+            OutOfRangeException {
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
         for (int i = 0; i < 14; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
         }
     }
 
-    public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException {
+    public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException,
+            OutOfRangeException {
         courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
 

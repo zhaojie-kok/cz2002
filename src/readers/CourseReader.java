@@ -29,7 +29,7 @@ public class CourseReader extends FileReader {
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles == null) {
             return new HashMap<>(); // TODO: remove line
-            // throw new Filereadingexception("Course Details Folder inaccessible. Please contact system administrator");
+            // throw new FileReadingException("Course Details Folder inaccessible. Please contact system administrator");
         }
 		HashMap<String, Course> courses = new HashMap<>();
 		Course toAdd;

@@ -9,26 +9,45 @@ import entities.School;
 import exceptions.*;
 import managers.StaffSystem;
 
+/**
+ * UI for Staff users. Meant to abstract staff system from user
+ */
 public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     private static Scanner scn;
     private static String userId;
     private static StaffSystem system;
 
+    /**
+     * Constructor
+     * NOTE: Staff system will not be instantiated and UI will not be activated until {@link #run()} is called
+     * 
+     * @param scn Scanner object for receiving input from user
+     * @param userId ID of user
+     */
     public StaffUI(Scanner scn, String userId) {
         StaffUI.scn = scn;
         StaffUI.userId = userId;
     }
 
+    /**
+     * Method to get input from user using Scanner object
+     */
     @Override
     public Object getUserInput() {
         return scn.nextLine();
     }
 
+    /**
+     * Method to display outputs to user
+     */
     @Override
     public void displayOutput(Object toDisplay) {
         System.out.println(toDisplay.toString());
     }
 
+    /**
+     * Method to start up the UI
+     */
     @Override
     public void run() {
         // set up the system
@@ -42,49 +61,69 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         shutDown();
     }
 
+    /**
+     * Main menu of UI. All other functional methods are called from here
+     */
     private void mainMenu() {
         int choice = 0;
 
-        String[] options = { "Change student access period", "Add Student to system", "Add course to system",
+        String[] options = { "Show System Status", "Change student access period", "Add Student to system", "Add course to system",
                 "Update course information", "Add index to a course", "Update index information",
                 "Print Students in a course index", "Print Students in a course", "Exit" };
 
-        while (choice != 8) {
+        while (choice != 9) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
             switch (choice) {
                 case 0:
-                    updateAccessPeriod();
+                    checkSystemStatus();
                     break;
                 case 1:
-                    addStudent();
+                    updateAccessPeriod();
                     break;
                 case 2:
-                    addCourse();
+                    addStudent();
                     break;
                 case 3:
-                    updateCourse();
+                    addCourse();
                     break;
                 case 4:
-                    addIndex();
+                    updateCourse();
                     break;
                 case 5:
-                    updateIndex();
+                    addIndex();
                     break;
                 case 6:
-                    printIndexStudents();
+                    updateIndex();
                     break;
                 case 7:
-                    printCourseStudents();
+                    printIndexStudents();
                     break;
                 case 8:
+                    printCourseStudents();
+                    break;
+                case 9:
                     break;
                 default:
-                    displayOutput("Choices must be between 1 and 8");
+                    displayOutput("Choices must be between 1 and 10");
                     break;
             }
         }
     }
 
+    /**
+     * Method to check the status of the system
+     */
+    private void checkSystemStatus() {
+        displayOutput(system.getSystemStatus());
+    }
+
+    /**
+     * Method to prompt user to select a course.Course selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting course successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
     private int promptCourseSelection() {
         String courseCode = "";
         displayOutput("Please Enter Course Code: ");
@@ -104,6 +143,13 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to prompt user to select an index. Index selected will be recorded
+     * and used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting index successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
     private int promptIndexSelection() {
         String indexNo = "";
         displayOutput("Please enter an Index");
@@ -124,6 +170,13 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to prompt user to select a student. student selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting student successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
     private int promptStudentSelection() {
         String identifier = "";
         displayOutput("Please enter a student's user ID or matriculation number");
@@ -143,6 +196,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to get unbounded integer input from user
+     * See {@link NumericUI#promptIntegerInput()}
+     */
     @Override
     public int promptIntegerInput() {
         int response;
@@ -156,6 +213,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to get bounded integer input from user
+     * See {@link NumericUI#promptIntegerInput(int, int)}
+     */
     @Override
     public int promptIntegerInput(int lowerLim, int upperLim) {
         int response;
@@ -173,6 +234,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to get date input from user
+     * See {@link DateTimeUI#getDateInput()}
+     */
     @Override
     public LocalDateTime getDateInput() {
         int day, mth, yr;
@@ -231,6 +296,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         return ldt;
     }
 
+    /**
+     * Method to get Time input from user 
+     * See {@link DateTimeUI#getTimeInput()}
+     */
     @Override
     public LocalTime getTimeInput() {
         int hr;
@@ -251,6 +320,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         return LocalTime.of(hr, min);
     }
 
+    /**
+     * Method to update the access period of a student
+     * Users will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method
+     */
     private void updateAccessPeriod() {
         int result;
 
@@ -272,9 +345,11 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } catch (FileReadingException e) {
             displayOutput(e.getMessage());
         }
-        ;
     }
 
+    /**
+     * Method to display students registered in a course
+     */
     private void printCourseStudents() {
         int result;
 
@@ -292,6 +367,9 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to display students registered in an index
+     */
     private void printIndexStudents() {
         int result;
 
@@ -315,6 +393,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to add a new course to the system
+     * User will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.CourseMgr#createCourse(String, String, School, int)} method
+     */
     private void addCourse() {
         // get the school that is teaching the course
         int choice = promptChoice("Select which school the course is under", School.values());
@@ -340,11 +422,16 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         try {
             system.addCourse(courseCode, courseName, school, acadU);
-        } catch (KeyClashException e) {
+        } catch (KeyClashException | OutOfRangeException e) {
             displayOutput(e.getMessage());
         }
     }
 
+    /**
+     * Method to update details about a course
+     * Users will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.CourseMgr#updateCourse(entities.course_info.Course, String, String, School)} method
+     * NOTE: Only course code, course name, and school of course can be changed after creation
+     */
     private void updateCourse() {
         int result;
 
@@ -395,6 +482,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         system.updateCourse(newCourseCode, newCourseName, newSchool);
     }
 
+    /**
+     * Method to create a set of lesson details using a LessonDetailMaker
+     * User will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.LessonDetailMaker#makeLessonDetails()} method
+     */
     private void createLessonDetails() {
         int choice;
         String venue = null;
@@ -446,6 +537,11 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } while (choice != 6);
     }
 
+    /**
+     * Method to add an index to an existing course
+     * User will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.CourseMgr#createIndex(entities.course_info.Course, String, int, java.util.List[])} method
+     * NOTE: the timetable for the index cannot be changed after being made available to students
+     */
     private void addIndex() {
         int result;
 
@@ -480,11 +576,12 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Update the index's index No and the total number of slots
+     * User needs to enter arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.CourseMgr#updateIndex(entities.course_info.Course, entities.course_info.Index, String, int)} method
+     * NOTE: the timetable cannot be changed after index has been made available to students
+     */
     private void updateIndex() {
-        /**
-         * Update the index's index No and the total number of slots
-         * NOTE: other details like the timetable cannot be changed after creating the index
-         */
         int result;
 
         // prompt user to select a course
@@ -530,7 +627,12 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
+    /**
+     * Method to add a new student into the system
+     * Users will need to input arguments for the {@link managers.StudentManager#createStudent(String, String, String, String, String, LocalDateTime[])} method
+     */
     private void addStudent() {
+        // TODO: email
         String userId = null;
         String name = null;
         String gender = null;
@@ -592,6 +694,9 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } while (choice != 8);
     }
 
+    /**
+     * Method to shut down the UI, to ensure all variables stored are deleted
+     */
     private void shutDown() {
         StaffUI.scn = null;
         StaffUI.system = null;

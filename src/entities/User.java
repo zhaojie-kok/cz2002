@@ -11,6 +11,7 @@ public class User implements Serializable{
 
     User(String userId, String userType, String name, String gender, String nationality) {
         // TODO: throw exception if any of these fields are null or invalid
+        // TODO: email
         this.userId = userId;
         this.userType = userType;
         this.name = name;

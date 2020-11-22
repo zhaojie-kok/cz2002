@@ -81,10 +81,11 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
-    public String checkRegisteredCourses(String format) {
+    public String checkRegisteredCourses() {
         /**
          * Converts to printable format
          */
+        String format = "Course: %s\n Index: %s\n";
         String toReturn = "";
         String toAdd;
         HashMap<String, String> hMap = user.getCourses();
@@ -184,11 +185,8 @@ public class StudentSystem implements CourseSystemInterface {
     // These are called AFTER selectCourse/selectIndex
     ////// ++++++++ START +++++++++
     // FUNCTIONAL REQUIREMENT - Student: 1. Add course
-    public void addCourse() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
+    public int addCourse() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
             MissingParametersException {
-        /**
-         * 
-         */
 
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course");
@@ -202,6 +200,7 @@ public class StudentSystem implements CourseSystemInterface {
             throw new OutOfRangeException("Timetable class detected. Course registration not allowed");
         }
 
+        // studentManager tries to register student for the course, or add student to the waitlist if the index is full
         int result = studentManager.addCourse(selectedCourse, selectedIndex, user);
         switch (result) {
             case 1:
@@ -211,6 +210,8 @@ public class StudentSystem implements CourseSystemInterface {
                 courseMgr.enqueueWaitlist(user, selectedIndex, selectedCourse);
                 break;
         }
+
+        return result;
     }
 
     // FUNCTIONAL REQUIREMENT - Student: 2. Drop course

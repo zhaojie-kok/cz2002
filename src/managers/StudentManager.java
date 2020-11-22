@@ -51,26 +51,7 @@ public class StudentManager implements EntityManager {
         saveState(newStudent);
     }
 
-    public void dropCourse(Course course, Student student) throws OutOfRangeException {
-        /**
-         * Returns boolean for dropping a course (true if successful, false otherwise)
-         */
-        // Check if student is registered
-        if (student.isRegistered(course)) {
-            student.removeCourse(course.getCourseCode(), course.getAcadU());
-            saveState(student);
-        } else if (student.isWaitlisted(course)) {
-            student.removeWaitlist(course);
-            saveState(student);
-        } else {
-            throw new OutOfRangeException(student.getUserId() + " is not registered for " + course.getCourseCode());
-        }
-    }
-
     public int addCourse(Course course, Index index, Student student) throws OutOfRangeException {
-        /**
-         * 
-         */
         if (student.isRegistered(course) || student.isWaitlisted(course)) {
             throw new OutOfRangeException("Cannot register for a course already registered");
         } else if (student.getAcadUnits() + course.getAcadU() > student.getAcadUnitsAllowed()) {
@@ -89,6 +70,23 @@ public class StudentManager implements EntityManager {
             return 0;
         }
     }
+
+    public void dropCourse(Course course, Student student) throws OutOfRangeException {
+        /**
+         * Returns boolean for dropping a course (true if successful, false otherwise)
+         */
+        // Check if student is registered or waitlisted
+        if (student.isRegistered(course)) {
+            student.removeCourse(course.getCourseCode(), course.getAcadU());
+            saveState(student);
+        } else if (student.isWaitlisted(course)) {
+            student.removeWaitlist(course);
+            saveState(student);
+        } else {
+            throw new OutOfRangeException(student.getUserId() + " is not registered for " + course.getCourseCode());
+        }
+    }
+
 
     public void swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException, OutOfRangeException {
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {

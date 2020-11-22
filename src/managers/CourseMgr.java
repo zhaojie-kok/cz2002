@@ -2,6 +2,10 @@ package managers;
 
 import java.util.HashMap;
 import java.util.List;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import entities.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
@@ -25,7 +29,8 @@ public class CourseMgr implements EntityManager {
         }
     }
 
-    public Course createCourse(String courseCode, String courseName, School school, int acadU){
+    public Course createCourse(String courseCode, String courseName, School school, int acadU)
+            throws OutOfRangeException {
         Course c = new Course(courseCode, courseName, school, acadU);
         saveState(c);
         return c;
@@ -34,7 +39,7 @@ public class CourseMgr implements EntityManager {
     public Index createIndex(Course course,
                             String indexNo,
                             int slotsTotal,
-                            List<LessonDetails>[] timeTable){
+                            List<LessonDetails>[] timeTable) throws MissingParametersException, OutOfRangeException {
         Index i = new Index(indexNo, slotsTotal, timeTable);
         course.updateIndex(i);
         saveState(course);
@@ -82,9 +87,9 @@ public class CourseMgr implements EntityManager {
             if (index.getSlotsAvailable() < changeInSlots){
                 throw new OutOfRangeException("new total slots cannot be less than number of students registered");
             }
-        }   
+        }
+        
         index.setSlotsTotal(slotsTotal);
-        index.setSlotsAvailable(index.getSlotsAvailable() - changeInSlots);
         course.updateIndex(index);
         saveState(course);
     }
@@ -109,6 +114,26 @@ public class CourseMgr implements EntityManager {
         return toReturn;
     }
 
+    public boolean addStudent(Student student, Index index, Course course)
+            throws MissingParametersException, OutOfRangeException {
+        if (student == null || index == null || course == null) {
+            throw new MissingParametersException("Missing Parameters provided, please check inputs");
+        }
+        List<Student> l = index.getRegisteredStudents();
+        if (!l.contains(student) && index.getSlotsAvailable() > 0) {
+            l.add(student);
+            index.setRegisteredStudents(l);
+            index.minusSlotsAvailable();
+            course.updateIndex(index);
+            saveState(course);
+            return true;
+        } else if (l.contains(student)) {
+            throw new OutOfRangeException("Cannot register for a course already registered");
+        } else {
+            throw new OutOfRangeException("Cannot add to an index that is full");
+        }
+    }
+
     public void removeStudent(Student student, Index index, Course course) throws MissingParametersException,
             OutOfRangeException {
         if (student == null || index == null || course == null){
@@ -128,26 +153,6 @@ public class CourseMgr implements EntityManager {
             saveState(course);
         } else {
             throw new OutOfRangeException(student.getUserId() + " is not registered for " + index.getIndexNo());
-        }
-    }
-
-    public boolean addStudent(Student student, Index index, Course course) throws MissingParametersException,
-            OutOfRangeException {
-        if (student == null || index == null){
-            throw new MissingParametersException("Invalid Parameters provided, please check inputs");
-        }
-        List<Student> l = index.getRegisteredStudents();
-        if (!l.contains(student) && index.getSlotsAvailable() > 0){
-            l.add(student);
-            index.setRegisteredStudents(l);
-            index.minusSlotsAvailable();
-            course.updateIndex(index);
-            saveState(course);
-            return true;
-        } else if (l.contains(student)) {
-            throw new OutOfRangeException("Cannot register for a course already registered");
-        } else {
-            throw new OutOfRangeException("Cannot add to an index that is full");
         }
     }
 
@@ -248,10 +253,18 @@ public class CourseMgr implements EntityManager {
     }
 
     private void informWaitlistSuccess(Student s, Course c, Index i){
+        // TODO: email
         String body = "You have successfully received a slot for " 
                         + c.getCourseName() 
                         + " (" + c.getCourseCode() + ") "
                         + "with Index " + i.getIndexNo();
-        NotifSender.sendNotif("Successful application for " + c, body, "placeholder@gmail.com");
+        
+        try {
+            NotifSender.sendNotif("Successful application for " + c, body, "placeholder@gmail.com");
+        } catch (AddressException a) {
+            System.out.println(a.getMessage());
+        } catch (MessagingException m) {
+            System.out.println(m.getMessage());
+        }
     }
 }
