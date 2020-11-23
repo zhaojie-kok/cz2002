@@ -48,9 +48,12 @@ public class LoginReader extends FileReader {
         Object[] newDetails = (Object[]) o;
         String hashedPassword = hashPassword((String) newDetails[1]);
         String userID = (String) newDetails[0];
-        assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
+        if (userID.equals("student")) {
+            assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
+        }
         
         File tempFile = new File(filepath);
+        // if the file for the user exists
         if (tempFile.exists()){
             try {
                 // read the entire file
@@ -59,6 +62,7 @@ public class LoginReader extends FileReader {
                 if (allDetails == null){
                     allDetails = new HashMap<String, Object[]>();
                 }
+
                 allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
                 writeSerializedObject(filepath, allDetails);
                 return 1;
@@ -67,6 +71,7 @@ public class LoginReader extends FileReader {
                 throw new FileReadingException("Error in saving login details. Please contact system administrator");
             }
         }
+        // if a new file needs to be created
         else{
             try {
                 HashMap<String, Object[]> allDetails = new HashMap<String, Object[]>();

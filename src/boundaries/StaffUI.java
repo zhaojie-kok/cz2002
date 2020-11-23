@@ -142,6 +142,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 return 1;
             } catch (KeyNotFoundException e) {
                 displayOutput(e.getMessage());
+                displayOutput("Type \"exit\" to return to main menu");
                 return -1;
             }
         }
@@ -167,7 +168,8 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 system.selectIndex(indexNo);
                 return 1;
             } catch (KeyNotFoundException e) {
-                displayOutput("Index No. could not be found, please re-enter or type \"exit\" to return to main menu");
+                displayOutput(e.getMessage());
+                displayOutput("Type \"exit\" to return to main menu");
             } catch (MissingSelectionException e) {
                 displayOutput("Please select a course first");
             }
@@ -346,7 +348,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         try {
             system.updateAccessPeriod(newAccessPeriod);
             displayOutput("Access Period changed successfully");
-        } catch (FileReadingException e) {
+        } catch (Exception e) {
             displayOutput(e.getMessage());
         }
     }

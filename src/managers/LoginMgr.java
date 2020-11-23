@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import entities.User;
+import entities.Student;
 import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
 import exceptions.OutOfRangeException;
@@ -92,5 +94,20 @@ public class LoginMgr {
 
     public void createNewLoginDetails(Object[] details) throws FileReadingException {
         loginReader.writeData(details);
+    }
+
+    /**
+     * Method to allow changing of access period
+     * 
+     * @param user            User tobe updated
+     * @param newAccessPeriod New access period
+     */
+    public void updateAccessPeriod(User user, LocalDateTime[] newAccessPeriod)
+            throws ClassNotFoundException, IOException {
+        Object[] newDetails = new Object[4];
+        newDetails[0] = user.getUserId();
+        newDetails[1] = ((String[]) loginReader.getData(user.getUserId())) [1];
+        newDetails[2] = user.getUserType();
+        newDetails[3] = newAccessPeriod;
     }
 }

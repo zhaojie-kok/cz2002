@@ -10,6 +10,7 @@ import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
 import entities.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Controller for the staff system.
- * Used to pass user inputs from UI classes to entity manager classes
- * Also used to invoke entity manager methods based on user actions from UI classes
+ * Controller for the staff system. Used to pass user inputs from UI classes to
+ * entity manager classes Also used to invoke entity manager methods based on
+ * user actions from UI classes
  */
 public class StaffSystem implements StudentSystemInterface, CourseSystemInterface {
     private CourseMgr courseMgr;
@@ -34,8 +35,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private List<LessonDetails>[] timetable = new ArrayList[14];
 
     /**
-     * Constructor
-     * Used to instantiated only if a staff user has successfully logged in to system
+     * Constructor Used to instantiated only if a staff user has successfully logged
+     * in to system
      * 
      * @param userId User ID of the staff user logged in to the system
      * @throws FileReadingException thrown if file cannot be read or found
@@ -56,8 +57,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     /**
-     * Method to select a course used for other methods
-     * See {@link CourseSystemInterface#selectCourse(String)} method;
+     * Method to select a course used for other methods See
+     * {@link CourseSystemInterface#selectCourse(String)} method;
      */
     @Override
     public void selectCourse(String courseCode) throws KeyNotFoundException {
@@ -66,8 +67,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     /**
-     * Method to select an index used for other methods
-     * See {@link CourseSystemInterface#selectIndex(String)} method
+     * Method to select an index used for other methods See
+     * {@link CourseSystemInterface#selectIndex(String)} method
      */
     @Override
     public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
@@ -75,8 +76,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     /**
-     * Method to select a student used for other methods
-     * See {@link StudentSystemInterface#selectStudent(String)} method;
+     * Method to select a student used for other methods See
+     * {@link StudentSystemInterface#selectStudent(String)} method;
      */
     @Override
     public void selectStudent(String identifier) throws KeyNotFoundException {
@@ -84,26 +85,26 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     }
 
     /**
-     * Method to check current objects selected by system
-     * 1. Course
-     * 2. Index
-     * 3. Student
+     * Method to check current objects selected by system 1. Course 2. Index 3.
+     * Student
      * 
-     * Blank fields indicate no selected made
-     * See {@link Systems#getSystemStatus()} method
+     * Blank fields indicate no selected made See {@link Systems#getSystemStatus()}
+     * method
      */
     @Override
     public String getSystemStatus() {
         String info = "";
-        info += String.format("\n%20s", "Selected course:") + (selectedCourse != null ? selectedCourse.getCourseCode() : "");
+        info += String.format("\n%20s", "Selected course:")
+                + (selectedCourse != null ? selectedCourse.getCourseCode() : "");
         info += String.format("\n%20s", "Selected index:") + (selectedIndex != null ? selectedIndex.getIndexNo() : "");
-        info += String.format("\n%20s", "Selected student:") + (selectedStudent != null ? selectedStudent.getUserId() : "");
+        info += String.format("\n%20s", "Selected student:")
+                + (selectedStudent != null ? selectedStudent.getUserId() : "");
         return info;
     }
 
     /**
-     * Method to clear all previously made selections
-     * See {@link Systems#clearSelections()} method
+     * Method to clear all previously made selections See
+     * {@link Systems#clearSelections()} method
      */
     @Override
     public void clearSelections() {
@@ -179,10 +180,14 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * Method to change the access period for the course selected
      * 
      * @param newAccessPeriod LocalDateTime array indicating new access period
-     * @throws FileReadingException thrown if student file cannot be accessed
+     * @throws FileReadingException   thrown if student file cannot be accessed
+     * @throws IOException            thrown if file cannot be read
+     * @throws ClassNotFoundException thrown if file is read but contains the wrong class
      */
-    public void updateAccessPeriod(LocalDateTime[] newAccessPeriod) throws FileReadingException {
+    public void updateAccessPeriod(LocalDateTime[] newAccessPeriod)
+            throws FileReadingException, ClassNotFoundException, IOException {
         studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
+        loginMgr.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
     /**
