@@ -46,12 +46,6 @@ public class LoginReader extends FileReader {
 
         // convert into array and check
         Object[] newDetails = (Object[]) o;
-<<<<<<< Updated upstream
-        String hashedPassword = hashPassword((String) newDetails[1]);
-        String userID = (String) newDetails[0];
-        if (userID.equals("student")) {
-            assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
-=======
         assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
 
         // convert to proper format and names
@@ -63,7 +57,6 @@ public class LoginReader extends FileReader {
             accessPeriod = (LocalDateTime[]) newDetails[3];
         } else {
             accessPeriod = null;
->>>>>>> Stashed changes
         }
         
         File tempFile = new File(filepath);
@@ -76,12 +69,7 @@ public class LoginReader extends FileReader {
                 if (allDetails == null){
                     allDetails = new HashMap<String, Object[]>();
                 }
-<<<<<<< Updated upstream
-
-                allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
-=======
                 allDetails.put(userID, new Object[]{hashedPassword, userType, accessPeriod});
->>>>>>> Stashed changes
                 writeSerializedObject(filepath, allDetails);
                 return 1;
             } catch (Exception e) {
