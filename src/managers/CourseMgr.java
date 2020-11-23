@@ -206,7 +206,6 @@ public class CourseMgr implements EntityManager {
         if (!l.contains(student) && index.getSlotsAvailable() > 0) {
             l.add(student);
             index.setRegisteredStudents(l);
-            index.minusSlotsAvailable();
             course.updateIndex(index);
             saveState(course);
             return true;
@@ -235,7 +234,6 @@ public class CourseMgr implements EntityManager {
         boolean removed = studentList.remove(student);
         if (removed){
             index.setRegisteredStudents(studentList);
-            index.addSlotsAvailable();
             course.updateIndex(index);
             dequeueWaitlist(course, index);
             saveState(course);

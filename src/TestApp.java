@@ -8,6 +8,7 @@ import java.util.List;
 import entities.School;
 import entities.Staff;
 import entities.Student;
+import entities.course_info.Course;
 import entities.course_info.Index;
 import entities.course_info.LessonDetails;
 import exceptions.FileReadingException;
@@ -23,20 +24,24 @@ import readers.LoginReader;
 import readers.StaffReader;
 
 public class TestApp {
-    public static void main(String[] args) {
-        StaffSystem staffSystem;
-        try {
-            staffSystem = new StaffSystem("JOHN123");
-            LoginReader lr = new LoginReader("data/loginDetails/");
-            Object[] details = (Object[]) lr.getData("SLEE001");
-            LocalDateTime[] ld = (LocalDateTime[])details[2];
-            System.out.println(ld[0]);
-            System.out.println(ld[1]);
-        } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-            return;
-        }
+    public static void main(String[] args) throws Exception {
+
+        CourseMgr cMgr = new CourseMgr();
+        Course c = cMgr.getCourse("BU8201");
+        System.out.println(cMgr.checkVacanciesAvailable(cMgr.getCourseIndex(c, "00403")));
+        // StaffSystem staffSystem;
+        // try {
+        //     staffSystem = new StaffSystem("JOHN123");
+        //     LoginReader lr = new LoginReader("data/loginDetails/");
+        //     Object[] details = (Object[]) lr.getData("SLEE001");
+        //     LocalDateTime[] ld = (LocalDateTime[])details[2];
+        //     System.out.println(ld[0]);
+        //     System.out.println(ld[1]);
+        // } catch (Exception e1) {
+        //     // TODO Auto-generated catch block
+        //     e1.printStackTrace();
+        //     return;
+        // }
 
         // try {
         //     CourseMgr cMgr = new CourseMgr();
@@ -93,34 +98,34 @@ public class TestApp {
         // }
 
         // TESTING ADD STUDENT
-        LocalDateTime[] newAccessPeriod = { LocalDateTime.of(2020, 11, 10, 0, 0),
-                LocalDateTime.of(2020, 12, 20, 0, 0) };
-        try {
+        // LocalDateTime[] newAccessPeriod = { LocalDateTime.of(2020, 11, 10, 0, 0),
+        //         LocalDateTime.of(2020, 12, 20, 0, 0) };
+        // try {
             
-            staffSystem.addStudent("SLEE001", "Sleepy", "M", "German", "notanemail@email.com", "U1234003C", newAccessPeriod, "colvig");
-            // staffSystem.addStudent("DOC0001", "Doc", "M", "German", "notanemail@email.com", "U1234001A", newAccessPeriod, "cummings");
-            // staffSystem.addStudent("SNEE001", "Sneezy", "M", "German", "notanemail@email.com", "U1234002B", newAccessPeriod, "gilbert");
-            // staffSystem.addStudent("BASH001", "Bashful", "M", "German", "notanemail@email.com", "U1234004D", newAccessPeriod, "mattraw");
-            // staffSystem.addStudent("DOPE001", "Dopey", "M", "German", "notanemail@email.com", "U1234005E", newAccessPeriod, "collins");
+        //     staffSystem.addStudent("SLEE001", "Sleepy", "M", "German", "notanemail@email.com", "U1234003C", newAccessPeriod, "colvig");
+        //     // staffSystem.addStudent("DOC0001", "Doc", "M", "German", "notanemail@email.com", "U1234001A", newAccessPeriod, "cummings");
+        //     // staffSystem.addStudent("SNEE001", "Sneezy", "M", "German", "notanemail@email.com", "U1234002B", newAccessPeriod, "gilbert");
+        //     // staffSystem.addStudent("BASH001", "Bashful", "M", "German", "notanemail@email.com", "U1234004D", newAccessPeriod, "mattraw");
+        //     // staffSystem.addStudent("DOPE001", "Dopey", "M", "German", "notanemail@email.com", "U1234005E", newAccessPeriod, "collins");
             
-            // staffSystem.addStudent("SNOW003", "Snow White", "F", "German", "notanemail@email.com", "U2020001A", newAccessPeriod, "apple");
-            // staffSystem.addStudent("ARIE003", "Ariel", "F", "Danish", "notanemail@email.com", "U2020002B", newAccessPeriod, "ocean");
-            // staffSystem.addStudent("BELL003", "Belle", "F", "French", "notanemail@email.com", "U2020003C", newAccessPeriod, "beast");
-            // staffSystem.addStudent("CIND003", "Cinderella", "F", "French", "notanemail@email.com", "U2020004D", newAccessPeriod, "slipper");
-            // staffSystem.addStudent("HUAM003", "Mulan", "F", "Chinese", "notanemail@email.com","U2020005E", newAccessPeriod, "mushu");
-            // staffSystem.addStudent("MERI003", "Merida", "F", "Scottish", "notanemail@email.com", "U2020006F", newAccessPeriod, "arrow");
-            // staffSystem.addStudent("JASM003", "Jasmine", "F", "Arabian", "notanemail@email.com", "U2020007G", newAccessPeriod, "carpet");
+        //     // staffSystem.addStudent("SNOW003", "Snow White", "F", "German", "notanemail@email.com", "U2020001A", newAccessPeriod, "apple");
+        //     // staffSystem.addStudent("ARIE003", "Ariel", "F", "Danish", "notanemail@email.com", "U2020002B", newAccessPeriod, "ocean");
+        //     // staffSystem.addStudent("BELL003", "Belle", "F", "French", "notanemail@email.com", "U2020003C", newAccessPeriod, "beast");
+        //     // staffSystem.addStudent("CIND003", "Cinderella", "F", "French", "notanemail@email.com", "U2020004D", newAccessPeriod, "slipper");
+        //     // staffSystem.addStudent("HUAM003", "Mulan", "F", "Chinese", "notanemail@email.com","U2020005E", newAccessPeriod, "mushu");
+        //     // staffSystem.addStudent("MERI003", "Merida", "F", "Scottish", "notanemail@email.com", "U2020006F", newAccessPeriod, "arrow");
+        //     // staffSystem.addStudent("JASM003", "Jasmine", "F", "Arabian", "notanemail@email.com", "U2020007G", newAccessPeriod, "carpet");
             
-            // staffSystem.addStudent("STUA002", "Student A", "M", "Singaporean", "czassignment482@gmail.com", "U20202511A", newAccessPeriod, "singlish");
-            // staffSystem.addStudent("STUB002", "Student B", "F", "Singaporean", "czassignment482@gmail.com", "U20202511B", newAccessPeriod, "singlish");
-            // staffSystem.addStudent("STUC002", "Student C", "M", "Singaporean", "czassignment482@gmail.com", "U20202511C", newAccessPeriod, "singlish");
-            // staffSystem.addStudent("STUD002", "Student D", "F", "Singaporean", "czassignment482@gmail.com", "U20202511D", newAccessPeriod, "singlish");
-            // staffSystem.addStudent("STUE002", "Student E", "M", "Singaporean", "czassignment482@gmail.com", "U20202511E", newAccessPeriod, "singlish");
+        //     // staffSystem.addStudent("STUA002", "Student A", "M", "Singaporean", "czassignment482@gmail.com", "U20202511A", newAccessPeriod, "singlish");
+        //     // staffSystem.addStudent("STUB002", "Student B", "F", "Singaporean", "czassignment482@gmail.com", "U20202511B", newAccessPeriod, "singlish");
+        //     // staffSystem.addStudent("STUC002", "Student C", "M", "Singaporean", "czassignment482@gmail.com", "U20202511C", newAccessPeriod, "singlish");
+        //     // staffSystem.addStudent("STUD002", "Student D", "F", "Singaporean", "czassignment482@gmail.com", "U20202511D", newAccessPeriod, "singlish");
+        //     // staffSystem.addStudent("STUE002", "Student E", "M", "Singaporean", "czassignment482@gmail.com", "U20202511E", newAccessPeriod, "singlish");
 
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // } catch (Exception e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // }
 
         // // // TESTING PRINT COURSE INFO
         // try {
