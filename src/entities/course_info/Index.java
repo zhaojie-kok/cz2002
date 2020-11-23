@@ -209,7 +209,19 @@ public class Index implements Serializable, Printable{
 		 */
 		String toReturn = String.format("Index: %s\nSlots available: %d out of %d\n", indexNo, slotsAvailable, slotsTotal);
 		
-		for (int i = 0; i < timeTable.length; i++){
+		toReturn += "Even:\n";
+		for (int i = 0; i < 7; i++){
+			List<LessonDetails> lessons = timeTable[i];
+			if (lessons == null){
+				continue;
+			}
+			for (LessonDetails lesson:lessons){
+				toReturn += lesson.getMoreInfo();
+			}
+		}
+
+		toReturn += "Odd:\n";
+		for (int i = 7; i < 14; i++){
 			List<LessonDetails> lessons = timeTable[i];
 			if (lessons == null){
 				continue;
