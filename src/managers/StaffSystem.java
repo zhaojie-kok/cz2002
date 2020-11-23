@@ -25,7 +25,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private CourseMgr courseMgr;
     private StudentManager studentManager;
     private CalendarMgr calendarMgr;
-    private LoginReader loginReader;
+    private LoginMgr loginMgr;
     private LessonDetailMaker lessonDetailMaker;
 
     private Course selectedCourse;
@@ -44,7 +44,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         for (int i = 0; i < 14; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
         }
-        loginReader = new LoginReader("data/loginDetails");
+        loginMgr = new LoginMgr("data/loginDetails");
         calendarMgr = new CalendarMgr();
         try {
             studentManager = new StudentManager();
@@ -206,8 +206,8 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
             studentManager.createStudent(userId, name, gender, nationality, email, matricNo, accessPeriod);
             // TODO: check validity of email
             // If student is created, then create login details
-            String[] data = { userId, password, "student" };
-            loginReader.writeData(data);
+            Object[] data = { userId, password, "student", accessPeriod };
+            loginMgr.createNewLoginDetails(data);
         } catch (KeyClashException e) {
             throw e;
         } catch (FileReadingException f) {
@@ -315,7 +315,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * 
      * @throws MissingSelectionException thrown if course or index are yet to be selected
      */
-    public String printStudentsbyIndex(boolean more) throws MissingSelectionException {
+    public String printStudentsbyIndex(boolean b) throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");
         }
@@ -323,8 +323,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         if (selectedIndex == null) {
             throw new MissingSelectionException("Index not yet selected");
         }
-        if (more)
+        if (b){
             return selectedIndex.getMoreInfo();
+        }
         return selectedIndex.getInfo();
     }
 

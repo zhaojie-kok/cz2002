@@ -248,9 +248,14 @@ public class StudentUI extends Promptable {
             return;
         }
 
-        HashMap<String, Integer> compiled = system.checkVacanciesAvailable();
-        for (Map.Entry<String, Integer> index : compiled.entrySet()) {
-            System.out.println(index.getKey() + ": " + index.getValue());
+        HashMap<String, Integer> compiled;
+        try {
+            compiled = system.checkVacanciesAvailable();
+            for (Map.Entry<String, Integer> index : compiled.entrySet()) {
+                System.out.println(index.getKey() + ": " + index.getValue());
+            }
+        } catch (MissingSelectionException e) {
+            displayOutput(e.getMessage());
         }
     }
 
