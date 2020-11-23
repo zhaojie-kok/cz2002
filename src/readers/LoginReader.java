@@ -90,4 +90,42 @@ public class LoginReader extends FileReader {
             }
         }
     }
+
+    public int updateData(Object[] newDetails, boolean hashed) throws FileReadingException {
+        // convert to proper format and names
+        String userID = (String) newDetails[0];
+        String hashedPassword = (String) newDetails[1];
+        if (!hashed) {
+            hashedPassword = hashPassword(hashedPassword);
+        }
+        String userType = (String) newDetails[2];
+        LocalDateTime[] accessPeriod;
+        if (userType.equals("student")) {
+            accessPeriod = (LocalDateTime[]) newDetails[3];
+        } else {
+            accessPeriod = null;
+        }
+
+        File tempFile = new File(filepath);
+        if (tempFile.exists()){
+            try {
+                // read the entire file
+                HashMap<String, Object[]> allDetails = (HashMap<String, Object[]>) readSerializedObject(filepath);
+                // In case allDetails is not created yet/cannot be read
+                if (allDetails == null){
+                    allDetails = new HashMap<String, Object[]>();
+                }
+                allDetails.put(userID, new Object[]{hashedPassword, userType, accessPeriod});
+                writeSerializedObject(filepath, allDetails);
+                return 1;
+            } catch (Exception e) {
+                // e.printStackTrace();
+                throw new FileReadingException("Error in saving login details. Please contact system administrator");
+            }
+        }
+        // if a new file needs to be created
+        else {
+            throw new FileReadingException("Login details file must first be created");
+        }
+    }
 }

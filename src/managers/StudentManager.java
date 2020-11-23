@@ -203,6 +203,17 @@ public class StudentManager implements EntityManager {
     }
 
     /**
+     * Method to return list of students
+     */
+    public String printAllStudents(){
+        String toReturn = "";
+        for (Student s : students.values()){
+            toReturn += s.getLessInfo() + "\n";
+        }
+        return toReturn;
+    }
+
+    /**
      * Method to save the state of a student object to a file
      */
 	@Override

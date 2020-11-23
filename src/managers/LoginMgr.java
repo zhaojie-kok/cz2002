@@ -101,13 +101,19 @@ public class LoginMgr {
      * 
      * @param user            User tobe updated
      * @param newAccessPeriod New access period
+     * @throws FileReadingException
+     * @throws ClassNotFoundException
+     * @throws IOException
      */
     public void updateAccessPeriod(User user, LocalDateTime[] newAccessPeriod)
-            throws ClassNotFoundException, IOException {
+            throws ClassNotFoundException, IOException, FileReadingException {
         Object[] newDetails = new Object[4];
         newDetails[0] = user.getUserId();
-        newDetails[1] = ((String[]) loginReader.getData(user.getUserId())) [1];
+        Object[] oldDetails = (Object[]) loginReader.getData(user.getUserId());
+        newDetails[1] = (String) oldDetails[0];
         newDetails[2] = user.getUserType();
         newDetails[3] = newAccessPeriod;
+
+        loginReader.updateData(newDetails, true);
     }
 }

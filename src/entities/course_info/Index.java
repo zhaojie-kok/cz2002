@@ -193,6 +193,14 @@ public class Index implements Serializable, Printable{
 	}
 
 	/**
+	 * Returns index no
+	 */
+	@Override
+	public String getLessInfo(){
+		return this.indexNo + "\n";
+	}
+
+	/**
 	 * Retrieves information about the index
 	 * Returns a string of information on the index
 	 * Eg.
@@ -247,7 +255,7 @@ public class Index implements Serializable, Printable{
 		int i = 1;
 		if (registeredStudents.size() != 0){
 			for (Student s: registeredStudents){
-				toReturn += i + ". " + s.getInfo() + "\n";
+				toReturn += i + ". " + s.getLessInfo() + "\n";
 				i++;
 			}
 		}
