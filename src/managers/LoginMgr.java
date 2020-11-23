@@ -2,9 +2,12 @@ package managers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
+import exceptions.OutOfRangeException;
 import readers.LoginReader;
 
 /**
@@ -33,16 +36,19 @@ public class LoginMgr {
      * 
      * @param userId   userID to be verified
      * @param password password to be verified
-     * @return         1: validated as student user, 2: validated as staff user, -1: validated details but no information retrieved (only for debugging)
-     * @throws FileNotFoundException thrown if userID cannot be mapped to any login details
+     * @return 1: validated as student user, 2: validated as staff user, -1:
+     *         validated details but no information retrieved (only for debugging)
+     * @throws FileNotFoundException thrown if userID cannot be mapped to any login
+     *                               details
      * @throws InvalidInputException thrown if password provided is incorrect
-     * @throws FileReadingException thrown if files found cannot be accessed
+     * @throws FileReadingException  thrown if files found cannot be accessed
+     * @throws OutOfRangeException
      */
-    public int verifyLoginDetails(String userId, String password) throws FileNotFoundException, InvalidInputException,
-            FileReadingException {
-        Object data = null;
+    public int verifyLoginDetails(String userId, String password)
+            throws FileNotFoundException, InvalidInputException, FileReadingException, OutOfRangeException {
+        Object rawData = null;
         try {
-            data = loginReader.getData(userId);
+            rawData = loginReader.getData(userId);
         } catch (FileNotFoundException f) {
             throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
         } catch (ClassNotFoundException e) {
@@ -51,25 +57,40 @@ public class LoginMgr {
             e.printStackTrace();
         }
         
-        if (data == null) {
+        if (rawData == null) {
             throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
         } else {
-            String[] details = (String[]) data;
-            if (details.length == 0) {
+            Object[] data = (Object []) rawData;
+            String hashedPassword = (String) data[0];
+            String userType = (String) data[1];
+            LocalDateTime[] accessPeriod = (LocalDateTime[]) data[2];
+            if (data.length == 0) {
                 return -1;
-            } else if (!loginReader.hashPassword(password).equals(details[0])) {
+            } else if (!loginReader.hashPassword(password).equals(hashedPassword)) {
                 throw new InvalidInputException("Wrong Password");
             } else {
                 // return positive numerics instead of just boolean for success to make it easy to add more classes
-                switch(details[1]) {
+                switch(userType) {
                     case "student":
+                        LocalDateTime now = LocalDateTime.now();
+                        if (now.isBefore(accessPeriod[0])) {
+                            throw new OutOfRangeException("You can only login after " + accessPeriod[0].toString());
+                        }
+                        if (now.isAfter(accessPeriod[1])) {
+                            throw new OutOfRangeException("You can only login before " + accessPeriod[1].toString());
+                        }
                         return 1;
                     case "staff":
+                        // for staff no need to validate access period
                         return 2;
                     default: // the default case would imply an error in the data from the file, meaning an unknown error
                         throw new FileReadingException("Unknown error in reading login details. Please contact system administrator");
                 }
             }
         }
+    }
+
+    public void createNewLoginDetails(Object[] details) throws FileReadingException {
+        loginReader.writeData(details);
     }
 }

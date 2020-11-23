@@ -3,12 +3,13 @@ package readers;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import exceptions.FileReadingException;
 
 public class LoginReader extends FileReader {
-    // login details should be in format userId, password, userType
+    // login details should be in format userId, password, userType, access period
     public LoginReader(String filepath) {
         this.filepath = filepath;
     }
@@ -26,8 +27,8 @@ public class LoginReader extends FileReader {
         if (allDetails == null) {
             return null; // return null if no file read
         }
-        String[] defaultVal = { "", "" };
-        String[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
+        String[] defaultVal = {"", "", null}; // {hashedPw, usertype, accessperiod}
+        Object[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
         return details;
     }
 
@@ -40,23 +41,25 @@ public class LoginReader extends FileReader {
         // ensuer object provided is of correct class and format
         // assertion instead of try catch since user should never be able to access this method directly,
         // hence this checking is primarily for testing and debugging
-        assert (o.getClass() == String[].class) : "New login details must be a String[]";
-        assert ((String[]) o).length == 3 : "Improper format for saving";
+        assert (o.getClass() == Object[].class) : "New login details must be a String[]";
+        assert ((Object[]) o).length == 4 : "login details should be in format userId, password, userType, access period";
 
         // convert into proper format
-        String[] newDetails = (String[]) o;
-
+        Object[] newDetails = (Object[]) o;
+        String hashedPassword = hashPassword((String) newDetails[1]);
+        String userID = (String) newDetails[0];
+        assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
         
         File tempFile = new File(filepath);
         if (tempFile.exists()){
             try {
                 // read the entire file
-                HashMap<String, String[]> allDetails = (HashMap<String, String[]>) readSerializedObject(filepath);
+                HashMap<String, Object[]> allDetails = (HashMap<String, Object[]>) readSerializedObject(filepath);
                 // In case allDetails is not created yet/cannot be read
                 if (allDetails == null){
-                    allDetails = new HashMap<String, String[]>();
+                    allDetails = new HashMap<String, Object[]>();
                 }
-                allDetails.put(newDetails[0], new String[]{hashPassword(newDetails[1]), newDetails[2]});
+                allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
                 writeSerializedObject(filepath, allDetails);
                 return 1;
             } catch (Exception e) {
@@ -66,8 +69,8 @@ public class LoginReader extends FileReader {
         }
         else{
             try {
-                HashMap<String, String[]> allDetails = new HashMap<String, String[]>();
-                allDetails.put(newDetails[0], new String[]{hashPassword(newDetails[1]), newDetails[2]});
+                HashMap<String, Object[]> allDetails = new HashMap<String, Object[]>();
+                allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
                 writeSerializedObject(filepath, allDetails);
                 return 1;
             } catch (Exception e) {
