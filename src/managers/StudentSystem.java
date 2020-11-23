@@ -184,6 +184,7 @@ public class StudentSystem implements CourseSystemInterface {
      * @throws FileReadingException thrown if problems are found with student's data
      */
     public String getTimeTable() throws FileReadingException {
+        // TODO: FIX Index 21 out of bounds for length 12
         String[][] tableForm = new String[12][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
         Course course;
@@ -263,9 +264,14 @@ public class StudentSystem implements CourseSystemInterface {
             throw new MissingSelectionException("Please select an index");
         }
 
+        // check if student is already registered
+        if (user.isRegistered(selectedCourse)) {
+            throw new InvalidInputException("You are already registered for this course");
+        }
+
         // Check timing clash
         if (checkAddClash(user)) {
-            throw new InvalidInputException("Timetable class detected. Course registration not allowed");
+            throw new InvalidInputException("Timetable clash detected. Course registration not allowed");
         }
 
         // studentManager tries to register student for the course, or add student to the waitlist if the index is full
