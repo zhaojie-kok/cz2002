@@ -329,7 +329,7 @@ public class StudentUI extends Promptable {
         // get the other student's login details
         displayOutput("Enter user ID of the student you are swopping with");
         String swopID = (String) getUserInput();
-        displayOutput("Enter the other student's password");
+        displayOutput("Enter the other student's password"); //TODO: hide password
         String swopPassword = (String) getUserInput();
 
         // verify the login details of the other student
@@ -361,7 +361,6 @@ public class StudentUI extends Promptable {
         try {
             displayOutput(system.getTimeTable());
         } catch (FileReadingException e) {
-            // TODO Auto-generated catch block
             displayOutput(e.getMessage());
         }
     }

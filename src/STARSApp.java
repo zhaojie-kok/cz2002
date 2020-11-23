@@ -58,7 +58,7 @@ public class STARSApp extends Promptable {
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
-        displayOutput("Enter Password: ");
+        displayOutput("Enter Password: "); //TODO: hide password
         char[] passString = System.console().readPassword();
         String password = new String(passString );
 

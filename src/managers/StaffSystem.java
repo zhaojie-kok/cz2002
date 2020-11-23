@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Controller for the staff system.
+ * Used to pass user inputs from UI classes to entity manager classes
+ * Also used to invoke entity manager methods based on user actions from UI classes
+ */
 public class StaffSystem implements StudentSystemInterface, CourseSystemInterface {
     private CourseMgr courseMgr;
     private StudentManager studentManager;
@@ -28,6 +33,13 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
     private Student selectedStudent;
     private List<LessonDetails>[] timetable = new ArrayList[14];
 
+    /**
+     * Constructor
+     * Used to instantiated only if a staff user has successfully logged in to system
+     * 
+     * @param userId User ID of the staff user logged in to the system
+     * @throws FileReadingException thrown if file cannot be read or found
+     */
     public StaffSystem(String userId) throws FileReadingException {
         for (int i = 0; i < 14; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
@@ -43,22 +55,43 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         lessonDetailMaker = new LessonDetailMaker();
     }
 
+    /**
+     * Method to select a course used for other methods
+     * See {@link CourseSystemInterface#selectCourse(String)} method;
+     */
     @Override
     public void selectCourse(String courseCode) throws KeyNotFoundException {
         selectedCourse = courseMgr.getCourse(courseCode);
         this.selectedIndex = null;
     }
 
+    /**
+     * Method to select an index used for other methods
+     * See {@link CourseSystemInterface#selectIndex(String)} method
+     */
     @Override
     public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
         selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
+    /**
+     * Method to select a student used for other methods
+     * See {@link StudentSystemInterface#selectStudent(String)} method;
+     */
     @Override
     public void selectStudent(String identifier) throws KeyNotFoundException {
         selectedStudent = studentManager.getStudent(identifier);
     }
 
+    /**
+     * Method to check current objects selected by system
+     * 1. Course
+     * 2. Index
+     * 3. Student
+     * 
+     * Blank fields indicate no selected made
+     * See {@link Systems#getSystemStatus()} method
+     */
     @Override
     public String getSystemStatus() {
         String info = "";
@@ -68,6 +101,10 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         return info;
     }
 
+    /**
+     * Method to clear all previously made selections
+     * See {@link Systems#clearSelections()} method
+     */
     @Override
     public void clearSelections() {
         selectedCourse = null;
@@ -78,6 +115,22 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         }
     }
 
+    /**
+     * Used to create lesson details used for other methods User needs to input
+     * arguments for {@link LessonDetailMaker#makeLessonDetails()} method
+     * 
+     * @param lessonVenue Venue of lesson
+     * @param lessonType  Type of lesson
+     * @param lessonDay   DayOfWeek of lesson
+     * @param evenOdd     int indicating weeks lesson is held (0. Even weeks, 1. Odd
+     *                    weeks, 2. All weeks)
+     * @param startTime   Start time of lesson
+     * @param endTime     End time of lesson
+     * @throws MissingParametersException thrown if arguments required are missing
+     * @throws OutOfRangeException        thrown if inputs are outside acceptable
+     *                                    constraints (See
+     *                                    {@link LessonDetailMaker#makeLessonDetails()})
+     */
     public void selectLessonDetails(String lessonVenue, String lessonType, int lessonDay, int evenOdd,
             LocalTime startTime, LocalTime endTime) throws MissingParametersException, OutOfRangeException {
         // for each argument, only update those that are not null
@@ -122,10 +175,30 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         lessonDetailMaker.clearSelections();
     }
 
+    /**
+     * Method to change the access period for the course selected
+     * 
+     * @param newAccessPeriod LocalDateTime array indicating new access period
+     * @throws FileReadingException thrown if student file cannot be accessed
+     */
     public void updateAccessPeriod(LocalDateTime[] newAccessPeriod) throws FileReadingException {
         studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
 
+    /**
+     * Method to create new student and add to system
+     * 
+     * @param userId       UserID of new student. Must be unique
+     * @param name         Name of new student
+     * @param gender       Gender of new student
+     * @param nationality  Nationality of new student
+     * @param email        Email address of new student
+     * @param matricNo     Matriculation number of new student
+     * @param accessPeriod Access period of new student
+     * @param password     Password for new userID
+     * @throws KeyClashException thrown if details required to be unique are not
+     * @throws FileReadingException thrown if new file cannot be created
+     */
     public void addStudent(String userId, String name, String gender, String nationality, String email,
                             String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, FileReadingException {
         // Call student manager to create the student
@@ -142,13 +215,19 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         }
     }
 
-    public void updateCourse(String courseCode, String courseName, School school) throws KeyClashException {
-        /**
-         * updates the courseCode, courseName and school of a course To change other
-         * details about the course, use the updateIndex, addIndex, or removeIndex
-         * method
-         */
-
+    /**
+     * Method to update the courseCode, courseName and school of a course To change
+     * other details about the course, use the updateIndex, addIndex, or removeIndex
+     * method
+     * 
+     * @throws MissingSelectionException thrown if course has yet to be selected
+     * @throws KeyClashException thrown if new course code is not unique
+     */
+    public void updateCourse(String courseCode, String courseName, School school)
+            throws KeyClashException, MissingSelectionException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Course must first be selected");
+        }
         // if any of the arguments are null then set them to the existing values
         if (courseCode == null) {
             courseCode = selectedCourse.getCourseCode();
@@ -162,10 +241,35 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         courseMgr.updateCourse(selectedCourse, courseCode, courseName, school);
     }
 
-    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException, KeyClashException {
+    /**
+     * Method to change index number and total capacity of an index
+     * 
+     * @param indexNo    index number to be changed to
+     * @param slotsTotal New total capacity of index
+     * @throws OutOfRangeException thrown if slotsTotal is less than number of students currently registered for index
+     * @throws KeyClashException thrown if indexNo is not unique within the course
+     * @throws MissingSelectionException thrown if course or index have yet to be selected
+     */
+    public void updateIndex(String indexNo, int slotsTotal)
+            throws OutOfRangeException, KeyClashException, MissingSelectionException {
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Course must first be selected");
+        }
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Index must first be selected");
+        }
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
     }
 
+    /**
+     * Method to create a new index for an existing course in the system
+     * 
+     * @param indexNo    Index number of new index
+     * @param slotsTotal Total number of slots in index
+     * @throws KeyClashException thrown if indexNo is not unique within the course
+     * @throws MissingParametersException thrown if course or timetable is yet to be selected. See {@link #selectCourse()} and {@link #selectLessonDetails()}
+     * @throws OutOfRangeException thrown if slotsTotal is insufficient
+     */
     public void addIndex(String indexNo, int slotsTotal) throws KeyClashException, MissingParametersException,
             OutOfRangeException {
         courseMgr.createIndex(selectedCourse, indexNo, slotsTotal, this.timetable);
@@ -174,11 +278,26 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         }
     }
 
+    /**
+     * Method to add course to system using {@link CourseMgr#createCourse()} method
+     * 
+     * @param courseCode Course code of new course
+     * @param courseName Name of new course
+     * @param school     School hosting new course
+     * @param acadU      Academic units carried by new course
+     * @throws KeyClashException Thrown if courseCode is not unique
+     * @throws OutOfRangeException Thrown if acadU is insufficient
+     */
     public void addCourse(String courseCode, String courseName, School school, int acadU) throws KeyClashException,
             OutOfRangeException {
         courseMgr.createCourse(courseCode, courseName, school, acadU);
     }
 
+    /**
+     * Method to retrieve vacancies available to the selected index
+     * 
+     * @throws MissingSelectionException thrown if course or index have yet to be selected
+     */
     public int checkAvailableVacancies() throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");
@@ -191,6 +310,11 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         return selectedIndex.getSlotsAvailable();
     }
 
+    /**
+     * Method to view all students registered for an index
+     * 
+     * @throws MissingSelectionException thrown if course or index are yet to be selected
+     */
     public String printStudentsbyIndex() throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");
@@ -202,13 +326,24 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         return selectedIndex.getMoreInfo();
     }
 
+    /**
+     * Method to view all students registered in a course
+     * 
+     * @throws MissingSelectionException thrown if course has yet to be selected
+     */
     public String printStudentsbyCourse() throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");
         }
         return selectedCourse.getMoreInfo();
     }
-    
+
+    /**
+     * Method to retrieve detailed information about a course, including students
+     * registered
+     * 
+     * @throws MissingSelectionExceptionthrown if course has yet to be selected
+     */
     public String getCourseInfo() throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");

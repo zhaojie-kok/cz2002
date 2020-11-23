@@ -16,6 +16,11 @@ import exceptions.MissingParametersException;
 import exceptions.MissingSelectionException;
 import exceptions.OutOfRangeException;
 
+/**
+ * Controller for the student system.
+ * Used to pass user inputs from UI classes to entity manager classes
+ * Also used to invoke entity manager methods based on user actions from UI classes
+ */
 public class StudentSystem implements CourseSystemInterface {
     private CourseMgr courseMgr;
     private StudentManager studentManager;
@@ -25,6 +30,13 @@ public class StudentSystem implements CourseSystemInterface {
     private Course selectedCourse = null;
     private Index selectedIndex = null;
 
+    /**
+     * Constructor
+     * 
+     * @param userId UserID of student user logging into system
+     * @throws FileReadingException thrown if student file of user cannot be accessed
+     * @throws KeyNotFoundException thrown if student details cannot be found
+     */
     public StudentSystem(String userId) throws FileReadingException, KeyNotFoundException {
         calendarMgr = new CalendarMgr();
         studentManager = new StudentManager();
@@ -32,10 +44,11 @@ public class StudentSystem implements CourseSystemInterface {
         user = studentManager.getStudent(userId);
     }
 
+    /**
+     * Method to view all courses within the system 
+     * @return All courses formatted as string
+     */
     public String printAllCourses() {
-        /**
-         * Converts to printable format
-         */
         String toReturn = "";
         Course c;
 
@@ -47,10 +60,14 @@ public class StudentSystem implements CourseSystemInterface {
         return toReturn;
     }
 
+    /**
+     * Method to view all courses within the system for a chosen school
+     * 
+     * @param school School selected
+     * @param format Desired format of course information
+     * @return Course information formatted based on format provided
+     */
     public String printCoursesBySchool(School school, String format) {
-        /**
-         * Converts to printable format
-         */
         String toReturn = "";
         Course c;
 
@@ -64,10 +81,15 @@ public class StudentSystem implements CourseSystemInterface {
         return toReturn;
     }
 
+    /**
+     * Method to view all courses within the system matching a String filter
+     * Searches course name and code for the filter
+     * 
+     * @param filter Keyword filter
+     * @param format Desired format of course information
+     * @return Course information formatted based on format provided
+     */
     public String printCoursesByStringFilter(String filter, String format) {
-        /**
-         * Searched course name and code for the filter
-         */
         String toReturn = "";
         Course c;
 
@@ -81,11 +103,25 @@ public class StudentSystem implements CourseSystemInterface {
         return toReturn;
     }
 
-    // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
+    /**
+     * Method to get all the indexes of a course selected
+     * 
+     * @param format String format for information
+     */
+    public String getIndexesOfCourse(String format) {
+        String toReturn = "";
+        Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
+        while (indexes.hasNext()) {
+            toReturn += String.format(format, indexes.next().getInfo());
+        }
+        return toReturn;
+    }
+
+    /**
+     * Method to check courses a student has registered for
+     */
     public String checkRegisteredCourses() {
-        /**
-         * Converts to printable format
-         */
+        // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
         String format = "Course: %s\n Index: %s\n";
         String toReturn = "";
         String toAdd;
@@ -99,19 +135,32 @@ public class StudentSystem implements CourseSystemInterface {
         return toReturn;
     }
 
-    /////////////// Select course/select index are necessary for the following
-    /////////////// functions
+    /**
+     * Method to select a course used for other methods See
+     * {@link CourseSystemInterface#selectCourse(String)} method;
+     */
     @Override
     public void selectCourse(String courseCode) throws KeyNotFoundException {
         selectedCourse = courseMgr.getCourse(courseCode);
         this.selectedIndex = null;
     }
 
+    /**
+     * Method to select an index used for other methods See
+     * {@link CourseSystemInterface#selectIndex(String)} method
+     */
     @Override
     public void selectIndex(String indexNo) throws KeyNotFoundException, MissingSelectionException {
         selectedIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
     }
 
+    /**
+     * Method to check current objects selected by system 1. Course 2. Index 3.
+     * Student
+     * 
+     * Blank fields indicate no selected made See {@link Systems#getSystemStatus()}
+     * method
+     */
     @Override
     public String getSystemStatus() {
         String sc = selectedCourse == null ? "" : "Selected course: " + selectedCourse.getCourseName();
@@ -119,12 +168,21 @@ public class StudentSystem implements CourseSystemInterface {
         return sc + "\n" + si;
     }
 
+    /**
+     * Method to clear all previously made selections See
+     * {@link Systems#clearSelections()} method
+     */
     @Override
     public void clearSelections() {
         selectedCourse = null;
         selectedIndex = null;
     }
 
+    /**
+     * Method to view the timetable for the user's registered courses
+     * @return Timetable formatted as a String
+     * @throws FileReadingException thrown if problems are found with student's data
+     */
     public String getTimeTable() throws FileReadingException {
         String[][] tableForm = new String[12][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
@@ -185,9 +243,18 @@ public class StudentSystem implements CourseSystemInterface {
 
     // These are called AFTER selectCourse/selectIndex
     ////// ++++++++ START +++++++++
-    // FUNCTIONAL REQUIREMENT - Student: 1. Add course
-    public int addCourse() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
-            MissingParametersException, InvalidInputException {
+    /**
+     * Method to register a student for a course
+     * 
+     * @return int denoting status of registration (1. Registration successful, 0. Waitlisted)
+     * @throws KeyNotFoundException thrown if index selected is not under course selected
+     * @throws MissingSelectionException thrown if course or index have not been selected
+     * @throws MissingParametersException thrown if course or index have not been selected or user is invalid
+     * @throws InvalidInputException thrown if student cannot register for the course
+     */
+    public int addCourse() throws KeyNotFoundException, MissingSelectionException,
+    MissingParametersException, InvalidInputException {
+        // FUNCTIONAL REQUIREMENT - Student: 1. Add course
 
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course");
@@ -198,7 +265,7 @@ public class StudentSystem implements CourseSystemInterface {
 
         // Check timing clash
         if (checkAddClash(user)) {
-            throw new OutOfRangeException("Timetable class detected. Course registration not allowed");
+            throw new InvalidInputException("Timetable class detected. Course registration not allowed");
         }
 
         // studentManager tries to register student for the course, or add student to the waitlist if the index is full
@@ -215,30 +282,27 @@ public class StudentSystem implements CourseSystemInterface {
         return result;
     }
 
-    // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
+    /**
+     * Method to allow student user to drop course
+     * 
+     * @throws InvalidInputException thrown if student has not registered for selected course
+     * @throws MissingParametersException thrown if course or index have not been selected
+     * @throws OutOfRangeException
+     */
     public void dropCourse() throws InvalidInputException, MissingParametersException, OutOfRangeException {
-        /**
-         * 
-         */
+        // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
         studentManager.dropCourse(selectedCourse, user);
-        courseMgr.removeStudent(user, selectedIndex, selectedCourse);
+        courseMgr.removeStudent(user, selectedIndex, selectedCourse); //TODO: docstring and check functionality
         clearSelections();
     }
-    
-    public String getIndexesOfCourse(String format) {
-        /**
-         * Converts to printable format
-         */
-        String toReturn = "";
-        Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
-        while (indexes.hasNext()) { 
-            toReturn += String.format(format, indexes.next().getInfo());
-        }
-        return toReturn;
-    }
 
-    // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
-    public HashMap<String, Integer> checkVacanciesAvailable(){
+    /**
+     * Method to check vacancies available for selected course
+     * 
+     * @throws MissingSelectionException thrown if course has yet to be selected
+     */
+    public HashMap<String, Integer> checkVacanciesAvailable() throws MissingSelectionException {
+        // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
         if (selectedCourse != null) {
             // if a particular slot has been selected then return the vacancy
             HashMap<String, Integer> compiled = new HashMap<>();
@@ -248,29 +312,37 @@ public class StudentSystem implements CourseSystemInterface {
             }
             return compiled;
         } else {
-            return null;
+            throw new MissingSelectionException("Course must first be selected");
         }
     }
 
-    // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
-    public void swopIndexWithStudent(String identifier) throws KeyNotFoundException, MissingSelectionException,
-            OutOfRangeException, InvalidInputException {
-        /** 
-         * Returns 0 and does nothing if either students will havetimetable clash, 
-         * else swaps indexes and returns 1
-         * -1: user or swopping student is not registered in the course
-         */
+    /**
+     * Method to swop index with another student
+     * 
+     * @param identifier String identifier of student other than user to swop with
+     * @throws KeyNotFoundException      If either student has not registered for
+     *                                   course
+     * @throws MissingSelectionException If course to swop has not been selected
+     * @throws InvalidInputException     thrown if student tries to swop with self
+     * @throws OutOfRangeException       thrown if timetable clash is detected, preventing swop
+     */
+    public void swopIndexWithStudent(String identifier)
+            throws KeyNotFoundException, MissingSelectionException, InvalidInputException, OutOfRangeException {
+        // FUNCTIONAL REQUIREMENT - Student: 6. Swop index number with student
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course first");
         }
         
+        if (identifier == user.getMatricNo() || identifier == user.getUserId()) {
+            throw new InvalidInputException("Cannot swop with yourself");
+        }
         Student toSwapWith = studentManager.getStudent(identifier);
 
         // first ensure that the swopping students both are enrolled in the course
         if (!user.isRegistered(selectedCourse)) {
-            throw new OutOfRangeException("you are not registered in this course");
+            throw new KeyNotFoundException("you are not registered in this course");
         } else if (!toSwapWith.isRegistered(selectedCourse)) {
-            throw new OutOfRangeException(identifier + " is not registered in this course");
+            throw new KeyNotFoundException(identifier + " is not registered in this course");
         }
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
