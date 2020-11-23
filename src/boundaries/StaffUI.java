@@ -431,6 +431,8 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } catch (KeyClashException | OutOfRangeException e) {
             displayOutput(e.getMessage());
         }
+
+        displayOutput(system.printAllCourses());
     }
 
     /**

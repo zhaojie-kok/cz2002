@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -357,5 +358,16 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
             throw new MissingSelectionException("Course not yet selected");
         }
         return selectedCourse.getMoreInfo();
+    }
+    public String printAllCourses(){
+        String toReturn = "";
+        Course c;
+
+        Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
+        while (courses.hasNext()) {
+            c = courses.next();
+            toReturn += c.getInfo();
+        }
+        return toReturn;
     }
 }
