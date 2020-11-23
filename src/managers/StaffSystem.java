@@ -315,7 +315,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * 
      * @throws MissingSelectionException thrown if course or index are yet to be selected
      */
-    public String printStudentsbyIndex() throws MissingSelectionException {
+    public String printStudentsbyIndex(boolean more) throws MissingSelectionException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course not yet selected");
         }
@@ -323,7 +323,9 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         if (selectedIndex == null) {
             throw new MissingSelectionException("Index not yet selected");
         }
-        return selectedIndex.getMoreInfo();
+        if (more)
+            return selectedIndex.getMoreInfo();
+        return selectedIndex.getInfo();
     }
 
     /**

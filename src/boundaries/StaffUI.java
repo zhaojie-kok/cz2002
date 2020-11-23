@@ -71,7 +71,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 "Update course information", "Add index to a course", "Update index information",
                 "Print Students in a course index", "Print Students in a course", "Exit" };
 
-        while (choice != 9) {
+        while (choice != 10) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
             switch (choice) {
                 case 0:
@@ -96,12 +96,15 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                     updateIndex();
                     break;
                 case 7:
-                    printIndexStudents();
+                    printIndexStudents(true);
                     break;
                 case 8:
                     printCourseStudents();
                     break;
                 case 9:
+                    printIndexStudents(false);
+                    break;
+                case 10:
                     break;
                 default:
                     displayOutput("Choices must be between 1 and 10");
@@ -371,7 +374,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     /**
      * Method to display students registered in an index
      */
-    private void printIndexStudents() {
+    private void printIndexStudents(boolean b) {
         int result;
 
         // prompt user to select a course
@@ -387,7 +390,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
 
         try {
-            String toPrint = system.printStudentsbyIndex();
+            String toPrint = system.printStudentsbyIndex(b);
             displayOutput(toPrint);
         } catch (MissingSelectionException e) {
             displayOutput(e.getMessage());
