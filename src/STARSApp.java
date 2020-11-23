@@ -3,7 +3,7 @@ import java.util.Scanner;
 import managers.LoginMgr;
 import boundaries.*;
 
-public class STARSApp extends Promptable {
+public class STARSApp extends Promptable implements HiddenInputUI {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
@@ -58,7 +58,7 @@ public class STARSApp extends Promptable {
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
-        displayOutput("Enter Password: "); //TODO: hide password
+        displayOutput("Enter Password: "); 
         char[] passString = System.console().readPassword();
         String password = new String(passString );
 
@@ -78,6 +78,14 @@ public class STARSApp extends Promptable {
     public String getUserInput() {
         String userInput = scn.nextLine();
         return userInput;
+    }
+
+    /**
+     * Method to get input from user without displaying input on console
+     */
+    @Override
+    public Object getHiddenInput() {
+        return System.console().readPassword();
     }
 
     // use this method to display output/prompt to user

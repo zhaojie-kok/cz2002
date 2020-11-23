@@ -14,7 +14,7 @@ import managers.StudentSystem;
 /**
  * UI for student users. Meant to abstract student system from users
  */
-public class StudentUI extends Promptable {
+public class StudentUI extends Promptable implements HiddenInputUI {
     private static Scanner scn;
     private static String userId;
     private static StudentSystem system;
@@ -37,6 +37,14 @@ public class StudentUI extends Promptable {
     @Override
     public Object getUserInput() {
         return scn.nextLine();
+    }
+
+    /**
+     * Method to get input from user without displaying input on console
+     */
+    @Override
+    public Object getHiddenInput() {
+        return System.console().readPassword();
     }
 
     /**
@@ -128,20 +136,22 @@ public class StudentUI extends Promptable {
      */
     private int promptCourseSelection() {
         String courseCode = "";
+        int returnVal = -1;
         displayOutput("Please Enter Course Code: ");
-        while (true) {
+        while (!courseCode.equals("EXIT")) {
             courseCode = (String) getUserInput();
             courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")) {
-                return -1;
-            }
-            try {
-                system.selectCourse(courseCode);
-                return 1;
-            } catch (KeyNotFoundException e) {
-                displayOutput("No such course code exists, please re-enter or type \"exit\" to return to main menu");
+            if (!courseCode.equals("EXIT")) {
+                try {
+                    system.selectCourse(courseCode);
+                    returnVal = 1;
+                    courseCode = "EXIT";
+                } catch (KeyNotFoundException e) {
+                    displayOutput("No such course code exists, please re-enter or type \"exit\" to return to main menu");
+                }
             }
         }
+        return returnVal;
     }
 
     /**
@@ -334,8 +344,8 @@ public class StudentUI extends Promptable {
         // get the other student's login details
         displayOutput("Enter user ID of the student you are swopping with");
         String swopID = (String) getUserInput();
-        displayOutput("Enter the other student's password"); //TODO: hide password
-        String swopPassword = (String) getUserInput();
+        displayOutput("Enter the other student's password");
+        String swopPassword = (String) getHiddenInput();
 
         // verify the login details of the other student
         LoginMgr loginMgr = new LoginMgr();
