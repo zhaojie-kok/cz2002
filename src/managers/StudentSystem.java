@@ -241,8 +241,6 @@ public class StudentSystem implements CourseSystemInterface {
         return timetable;
     }
 
-    // These are called AFTER selectCourse/selectIndex
-    ////// ++++++++ START +++++++++
     /**
      * Method to register a student for a course
      * 
@@ -287,12 +285,11 @@ public class StudentSystem implements CourseSystemInterface {
      * 
      * @throws InvalidInputException thrown if student has not registered for selected course
      * @throws MissingParametersException thrown if course or index have not been selected
-     * @throws OutOfRangeException
      */
-    public void dropCourse() throws InvalidInputException, MissingParametersException, OutOfRangeException {
+    public void dropCourse() throws InvalidInputException, MissingParametersException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
         studentManager.dropCourse(selectedCourse, user);
-        courseMgr.removeStudent(user, selectedIndex, selectedCourse); //TODO: docstring and check functionality
+        courseMgr.removeStudent(user, selectedIndex, selectedCourse);
         clearSelections();
     }
 
@@ -363,38 +360,56 @@ public class StudentSystem implements CourseSystemInterface {
         }
     }
 
-    // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
-    public void swopToIndex() throws KeyNotFoundException, MissingSelectionException, OutOfRangeException,
-            MissingParametersException, InvalidInputException {
+    /**
+     * Method to change to another index for the selected course
+     * 
+     * @throws KeyNotFoundException       thrown if chosen index does not exist for the selected course
+     * @throws MissingSelectionException  thrown if either course or index has not been selected
+     * @throws MissingParametersException thrown if either course or index has not been selected
+     * @throws InvalidInputException      thrown if user is not registered for course, already in the new index, new index is full, or timetable clashes
+     */
+    public void swopToIndex() throws KeyNotFoundException, MissingSelectionException,
+    MissingParametersException, InvalidInputException {
+        // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a Course for swopping index");
         } else if (user.isRegistered(selectedCourse)) {
-            throw new OutOfRangeException("You are not registered for this course");
+            throw new InvalidInputException("You are not registered for this course");
         }
         
         if (selectedIndex == null) {
             throw new MissingSelectionException("Please select an Index to swop to");
         } else if (user.isRegistered(selectedCourse, selectedIndex)){
-            throw new OutOfRangeException("You are already in this index");
+            throw new InvalidInputException("You are already in this index");
         }
         // no more slots
         if (selectedIndex.getSlotsAvailable() <= 0){
-            throw new OutOfRangeException("The chosen index is full");
+            throw new InvalidInputException("The chosen index is full");
         }
 
         String current = user.getCourseIndex(selectedCourse.getCourseCode());
         if (checkSwopClash(user, selectedIndex)){
-            throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
+            throw new InvalidInputException("Timetable clash detected. Index Swop not allowed");
         }
         courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
         courseMgr.addStudent(user, selectedIndex, selectedCourse);
         studentManager.swopIndex(user, selectedCourse, selectedIndex);
     }
 
+    /**
+     * Method to check whether or not for a particular student, adding the selected
+     * index will result in a clash
+     * 
+     * @param student student to be checked
+     * @return true if a clash is detected, false otherwise
+     * @throws KeyNotFoundException      thrown if an index under student is found
+     *                                   to not be under the course stated
+     * @throws MissingSelectionException thrown if an index is yet to be selected
+     */
     private boolean checkAddClash(Student student) throws KeyNotFoundException, MissingSelectionException {
-        /**
-         * Returns false if no ADD clash. Else returns true.
-         */
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Please first select an index");
+        }
         HashMap<String, String> courses = student.getCourses();
         if (courses.size() == 0){
             return false;
@@ -413,11 +428,25 @@ public class StudentSystem implements CourseSystemInterface {
         return false;
     }
 
+
+    /**
+     * Method to check if swopping to a new index
+     * 
+     * @param student  Student to check
+     * @param newIndex Index to be swopped to
+     * @return         true if a clash is detected. false otherwise
+     * @throws KeyNotFoundException      thrown if an index under student is found
+     *                                   to not be under the course stated
+     * @throws MissingSelectionException thrown if course or index is yet to be selected
+     */
     private boolean checkSwopClash(Student student, Index newIndex) throws KeyNotFoundException,
             MissingSelectionException {
-        /**
-         * Returns false if no SWOP clash. Else returns true.
-         */
+        if (selectedCourse == null) {
+            throw new MissingSelectionException("Please select a course first");
+        }
+        if (selectedIndex == null) {
+            throw new MissingSelectionException("Please select an index first");
+        }
         HashMap<String, String> courses = student.getCourses();
         Course course;
         Index registered;
@@ -436,5 +465,4 @@ public class StudentSystem implements CourseSystemInterface {
         }
         return false;
     }
-    ////// ++++++++ END +++++++++
 }

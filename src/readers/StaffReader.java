@@ -6,16 +6,33 @@ import java.util.HashMap;
 import entities.Staff;
 import exceptions.FileReadingException;
 
+/**
+ * Boundary class for handling reading and writing of files relating to Staff entities
+ */
 public class StaffReader extends FileReader {
-    // staff files are named by their user id inside a folder
+    /**
+     * Constructor 
+     * 
+     * @param filedir path to directory storing the files relating to staff entities
+     */
     public StaffReader(String filedir) {
         this.filepath = filedir;
     }
 
+    /**
+     * Method to get information from all the files in the directory
+     * Overloaded version of {@link #getData(String)}
+     */
     public Object getData() throws FileReadingException {
         return getData("");
     }
 
+    /**
+     * Method to get information from all the files in the directory
+     * @param params Unused argument
+     * @return HashMap containing information about all staff users in system. Staff number and ID are used as keys
+     * @throws FileReadingException thrown if a file cannot be read
+     */
     @Override
     public Object getData(String params) throws FileReadingException {
         /*
@@ -52,6 +69,11 @@ public class StaffReader extends FileReader {
         return students;
     }
 
+    /**
+     * Method to write a Staff object to its corresponding file
+     * @param o Staff object to be written
+     * @return  1. if file writing is successful, -1 otherwise
+     */
     @Override
     public int writeData(Serializable o) {
         /*

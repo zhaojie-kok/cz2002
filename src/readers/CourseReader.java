@@ -7,16 +7,35 @@ import java.util.HashMap;
 import entities.course_info.Course;
 import exceptions.FileReadingException;
 
+/**
+ * Boundary class meant to handle reading and writing of files relating to Course entities
+ */
 public class CourseReader extends FileReader {
+    /**
+     * Constructor
+     * 
+     * @param filedir directory of the files for course entities
+     */
     public CourseReader(String filedir) {
         this.filepath = filedir;
     }
 
+    /**
+     * Method to read data from a file.
+     * See {@link FileReader#getData()}
+     */
     @Override
     public Object getData(String params) throws FileReadingException {
         return getData();
     }
 
+    /**
+     * Method to get data from a file
+     * Overloaded and refined version of {@link #getData(String)}
+     * 
+     * @return HashMap containing information of courses read from each course's file 
+     * @throws FileReadingException thrown if a file cannot be read
+     */
     public Object getData() throws FileReadingException {
         /**
 		Returns all courses (HashMap where key is courseCode) if the courseCode is null
@@ -49,6 +68,11 @@ public class CourseReader extends FileReader {
         return courses;
     }
 
+    /**
+     * Method to update information about a course
+     * 
+     * @return 1 if course information was written to file successfully, -1 otherwise
+     */
     @Override
     public int writeData(Serializable o) {
         /* CODES FOR CourseReader.writeData:

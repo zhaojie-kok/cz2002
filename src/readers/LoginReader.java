@@ -8,16 +8,33 @@ import java.util.HashMap;
 
 import exceptions.FileReadingException;
 
+/**
+ * Boundary class meant to handle reading and writing of files relating to login details for users
+ * login details should be in format userId, password, userType, access period
+ */
 public class LoginReader extends FileReader {
-    // login details should be in format userId, password, userType, access period
+    /**
+     * Constructor
+     * 
+     * @param filepath file path of file containing login details for all users
+     */
     public LoginReader(String filepath) {
         this.filepath = filepath;
     }
 
+    /**
+     * Method to hash a String to prevent storing in raw text format
+     * 
+     * @param password unhashed String used as password
+     * @return         hashed version of the password String
+     */
     public String hashPassword(String password) {
         return "" + String.valueOf(password.hashCode());
     }
 
+    /**
+     * Method to retrieve information about a user based on userID 
+     */
     @Override
     public Object getData(String userId) throws ClassNotFoundException, IOException {
         // since the login details are saved hashMaps, the userId can be looked up
@@ -32,12 +49,13 @@ public class LoginReader extends FileReader {
         return details;
     }
 
+    /**
+     * Method to save save user login details
+     * login details should be in an Object[] with format: 
+     * (String) userId, (String) password, (String) userType, (LocalDateTime[]) access period
+     */
     @Override
     public int writeData(Serializable o) throws FileReadingException {
-        /* CODES FOR LoginReader.writeData:
-         * 1: successfully changed
-         */
-
         // ensuer object provided is of correct class and format
         // assertion instead of try catch since user should never be able to access this method directly,
         // hence this checking is primarily for testing and debugging

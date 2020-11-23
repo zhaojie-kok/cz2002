@@ -3,16 +3,26 @@ import java.util.Scanner;
 import managers.LoginMgr;
 import boundaries.*;
 
+/**
+ * Main Application for our STARS system
+ */
 public class STARSApp extends Promptable implements HiddenInputUI {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
 
+    /**
+     * Main method
+     */
     public static void main(String[] args) {
         STARSApp app = new STARSApp(); // to allow calling of non-static methods
         app.run();
     }
 
+    /**
+     * Method to start up the UI
+     * See {@link boundaries.GeneralUI#run()}
+     */
     @Override
     public void run() {
         int choice = 0;
@@ -52,9 +62,12 @@ public class STARSApp extends Promptable implements HiddenInputUI {
 
         // show UI for each respective type of user
         newUI.run();
-
     }
 
+    /**
+     * Method to prompt user to login
+     * @return login status. See {@link managers.LoginMgr#verifyLoginDetails(String, String)}
+     */
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
@@ -73,7 +86,9 @@ public class STARSApp extends Promptable implements HiddenInputUI {
         return result;
     }
     
-    // use this method to get and return inputs from the user
+    /**
+     * Method to get inputs from user
+     */
     @Override
     public String getUserInput() {
         String userInput = scn.nextLine();
@@ -88,7 +103,9 @@ public class STARSApp extends Promptable implements HiddenInputUI {
         return System.console().readPassword();
     }
 
-    // use this method to display output/prompt to user
+    /**
+     * Method to dsplay output to user
+     */
     @Override
     public void displayOutput(Object toDisplay) {
         System.out.println(toDisplay.toString());

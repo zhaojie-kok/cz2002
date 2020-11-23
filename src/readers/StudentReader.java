@@ -7,24 +7,37 @@ import java.util.HashMap;
 import entities.Student;
 import exceptions.FileReadingException;
 
+/**
+ * Boundary class for handling reading and writing of files relating to Staff entities
+ */
 public class StudentReader extends FileReader {
-    // student files are named by their user id inside a folder
+    /**
+     * Construcutor
+     * 
+     * @param filedir path to directory storing the files relating to staff entities
+     */
     public StudentReader(String filedir) {
         this.filepath = filedir;
     }
 
+    /**
+     * Method to get information from all the files in the directory
+     * @param params Unused argument
+     * @return HashMap containing information about all student users in system. Matriculation number and ID are used as keys
+     */
     @Override
     public Object getData(String params) throws FileReadingException {
         return getData();
     }
 
+    /**
+     * Method to get information from all the files in the directory
+     * Overloaded version of {@link #getData(String)}
+     * 
+     * @return HashMap containing information about all student users in system. Matriculation number and ID are used as keys
+     * @throws FileReadingException thrown if a file cannot be read
+     */
     public Object getData() throws FileReadingException {
-        /*
-        Returns all students (HashMap where key is matric no of student) if the identifier is null
-        Returns only a specific student if the student can be identified with the identifier (matricNo or userId)
-        Returns null if student cannot be identified
-		 */
-
         // iterate through all files in the folder
 		File folder = new File(this.filepath);
         File[] listOfFiles = folder.listFiles();
@@ -54,6 +67,11 @@ public class StudentReader extends FileReader {
         return students;
     }
 
+    /**
+     * Method to write a Student object to its corresponding file
+     * @param o Student object to be written
+     * @return  1. if file writing is successful, -1 otherwise
+     */
     @Override
     public int writeData(Serializable o) {
         /* CODES FOR StudentReader.writeData:
