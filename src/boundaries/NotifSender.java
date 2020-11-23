@@ -10,10 +10,23 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+
+/** Default class for sending notifications to users.
+ * Method of notifying is email by default.
+ */
 public class NotifSender {
 
-	public static boolean sendNotif(String subject, String body, String address) {
-
+	/**
+	 * Method to send notifications via email
+	 * 
+	 * @param subject Email subject
+	 * @param body    Message body
+	 * @param address Recipient's email address
+	 * @return true if notification was made successfully, false otherwise
+	 * @throws MessagingException in event where notification cannot be made, exception is thrown
+	 */
+	public static boolean sendNotif(String subject, String body, String address) throws MessagingException {
+		// TODO: make general for all
 		final String username = "czassignment482"; // to be added
 		final String password = "javaisfun"; // to be added
 
@@ -24,11 +37,11 @@ public class NotifSender {
 		props.put("mail.smtp.port", "587");
 
 		Session session = Session.getInstance(props,
-		  new javax.mail.Authenticator() {
+		new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(username, password);
 			}
-		  });
+		});
 
 		boolean success = false;
 
@@ -46,7 +59,7 @@ public class NotifSender {
 			success = true;
 
 		} catch (MessagingException e) {
-			throw new RuntimeException(e);
+			throw new MessagingException("Unable to send notification. Please inform system administrator");
 		}
 
 		return success;

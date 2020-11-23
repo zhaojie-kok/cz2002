@@ -7,26 +7,39 @@ import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
 import readers.LoginReader;
 
+/**
+ * Controller for handling login related methods
+ */
 public class LoginMgr {
     private static LoginReader loginReader;
 
+    /**
+     * Constructor
+     */
     public LoginMgr() {
         loginReader = new LoginReader("data/loginDetails/");
     }
 
-    // overloaded for future upgrades, where the filepath will depend on the
-    // application design
+    /**
+     * Alternative constructor to allow for possibility of storing login details in seperate locations
+     * @param loginDetailsFilePath file/folder path to login details
+     */
     public LoginMgr(String loginDetailsFilePath) {
         loginReader = new LoginReader(loginDetailsFilePath);
     }
 
+    /**
+     * Method to verify the login details provided
+     * 
+     * @param userId   userID to be verified
+     * @param password password to be verified
+     * @return         1: validated as student user, 2: validated as staff user, -1: validated details but no information retrieved (only for debugging)
+     * @throws FileNotFoundException thrown if userID cannot be mapped to any login details
+     * @throws InvalidInputException thrown if password provided is incorrect
+     * @throws FileReadingException thrown if files found cannot be accessed
+     */
     public int verifyLoginDetails(String userId, String password) throws FileNotFoundException, InvalidInputException,
             FileReadingException {
-        /*
-         * CODES FOR LoginMgr.verifyLoginDetails: 2: successful & user is a staff 1:
-         * successful & user is a student -1: username not found -2: wrong password -3:
-         * unknown error
-         */
         Object data = null;
         try {
             data = loginReader.getData(userId);

@@ -5,7 +5,18 @@ import java.util.List;
 
 import entities.course_info.*;
 
+/**
+ * Controller class for DateTime related functionality.
+ * Primarily meant to help check for clashes between schedules/timetables
+ */
 public class CalendarMgr {
+    /**
+     * Method used to check for clashes between lesson details of 2 indexes
+     * 
+     * @param i1 first index to check
+     * @param i2 second index to check
+     * @return true if a clash is detected, false otherwise
+     */
     public boolean checkClash(Index i1, Index i2) {
         // each timetable is a array of length 14, each slot for a day of the week for 2 weeks
         // the List of lessonDetails in each slot represents the lessons in each day
@@ -47,6 +58,13 @@ public class CalendarMgr {
         return false;
     }
 
+    /**
+     * Generalised version of {@link #checkClash(Index, Index)} method
+     * Meant to check if there are any clashes between 2 lessons
+     * @param lesson1 first lesson's details 
+     * @param lesson2 second lesson's details
+     * @return true if clash is detected, false otherwise
+     */
     public boolean lessonClash(LessonDetails lesson1, LessonDetails lesson2) {
         LocalTime start1 = lesson1.getStartTime();
         LocalTime end1 = lesson1.getEndTime();

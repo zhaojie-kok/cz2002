@@ -11,26 +11,45 @@ import exceptions.MissingSelectionException;
 import managers.LoginMgr;
 import managers.StudentSystem;
 
+/**
+ * UI for student users. Meant to abstract student system from users
+ */
 public class StudentUI extends Promptable {
     private static Scanner scn;
     private static String userId;
     private static StudentSystem system;
 
+    /**
+     * Constructor
+     * NOTE: Student system will not be instantiated until {@link #run()} method is called
+     * 
+     * @param scn Scanner object for receiving input from user
+     * @param userId ID of user
+     */
     public StudentUI(Scanner scn, String userId) {
         StudentUI.scn = scn;
         StudentUI.userId = userId;
     }
 
+    /**
+     * Method to get input from user using Scanner object
+     */
     @Override
     public Object getUserInput() {
         return scn.nextLine();
     }
 
+    /**
+     * Method to display outputs to user
+     */
     @Override
     public void displayOutput(Object toDisplay) {
         System.out.println(toDisplay.toString());
     }
 
+    /**
+     * Method to start up the UI
+     */
     @Override
     public void run() {
         // set up the system
@@ -43,6 +62,9 @@ public class StudentUI extends Promptable {
         shutDown();
     }
 
+    /**
+     * Main menu of UI. All other functional methods are called from here
+     */
     public void mainMenu() {
         int choice = 0;
 
@@ -90,10 +112,20 @@ public class StudentUI extends Promptable {
 
     }
 
+    /**
+     * Method to check the status of the system
+     */
     private void checkSystemStatus() {
         displayOutput(system.getSystemStatus());
     }
 
+    /**
+     * Method to prompt user to select a course.Course selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting course successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
     private int promptCourseSelection() {
         String courseCode = "";
         displayOutput("Please Enter Course Code: ");
@@ -112,6 +144,13 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Method to prompt user to select an index. Index selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting index successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
     private int promptIndexSelection() {
         String indexNo = "";
         displayOutput("Please enter an Index");
@@ -133,6 +172,11 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Method to allow students to register for a course
+     * user will need to enter arguments for {@link managers.StudentManager#addCourse()} method
+     * user will be automatically added to waitlist if the index is full
+     */
     private void addCourse() {
         int result;
         // prompt user for choice of course and index
@@ -148,13 +192,24 @@ public class StudentUI extends Promptable {
 
         // try to add course in the system
         try {
-            system.addCourse();
+            result = system.addCourse();
+            switch(result) {
+                case 0:
+                    displayOutput("Course is full, you have been added to waitlist");
+                    break;
+                case 1:
+                    displayOutput("Successfully registered for course");
+                    break;
+            }
         } catch (Exception e) {
             displayOutput(e.getMessage());
             return;
         }
     }
 
+    /**
+     * Method to allow students to drop a course, whether from their registered or waitlisted courses
+     */
     private void dropCourse() {
         int result;
         // prompt user for choice of course and index
@@ -177,10 +232,16 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Displays a list of courses the user has been registered for
+     */
     private void printRegisteredCourses() {
-        displayOutput(system.checkRegisteredCourses("Course: %s\n Index: %s\n"));
+        displayOutput(system.checkRegisteredCourses());
     }
 
+    /**
+     * Displays the list of vacancies available for each course in the system
+     */
     private void checkVacanciesAvailable() {
         int result = promptCourseSelection();
         if (result == -1) {
@@ -193,6 +254,11 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Method to display a list of courses
+     * User can choose to filter by school with {@link managers.StudentSystem#printCoursesBySchool()} method
+     * or users can filter using keywords with {@link managers.StudentSystem#printCoursesByStringFilter()} method
+     */
     private void printCourses() {
         // print all, b sch, or by filter
         String[] options = { "All courses", "By School", "By keywords" };
@@ -219,6 +285,9 @@ public class StudentUI extends Promptable {
         displayOutput(result);
     }
 
+    /**
+     * Method to allow a student to change to another index in a course
+     */
     private void swopIndex() {
         int result;
 
@@ -244,6 +313,10 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Method to allow 2 students to swop their indexes with each other
+     * NOTE: userID and password of the swopping student is required
+     */
     private void swopStudentIndex() {
         int result;
 
@@ -256,7 +329,7 @@ public class StudentUI extends Promptable {
         // get the other student's login details
         displayOutput("Enter user ID of the student you are swopping with");
         String swopID = (String) getUserInput();
-        displayOutput("Enter the other student's password");
+        displayOutput("Enter the other student's password"); //TODO: hide password
         String swopPassword = (String) getUserInput();
 
         // verify the login details of the other student
@@ -281,20 +354,20 @@ public class StudentUI extends Promptable {
         }
     }
 
+    /**
+     * Method for students to view their existing timetable
+     */
     private void viewTimeTable() {
         try {
             displayOutput(system.getTimeTable());
-<<<<<<< HEAD
-        } catch (Exception e) {
-            displayOutput(e.getMessage());
-=======
         } catch (FileReadingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
->>>>>>> ab0be1a9caa95e91bcead216158e0a0fd585073f
+            displayOutput(e.getMessage());
         }
     }
 
+    /**
+     * Method to shut down the UI, to ensure all variables stored are deleted
+     */
     private void shutDown() {
         StudentUI.scn = null;
         StudentUI.userId = null;
