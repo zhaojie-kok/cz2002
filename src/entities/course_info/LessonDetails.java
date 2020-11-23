@@ -89,6 +89,26 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	public void setLessonDay(DayOfWeek lessonDay) {
 		this.lessonDay = lessonDay;
 	}
+
+	/**
+	 * Getter for evenOdd of lesson
+	 * 0: even weeks
+	 * 1: odd weeks
+	 * 2: both
+	 */
+	public int getEvenOdd() {
+		return evenOdd;
+	}
+
+	/**
+	 * Setter for evenOdd of lesson
+	 * 0: even weeks
+	 * 1: odd weeks
+	 * 2: both
+	 */
+	public void setEvenOdd(int evenOdd) {
+		this.evenOdd = evenOdd;
+	}
 	
 	/**
 	 * Getter for start time of the lesson

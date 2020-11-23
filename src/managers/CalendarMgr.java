@@ -66,6 +66,14 @@ public class CalendarMgr {
      * @return true if clash is detected, false otherwise
      */
     public boolean lessonClash(LessonDetails lesson1, LessonDetails lesson2) {
+        int evenOdd1 = lesson1.getEvenOdd();
+        int evenOdd2 = lesson2.getEvenOdd();
+        if (evenOdd1 == 1 && evenOdd2 == 0) {
+            return false;
+        } else if (evenOdd2 == 1 && evenOdd1 == 0) {
+            return false;
+        }
+        
         LocalTime start1 = lesson1.getStartTime();
         LocalTime end1 = lesson1.getEndTime();
         LocalTime start2 = lesson2.getStartTime();
