@@ -67,6 +67,7 @@ public class StudentManager implements EntityManager {
         /**
          * creates a new student based on information provided
          */
+        // TODO: throw exception if any field is null in user
         if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
             throw new KeyClashException("Matric Number " + matricNo);
@@ -207,7 +208,16 @@ public class StudentManager implements EntityManager {
      */
     public String printAllStudents(){
         String toReturn = "";
-        for (Student s : students.values()){
+        Student s;
+        for (String i : students.keySet()){
+            try {
+                s = getStudent(i);
+            } catch (KeyNotFoundException e) {
+                continue;
+            }
+            if (i == s.getMatricNo()){
+                continue;
+            }
             toReturn += s.getLessInfo() + "\n";
         }
         return toReturn;
@@ -220,6 +230,8 @@ public class StudentManager implements EntityManager {
     public void saveState(Object student) {
         Student s = (Student) student;
         sReader.writeData(s);
-        students.replace(s.getMatricNo(), s);
+        students.put(s.getMatricNo(), s);
+        students.put(s.getUserId(), s);
+
     }
 }

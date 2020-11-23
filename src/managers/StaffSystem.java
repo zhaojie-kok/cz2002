@@ -10,6 +10,7 @@ import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
 import entities.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -183,10 +184,12 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * @param newAccessPeriod LocalDateTime array indicating new access period
      * @throws FileReadingException   thrown if student file cannot be accessed
      * @throws IOException            thrown if file cannot be read
-     * @throws ClassNotFoundException thrown if file is read but contains the wrong class
+     * @throws ClassNotFoundException thrown if file is read but contains the wrong
+     *                                class
+     * @throws KeyNotFoundException   thrown if selectedStudent is not within system
      */
     public void updateAccessPeriod(LocalDateTime[] newAccessPeriod)
-            throws FileReadingException, ClassNotFoundException, IOException {
+            throws FileReadingException, ClassNotFoundException, IOException, KeyNotFoundException {
         studentManager.updateAccessPeriod(selectedStudent, newAccessPeriod);
         loginMgr.updateAccessPeriod(selectedStudent, newAccessPeriod);
     }
@@ -202,18 +205,33 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * @param matricNo     Matriculation number of new student
      * @param accessPeriod Access period of new student
      * @param password     Password for new userID
+     * @return String with list of students
      * @throws KeyClashException thrown if details required to be unique are not
      * @throws FileReadingException thrown if new file cannot be created
      */
-    public void addStudent(String userId, String name, String gender, String nationality, String email,
+    public String addStudent(String userId, String name, String gender, String nationality, String email,
                             String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, FileReadingException {
         // Call student manager to create the student
+        boolean isUnique = false;
+        try {
+            loginMgr.verifyLoginDetails(userId, null);
+        } catch (KeyNotFoundException e) {
+            isUnique = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (!isUnique) {
+            throw new KeyClashException("UserID " + userId);
+        }
+
         try {
             studentManager.createStudent(userId, name, gender, nationality, email, matricNo, accessPeriod);
             // TODO: check validity of email
             // If student is created, then create login details
             Object[] data = { userId, password, "student", accessPeriod };
             loginMgr.createNewLoginDetails(data);
+            return studentManager.printAllStudents();
         } catch (KeyClashException e) {
             throw e;
         } catch (FileReadingException f) {
@@ -366,7 +384,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
         Iterator<Course> courses = courseMgr.getAllCourses().values().iterator();
         while (courses.hasNext()) {
             c = courses.next();
-            toReturn += c.getInfo();
+            toReturn += c.getLessInfo();
         }
         return toReturn;
     }

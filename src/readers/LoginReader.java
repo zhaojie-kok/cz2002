@@ -1,12 +1,14 @@
 package readers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import exceptions.FileReadingException;
+import exceptions.KeyNotFoundException;
 
 public class LoginReader extends FileReader {
     // login details should be in format userId, password, userType, access period
@@ -19,7 +21,7 @@ public class LoginReader extends FileReader {
     }
 
     @Override
-    public Object getData(String userId) throws ClassNotFoundException, IOException {
+    public Object getData(String userId) throws ClassNotFoundException, IOException, KeyNotFoundException {
         // since the login details are saved hashMaps, the userId can be looked up
         // directly
         HashMap<String, String[]> allDetails;
@@ -27,8 +29,12 @@ public class LoginReader extends FileReader {
         if (allDetails == null) {
             return null; // return null if no file read
         }
-        String[] defaultVal = {"", "", null}; // {hashedPw, usertype, accessperiod}
-        Object[] details = allDetails.getOrDefault(userId, defaultVal); // return null of userId cant be found
+
+
+        Object[] details = allDetails.get(userId); // return null of userId cant be found
+        if (details == null) {
+            throw new KeyNotFoundException(userId);
+        }
         return details;
     }
 
