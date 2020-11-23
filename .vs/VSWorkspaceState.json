@@ -1,8 +1,16 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src"
+    "\\data",
+    "\\data\\staff",
+    "\\src",
+    "\\src\\boundaries",
+    "\\src\\entities",
+    "\\src\\entities\\course_info",
+    "\\src\\exceptions",
+    "\\src\\managers",
+    "\\src\\readers"
   ],
-  "SelectedNode": "\\src\\Index.java",
+  "SelectedNode": "\\src\\boundaries\\StudentUI.java",
   "PreviewInSolutionExplorer": false
 }

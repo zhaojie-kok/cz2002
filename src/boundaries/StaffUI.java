@@ -47,9 +47,9 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         String[] options = { "Change student access period", "Add Student to system", "Add course to system",
                 "Update course information", "Add index to a course", "Update index information",
-                "Print Students in a course index", "Print Students in a course", "Exit" };
+                "Print Students in a course index", "Print Students in a course", "Check available slots for course index", "Exit" };
 
-        while (choice != 8) {
+        while (choice != 9) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
             switch (choice) {
                 case 0:
@@ -71,12 +71,15 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                     updateIndex();
                     break;
                 case 6:
-                    printIndexStudents();
+                    printIndexStudents(true);
                     break;
                 case 7:
                     printCourseStudents();
                     break;
                 case 8:
+                    printIndexStudents(false);
+                    break;
+                case 9:
                     break;
                 default:
                     displayOutput("Choices must be between 1 and 8");
@@ -292,7 +295,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
     }
 
-    private void printIndexStudents() {
+    private void printIndexStudents(boolean b) {
         int result;
 
         // prompt user to select a course
@@ -308,12 +311,14 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         }
 
         try {
-            String toPrint = system.printStudentsbyIndex();
+            String toPrint = system.printStudentsbyIndex(b);
             displayOutput(toPrint);
         } catch (MissingSelectionException e) {
             displayOutput(e.getMessage());
         }
     }
+
+
 
     private void addCourse() {
         // get the school that is teaching the course
