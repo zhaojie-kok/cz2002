@@ -69,7 +69,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         String[] options = { "Show System Status", "Change student access period", "Add Student to system", "Add course to system",
                 "Update course information", "Add index to a course", "Update index information",
-                "Print Students in a course index", "Print Students in a course", "Exit" };
+                "Print Students in a course index", "Print Students in a course", "Check available slots for course index", "Exit" };
 
         while (choice != 10) {
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
