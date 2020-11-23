@@ -12,8 +12,8 @@ public class KeyNotFoundException extends Exception {
      * 
      * @param message error message to be accessed with {@link #getMessage()} method
      */
-    public KeyNotFoundException(String message){
-        this.message = message;
+    public KeyNotFoundException(String key){
+        this.message = key + " not found";
     }
     
     /**

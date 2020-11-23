@@ -62,12 +62,19 @@ public class LoginReader extends FileReader {
         assert (o.getClass() == Object[].class) : "New login details must be a String[]";
         assert ((Object[]) o).length == 4 : "login details should be in format userId, password, userType, access period";
 
-        // convert into proper format
+        // convert into array and check
         Object[] newDetails = (Object[]) o;
-        String hashedPassword = hashPassword((String) newDetails[1]);
+        assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
+
+        // convert to proper format and names
         String userID = (String) newDetails[0];
-        if (userID.equals("student")) {
-            assert (newDetails[3].getClass() == LocalDateTime[].class) : "Access period should be a LocalDateTime array";
+        String hashedPassword = hashPassword((String) newDetails[1]);
+        String userType = (String) newDetails[2];
+        LocalDateTime[] accessPeriod;
+        if (userType.equals("student")) {
+            accessPeriod = (LocalDateTime[]) newDetails[3];
+        } else {
+            accessPeriod = null;
         }
         
         File tempFile = new File(filepath);
@@ -80,8 +87,7 @@ public class LoginReader extends FileReader {
                 if (allDetails == null){
                     allDetails = new HashMap<String, Object[]>();
                 }
-
-                allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
+                allDetails.put(userID, new Object[]{hashedPassword, userType, accessPeriod});
                 writeSerializedObject(filepath, allDetails);
                 return 1;
             } catch (Exception e) {
@@ -93,7 +99,7 @@ public class LoginReader extends FileReader {
         else{
             try {
                 HashMap<String, Object[]> allDetails = new HashMap<String, Object[]>();
-                allDetails.put(userID, new Object[]{hashedPassword, newDetails[2], newDetails[3]});
+                allDetails.put(userID, new Object[]{hashedPassword, userType, accessPeriod});
                 writeSerializedObject(filepath, allDetails);
                 return 1;
             } catch (Exception e) {
