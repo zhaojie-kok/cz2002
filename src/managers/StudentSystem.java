@@ -185,34 +185,42 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public String getTimeTable() throws FileReadingException {
         // TODO: FIX Index 21 out of bounds for length 12
-        String[][] tableForm = new String[12][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
+        String[][] tableForm = new String[26][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
         Course course;
         Index ind;
         List<LessonDetails>[] lessons;
+        String output = "";
         for (Map.Entry<String, String> entry: courses.entrySet()) {
             try {
                 course = courseMgr.getCourse(entry.getKey());
                 ind = courseMgr.getCourseIndex(course, entry.getValue());
                 lessons = ind.getTimeTable();
                 for (int i=0; i<lessons.length; i++) {
+                    // For each day
                     for (LessonDetails ld: lessons[i]) {
-                        int startRow = (ld.getStartTime().getHour()-8) * 2 + (ld.getStartTime().getMinute() / 30);
+                        // For the lessons
+                        int startRow = (ld.getStartTime().getHour() - 8) * 2 + (ld.getStartTime().getMinute() / 30);
                         int endRow = (ld.getEndTime().getHour() - 8) * 2 + (ld.getEndTime().getMinute() / 30);
-                        for (int j=startRow; j<=endRow; j++) {
-                            tableForm[j][i] = String.format("%15s", course.getCourseCode() + " " + ind.getIndexNo());
+                        if (startRow - 1 >= 0 && tableForm[startRow][i] == null){
+                            tableForm[startRow - 1][i] = "_______________";
+                        }
+                        tableForm[startRow][i] = String.format("%15s", course.getCourseCode() + " " + ld.getLessonType());
+                        if (startRow != endRow - 1){
+                            tableForm[endRow - 1][i] = "_______________";
                         }
                     }
                 }
 
-                String output = "\nEVEN WEEKS\n|     |";
+                output += "\nEVEN WEEKS\n|     |";
                 for (int i=0; i<DayOfWeek.values().length; i++) {
                     output += String.format("%15s|", DayOfWeek.values()[i].toString());
                 }
                 for (int i=0; i<tableForm.length; i++) {
-                    output += String.format("\n|%2d:%2d|", ((int) (i/2)) + 8, i%2 * 30);
+                    output += String.format("\n|%02d:%02d|", ((int) (i/2)) + 8, i%2 * 30);
                     for (int j=0; j<7; j++) {
-                        output += String.format("%s|", tableForm[i][j]);
+                        output += String.format("%s|", 
+                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
                     }
                 }
                 output += "\nODD WEEKS\n|     |";
@@ -220,26 +228,19 @@ public class StudentSystem implements CourseSystemInterface {
                     output += String.format("%15s|", DayOfWeek.values()[i].toString());
                 }
                 for (int i = 0; i < tableForm.length; i++) {
-                    output += String.format("\n|%2d:%2d|", ((int) (i / 2)) + 8, i % 2 * 30);
+                    output += String.format("\n|%02d:%02d|", ((int) (i / 2)) + 8, i % 2 * 30);
                     for (int j = 7; j < tableForm[0].length; j++) {
-                        output += String.format("%s|", tableForm[i][j]);
+                        output += String.format("%s|", 
+                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
                     }
                 }
 
-                return output;
             } catch (KeyNotFoundException e) {
                 throw new FileReadingException("inconsistencies found in student data. Please contact system administrator");
             }
         }
-
-        String timetable = "";
-        for (int i=0; i<tableForm.length; i++) {
-            for (int j=0; j<tableForm[0].length; j++) {
-                timetable += tableForm[i][j];
-            }
-            timetable += "\n";
-        }
-        return timetable;
+        
+        return output;
     }
 
     // These are called AFTER selectCourse/selectIndex
