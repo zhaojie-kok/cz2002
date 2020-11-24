@@ -57,6 +57,9 @@ public class StudentSystem implements CourseSystemInterface {
             c = courses.next();
             toReturn += c.getInfo();
         }
+        if (toReturn == ""){
+            return "No courses found";
+        }
         return toReturn;
     }
 
@@ -77,6 +80,9 @@ public class StudentSystem implements CourseSystemInterface {
             if (c.isSchool(school)) {
                 toReturn += String.format(format, c.getInfo());
             }
+        }
+        if (toReturn == ""){
+            return "No courses found";
         }
         return toReturn;
     }
@@ -100,6 +106,9 @@ public class StudentSystem implements CourseSystemInterface {
                 toReturn += String.format(format, c.getInfo());
             }
         }
+        if (toReturn == ""){
+            return "No courses found";
+        }
         return toReturn;
     }
 
@@ -113,6 +122,9 @@ public class StudentSystem implements CourseSystemInterface {
         Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
         while (indexes.hasNext()) {
             toReturn += String.format(format, indexes.next().getInfo());
+        }
+        if (toReturn == ""){
+            return "None";
         }
         return toReturn;
     }
@@ -132,6 +144,9 @@ public class StudentSystem implements CourseSystemInterface {
             toAdd = String.format(format, courses.get(i), indexes.get(i));
             toReturn += toAdd;
         }
+        if (toReturn == ""){
+            return "None";
+        }
         return toReturn;
     }
 
@@ -148,6 +163,9 @@ public class StudentSystem implements CourseSystemInterface {
         for (int i = 0; i < hMap.size(); i++) {
             toAdd = String.format(format, courses.get(i), indexes.get(i));
             toReturn += toAdd;
+        }
+        if (toReturn == ""){
+            return "None";
         }
         return toReturn;
     }
