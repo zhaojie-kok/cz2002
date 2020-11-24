@@ -185,7 +185,7 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public String getTimeTable() throws FileReadingException {
         // TODO: FIX Index 21 out of bounds for length 12
-        String[][] tableForm = new String[26][14]; // for 2 weeks, 8 am to 8pm in 30 min intervals
+        String[][] tableForm = new String[25][14]; // for 2 weeks, 8 am to 8.30pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
         Course course;
         Index ind;
