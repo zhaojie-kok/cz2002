@@ -72,6 +72,8 @@ public class Student extends User implements Printable{
     public String getCourseIndex(String courseCode) throws KeyNotFoundException {
         if (this.courses.containsKey(courseCode)) {
             return this.courses.get(courseCode);
+        } else if (this.waitlist.containsKey(courseCode)){
+            return this.waitlist.get(courseCode);
         } else {
             throw new KeyNotFoundException(this.userId + " is not registered for " + courseCode);
         }

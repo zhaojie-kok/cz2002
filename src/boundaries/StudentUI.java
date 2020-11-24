@@ -229,11 +229,6 @@ public class StudentUI extends Promptable implements HiddenInputUI {
             return;
         }
 
-        result = promptIndexSelection();
-        if (result == -1) {
-            return;
-        }
-
         // try to remove the course in the system
         try {
             system.dropCourse();
