@@ -428,11 +428,11 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         try {
             system.addCourse(courseCode, courseName, school, acadU);
+            displayOutput(system.printAllCourses());
         } catch (KeyClashException | OutOfRangeException e) {
             displayOutput(e.getMessage());
         }
 
-        displayOutput(system.printAllCourses());
     }
 
     /**
@@ -681,7 +681,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 case 4:
                     displayOutput("Enter email address of user");
                     email = (String) getUserInput();
-                    break; // TODO: check email validity
+                    break;
                 case 5:
                     displayOutput("Enter student matriculation number");
                     matricNo = (String) getUserInput();
@@ -701,7 +701,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 case 9:
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};
                     try {
-                        system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password);
+                        displayOutput(system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password));
                     } catch (KeyClashException k) {
                         displayOutput(k.getMessage());
                     } catch (FileReadingException f) {

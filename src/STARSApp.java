@@ -28,7 +28,8 @@ public class STARSApp extends Promptable implements HiddenInputUI {
         int choice = 0;
         int loginStatus;
         loginStatus = promptLogin();
-        // loginStatus = 2;
+        //TODO: Please delet :D 
+        // loginStatus = 1;
 
         while (loginStatus <= 0) {
             String[] options= {"Yes", "No"};

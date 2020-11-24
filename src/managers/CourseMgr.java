@@ -46,9 +46,13 @@ public class CourseMgr implements EntityManager {
      * @param acadU      Academic units carried by new course
      * @return new course that has been successfully created
      * @throws OutOfRangeException thrown if academic units are insufficient
+     * @throws KeyClashException
      */
     public Course createCourse(String courseCode, String courseName, School school, int acadU)
-            throws OutOfRangeException {
+            throws OutOfRangeException, KeyClashException {
+        if (allCourses.containsKey(courseCode)) {
+            throw new KeyClashException("Course Code " + courseCode);
+        }
         Course c = new Course(courseCode, courseName, school, acadU);
         saveState(c);
         return c;
@@ -202,7 +206,6 @@ public class CourseMgr implements EntityManager {
         if (!l.contains(student) && index.getSlotsAvailable() > 0) {
             l.add(student);
             index.setRegisteredStudents(l);
-            index.minusSlotsAvailable();
             course.updateIndex(index);
             saveState(course);
             return true;
@@ -231,7 +234,6 @@ public class CourseMgr implements EntityManager {
         boolean removed = studentList.remove(student);
         if (removed){
             index.setRegisteredStudents(studentList);
-            index.addSlotsAvailable();
             course.updateIndex(index);
             dequeueWaitlist(course, index);
             saveState(course);

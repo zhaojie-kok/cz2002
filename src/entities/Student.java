@@ -202,6 +202,14 @@ public class Student extends User implements Printable{
     }
 
     /**
+     * Same as getInfo()
+     */
+    @Override
+    public String getLessInfo(){
+        return getInfo();
+    }
+
+    /**
      * Method to get basic information about the student
      * Returns string with information on student as specified in functional
      * requirements (Admin 6.) Eg. John Doe - Male - Singaporean

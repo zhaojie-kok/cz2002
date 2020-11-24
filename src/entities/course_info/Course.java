@@ -171,6 +171,15 @@ public class Course implements Serializable, Printable{
     }
 
     /**
+     * Returns a one liner
+     * AC2101 - Accounting Recognition and Measurement
+     */
+    @Override
+    public String getLessInfo(){
+        return String.format("%s - %s\n", courseCode, courseName);
+    }
+
+    /**
      * Retrieves information about the course
      * Returns formatted string of course information
      * Eg:

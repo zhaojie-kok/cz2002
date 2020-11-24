@@ -9,6 +9,7 @@ import entities.User;
 import entities.Student;
 import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
+import exceptions.KeyNotFoundException;
 import exceptions.OutOfRangeException;
 import readers.LoginReader;
 
@@ -44,19 +45,16 @@ public class LoginMgr {
      *                               details
      * @throws InvalidInputException thrown if password provided is incorrect
      * @throws FileReadingException  thrown if files found cannot be accessed
-     * @throws OutOfRangeException
+     * @throws KeyNotFoundException  thrown if user id cannot be found in system
+     * @throws OutOfRangeException   thrown if logging in outside of access period
      */
-    public int verifyLoginDetails(String userId, String password)
-            throws FileNotFoundException, InvalidInputException, FileReadingException, OutOfRangeException {
+    public int verifyLoginDetails(String userId, String password) throws FileNotFoundException, InvalidInputException,
+            FileReadingException, KeyNotFoundException, OutOfRangeException {
         Object rawData = null;
         try {
             rawData = loginReader.getData(userId);
-        } catch (FileNotFoundException f) {
-            throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IOException | KeyNotFoundException f) {
+            throw new KeyNotFoundException("\n|||||Unknown user id|||||\n");
         }
         
         if (rawData == null) {
@@ -101,13 +99,20 @@ public class LoginMgr {
      * 
      * @param user            User tobe updated
      * @param newAccessPeriod New access period
+     * @throws FileReadingException
+     * @throws ClassNotFoundException
+     * @throws IOException
+     * @throws KeyNotFoundException
      */
     public void updateAccessPeriod(User user, LocalDateTime[] newAccessPeriod)
-            throws ClassNotFoundException, IOException {
+            throws ClassNotFoundException, IOException, FileReadingException, KeyNotFoundException {
         Object[] newDetails = new Object[4];
         newDetails[0] = user.getUserId();
-        newDetails[1] = ((String[]) loginReader.getData(user.getUserId())) [1];
+        Object[] oldDetails = (Object[]) loginReader.getData(user.getUserId());
+        newDetails[1] = (String) oldDetails[0];
         newDetails[2] = user.getUserType();
         newDetails[3] = newAccessPeriod;
+
+        loginReader.updateData(newDetails, true);
     }
 }

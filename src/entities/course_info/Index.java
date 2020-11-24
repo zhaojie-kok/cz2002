@@ -114,6 +114,8 @@ public class Index implements Serializable, Printable{
 	public void setRegisteredStudents(List<Student> registeredStudents) {
 		this.registeredStudents = registeredStudents;
 		this.slotsAvailable = this.slotsTotal - registeredStudents.size();
+		// TODO: Delete
+		System.out.println(this.slotsAvailable);
 	}
 	
 	/**
@@ -128,27 +130,6 @@ public class Index implements Serializable, Printable{
 	 */
 	public void setTimeTable(List<LessonDetails>[] timeTable) {
 		this.timeTable = timeTable;
-	}
-	
-	/**
-	 * Method to increment slots available
-	 */
-	public void addSlotsAvailable() {
-		this.slotsAvailable++;
-	}
-	
-	/**
-	 * Method to decrease slots available
-	 */
-	public void minusSlotsAvailable() {
-		this.slotsAvailable--;
-	}
-	
-	/**
-	 * Method to increment total slots
-	 */
-	public void addSlotsTotal() {
-		this.slotsTotal++;
 	}
 	
 	/**
@@ -190,6 +171,14 @@ public class Index implements Serializable, Printable{
 	 */
 	public void removeFromWaitList(Student student) {
 		waitlist.remove(student);
+	}
+
+	/**
+	 * Returns index no
+	 */
+	@Override
+	public String getLessInfo(){
+		return this.indexNo + "\n";
 	}
 
 	/**
@@ -247,7 +236,7 @@ public class Index implements Serializable, Printable{
 		int i = 1;
 		if (registeredStudents.size() != 0){
 			for (Student s: registeredStudents){
-				toReturn += i + ". " + s.getInfo() + "\n";
+				toReturn += i + ". " + s.getLessInfo() + "\n";
 				i++;
 			}
 		}

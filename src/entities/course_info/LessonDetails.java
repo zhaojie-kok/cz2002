@@ -152,6 +152,14 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	}
 
 	/**
+	 * Same as getInfo() - get the start to end timing of the entire lesson in a String
+	 */
+	@Override
+	public String getLessInfo(){
+		return "";
+	}
+
+	/**
 	 * Method to get the start to end timing of the entire lesson in a String
 	 */
 	@Override
