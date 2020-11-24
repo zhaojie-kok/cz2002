@@ -2,11 +2,9 @@ package managers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import entities.User;
-import entities.Student;
 import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
 import exceptions.KeyNotFoundException;
@@ -54,11 +52,11 @@ public class LoginMgr {
         try {
             rawData = loginReader.getData(userId);
         } catch (ClassNotFoundException | IOException | KeyNotFoundException f) {
-            throw new KeyNotFoundException("\n|||||Unknown user id|||||\n");
+            throw new KeyNotFoundException("User ID " + userId);
         }
         
         if (rawData == null) {
-            throw new FileNotFoundException("\n|||||Unknown user id|||||\n");
+            throw new FileNotFoundException("User ID " + userId);
         } else {
             Object[] data = (Object []) rawData;
             String hashedPassword = (String) data[0];

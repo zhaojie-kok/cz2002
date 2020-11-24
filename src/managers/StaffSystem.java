@@ -1,6 +1,5 @@
 package managers;
 
-import readers.*;
 import entities.course_info.*;
 import exceptions.FileReadingException;
 import exceptions.KeyClashException;
@@ -10,7 +9,6 @@ import exceptions.MissingParametersException;
 import exceptions.OutOfRangeException;
 import entities.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

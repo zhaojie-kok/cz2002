@@ -163,7 +163,7 @@ public class Student extends User implements Printable{
      */
     public void addCourse(String courseCode, String indexNo, int acadUnits) {
         this.courses.put(courseCode, indexNo);
-        this.acadUnits += acadUnits; // TODO: check what happends when add already registered course from UI
+        this.acadUnits += acadUnits;
     }
 
     /**

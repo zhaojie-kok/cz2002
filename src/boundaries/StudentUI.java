@@ -81,6 +81,7 @@ public class StudentUI extends Promptable implements HiddenInputUI {
                 "View TimeTable", "Exit" };
 
         while (choice != 9) {
+            system.clearSelections();
             choice = promptChoice("++++++++++Main Menu++++++++++", options);
             switch (choice) {
                 case 0:
@@ -246,23 +247,38 @@ public class StudentUI extends Promptable implements HiddenInputUI {
      * Displays a list of courses the user has been registered for
      */
     private void printRegisteredCourses() {
+        displayOutput("Registered Courses: ");
         displayOutput(system.checkRegisteredCourses());
+        displayOutput("Waitlisted Courses: ");
+        displayOutput(system.checkWaitlistedCourses());
     }
 
     /**
      * Displays the list of vacancies available for each course in the system
      */
     private void checkVacanciesAvailable() {
+        String[] options = {"Check by course", "Check by index"};
+        int choice = promptChoice("How would you like to check course vacancies?", options);
+
         int result = promptCourseSelection();
         if (result == -1) {
             return;
         }
 
-        HashMap<String, Integer> compiled;
+        // get user to select index if they want to view by index
+        if (choice == 1) {
+            result = promptIndexSelection();
+            if (result == -1) {
+                return;
+            }
+        }
+        
+        displayOutput("Vacancies Available: ");
+        HashMap<String, Integer[]> compiled;
         try {
             compiled = system.checkVacanciesAvailable();
-            for (Map.Entry<String, Integer> index : compiled.entrySet()) {
-                System.out.println(index.getKey() + ": " + index.getValue());
+            for (Map.Entry<String, Integer[]> index : compiled.entrySet()) {
+                System.out.println(index.getKey() + ": " + index.getValue()[0] + "/" + index.getValue()[1]);
             }
         } catch (MissingSelectionException e) {
             displayOutput(e.getMessage());

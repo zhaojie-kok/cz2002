@@ -122,10 +122,27 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public String checkRegisteredCourses() {
         // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
-        String format = "Course: %s\n Index: %s\n";
+        String format = "Course: %s\n ->Index: %s\n";
         String toReturn = "";
         String toAdd;
         HashMap<String, String> hMap = user.getCourses();
+        List<String> indexes = new ArrayList<String>(hMap.values());
+        List<String> courses = new ArrayList<String>(hMap.keySet());
+        for (int i = 0; i < hMap.size(); i++) {
+            toAdd = String.format(format, courses.get(i), indexes.get(i));
+            toReturn += toAdd;
+        }
+        return toReturn;
+    }
+
+    /**
+     * Method to check courses a student has waitlisted for
+     */
+    public String checkWaitlistedCourses() {
+        String format = "Course: %s\n ->Index: %s\n";
+        String toReturn = "";
+        String toAdd;
+        HashMap<String, String> hMap = user.getWaitlist();
         List<String> indexes = new ArrayList<String>(hMap.values());
         List<String> courses = new ArrayList<String>(hMap.keySet());
         for (int i = 0; i < hMap.size(); i++) {
@@ -163,8 +180,8 @@ public class StudentSystem implements CourseSystemInterface {
      */
     @Override
     public String getSystemStatus() {
-        String sc = selectedCourse == null ? "" : "Selected course: " + selectedCourse.getCourseName();
-        String si = selectedIndex == null ? "" : "Selected index: " + selectedIndex.getIndexNo();
+        String sc = "Selected course: " + (selectedCourse == null ? "" : selectedCourse.getCourseName());
+        String si = "Selected index: " + (selectedIndex == null ? "" : selectedIndex.getIndexNo());
         return sc + "\n" + si;
     }
 
@@ -304,15 +321,20 @@ public class StudentSystem implements CourseSystemInterface {
      * 
      * @throws MissingSelectionException thrown if course has yet to be selected
      */
-    public HashMap<String, Integer> checkVacanciesAvailable() throws MissingSelectionException {
+    public HashMap<String, Integer[]> checkVacanciesAvailable() throws MissingSelectionException {
         // FUNCTIONAL REQUIREMENT - Student: 4. Check vacancies available
         if (selectedCourse != null) {
             // if a particular slot has been selected then return the vacancy
-            HashMap<String, Integer> compiled = new HashMap<>();
+            HashMap<String, Integer[]> compiled = new HashMap<>();
             HashMap<String, Index> indexes = selectedCourse.getIndexes();
             for (Index index: indexes.values()) {
-                compiled.put(index.getIndexNo(), index.getSlotsAvailable());
+                if (selectedIndex != null && index != selectedIndex) {
+                    continue;
+                }
+                Integer[] capacities = {index.getSlotsAvailable(), index.getSlotsTotal()};
+                compiled.put(index.getIndexNo(), capacities);
             }
+            clearSelections();
             return compiled;
         } else {
             throw new MissingSelectionException("Course must first be selected");
@@ -355,6 +377,7 @@ public class StudentSystem implements CourseSystemInterface {
 
         // do nothing if both are registered in same course
         if (strToSwapTo.equals(strCurr)) {
+            clearSelections();
             return;
         }
 
