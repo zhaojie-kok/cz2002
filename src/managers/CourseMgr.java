@@ -421,13 +421,14 @@ public class CourseMgr implements EntityManager {
      * @param i index accepting the student
      */
     private void informWaitlistSuccess(Student s, Course c, Index i){
-        String body = "You have successfully received a slot for " 
+        String body = "Dear " + s.getName() + ",\n"
+                        + "You have successfully received a slot for " 
                         + c.getCourseName() 
                         + " (" + c.getCourseCode() + ") "
                         + "with Index " + i.getIndexNo();
         
         try {
-            NotifSender.sendNotif("Successful application for " + c, body, s.getEmail());
+            NotifSender.sendNotif("Successful application for " + c.getCourseName(), body, s.getEmail());
         } catch (AddressException a) {
             System.out.println(a.getMessage());
         } catch (MessagingException m) {

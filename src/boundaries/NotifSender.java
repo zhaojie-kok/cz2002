@@ -53,8 +53,6 @@ public class NotifSender {
 			message.setText(body);
 
 			Transport.send(message);
-
-			System.out.println("Notification sent");
 			success = true;
 
 		} catch (MessagingException e) {

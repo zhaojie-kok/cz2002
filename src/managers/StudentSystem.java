@@ -405,7 +405,7 @@ public class StudentSystem implements CourseSystemInterface {
         // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a Course for swopping index");
-        } else if (user.isRegistered(selectedCourse)) {
+        } else if (!user.isRegistered(selectedCourse)) {
             throw new InvalidInputException("You are not registered for this course");
         }
         

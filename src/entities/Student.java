@@ -99,7 +99,7 @@ public class Student extends User implements Printable{
         if (this.courses.containsKey(course.getCourseCode())) {
             return (index.getIndexNo() == this.courses.get(course.getCourseCode()));
         } else {
-            throw new KeyNotFoundException("Student is not registered for course " + course.getCourseCode());
+            throw new KeyNotFoundException("Student is not registered for course " + course.getCourseCode() + ": ");
         }
     }
 
