@@ -118,25 +118,18 @@ public class StudentManager implements EntityManager {
      * @param student Student wanting to drop
      * @throws InvalidInputException Thrown if student has not registered for course before (including waitlist)
      */
-    public String dropCourse(Course course, Student student) throws InvalidInputException {
+    public Student dropCourse(Course course, Student student) throws InvalidInputException {
         // Check if student is registered or waitlisted
-        String indexNo = "";
         if (student.isRegistered(course)) {
-            try {
-                indexNo = student.getCourseIndex(course.getCourseCode());
-            } catch (KeyNotFoundException e) {System.out.println("HOLD ON");}
             student.removeCourse(course);
             saveState(student);
         } else if (student.isWaitlisted(course)) {
-            try {
-                indexNo = student.getCourseIndex(course.getCourseCode());
-            } catch (KeyNotFoundException e) {System.out.println("HOLD ON");}
             student.removeWaitlist(course);
             saveState(student);
         } else {
             throw new InvalidInputException(student.getUserId() + " is not registered for " + course.getCourseCode());
         }
-        return indexNo;
+        return student;
     }
 
     /**

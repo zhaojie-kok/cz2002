@@ -28,7 +28,29 @@ public class TestApp {
 
         CourseMgr cMgr = new CourseMgr();
         Course c = cMgr.getCourse("BU8201");
-        System.out.println(cMgr.checkVacanciesAvailable(cMgr.getCourseIndex(c, "00403")));
+        Index i = cMgr.getCourseIndex(c, "00403");
+        System.out.println(cMgr.checkVacanciesAvailable(i));
+        
+        StudentManager sMgr = new StudentManager();
+        Student s = sMgr.getStudent("SNEE001");
+
+        for (Student S_:i.getWaitlistedStudents()){
+            if (S_.equals(s)){
+                System.out.println("WOT");
+            }
+            System.out.println("STUD: ");
+            System.out.println(S_.getUserId());
+        }
+        
+        for (String value:s.getWaitlist().values()){
+            System.out.println(value);
+        }
+        for (String key:s.getWaitlist().keySet()){
+            System.out.println(key);
+        }
+        System.out.println(s.isWaitlisted(c) ? "Waitlisted" : "Not");
+        System.out.println(i.getWaitlistedStudents().remove(s) ? "removeWaitlist"  : "IDGI");
+        cMgr.removeStudent(s, i, c);
         // StaffSystem staffSystem;
         // try {
         //     staffSystem = new StaffSystem("JOHN123");

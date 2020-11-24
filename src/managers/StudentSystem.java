@@ -316,8 +316,8 @@ public class StudentSystem implements CourseSystemInterface {
     public void dropCourse()
             throws InvalidInputException, MissingParametersException, KeyNotFoundException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-        String indexNo = studentManager.dropCourse(selectedCourse, user);
-        courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, indexNo), selectedCourse);
+        courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, user.getCourseIndex(selectedCourse.getCourseCode())), selectedCourse);
+        user = studentManager.dropCourse(selectedCourse, user);
         clearSelections();
     }
 

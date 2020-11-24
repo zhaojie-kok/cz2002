@@ -231,13 +231,13 @@ public class CourseMgr implements EntityManager {
             throw new MissingParametersException("Missing arguments provided, please check inputs");
         }
         List<Student> studentList = index.getRegisteredStudents();
-        boolean removed = studentList.remove(student);
-        if (removed){
+        List<Student> studentWaitlist = index.getWaitlistedStudents();
+        if (studentList.remove(student)){
             index.setRegisteredStudents(studentList);
             course.updateIndex(index);
             dequeueWaitlist(course, index);
             saveState(course);
-        } else if (!studentList.contains(student)) { // check waitlist if not in the list of registered students
+        } else if (studentWaitlist.remove(student)) { // check waitlist if not in the list of registered students
             index.removeFromWaitList(student);
             course.updateIndex(index);
             saveState(course);
