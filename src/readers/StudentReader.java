@@ -42,8 +42,7 @@ public class StudentReader extends FileReader {
 		File folder = new File(this.filepath);
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles == null) {
-            return new HashMap<>(); // TODO: remove line
-            // throw new FileReadingException("Student Details Folder inaccessible. Please contact system administrator");
+            return new HashMap<>();
         }
 		HashMap<String, Student> students = new HashMap<>();
 		Student toAdd;

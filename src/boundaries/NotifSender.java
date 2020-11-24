@@ -26,7 +26,6 @@ public class NotifSender {
 	 * @throws MessagingException in event where notification cannot be made, exception is thrown
 	 */
 	public static boolean sendNotif(String subject, String body, String address) throws MessagingException {
-		// TODO: make general for all
 		final String username = "czassignment482"; // to be added
 		final String password = "javaisfun"; // to be added
 
