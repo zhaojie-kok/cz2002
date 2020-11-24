@@ -701,7 +701,8 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                 case 9:
                     LocalDateTime[] accessPeriod = {startAccess, endAccess};
                     try {
-                        displayOutput(system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password));
+                        String listOfStudents = system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password);
+                        displayOutput("Successfully added " + name + "\n\n" + listOfStudents);
                     } catch (KeyClashException k) {
                         displayOutput(k.getMessage());
                     } catch (FileReadingException f) {

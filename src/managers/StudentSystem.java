@@ -184,7 +184,6 @@ public class StudentSystem implements CourseSystemInterface {
      * @throws FileReadingException thrown if problems are found with student's data
      */
     public String getTimeTable() throws FileReadingException {
-        // TODO: FIX Index 21 out of bounds for length 12
         String[][] tableForm = new String[25][14]; // for 2 weeks, 8 am to 8.30pm in 30 min intervals
         HashMap<String, String> courses = user.getCourses();
         Course course;
@@ -299,7 +298,7 @@ public class StudentSystem implements CourseSystemInterface {
     public void dropCourse() throws InvalidInputException, MissingParametersException, OutOfRangeException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
         studentManager.dropCourse(selectedCourse, user);
-        courseMgr.removeStudent(user, selectedIndex, selectedCourse); //TODO: docstring and check functionality
+        courseMgr.removeStudent(user, selectedIndex, selectedCourse);
         clearSelections();
     }
 

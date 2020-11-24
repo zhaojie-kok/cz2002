@@ -114,8 +114,6 @@ public class Index implements Serializable, Printable{
 	public void setRegisteredStudents(List<Student> registeredStudents) {
 		this.registeredStudents = registeredStudents;
 		this.slotsAvailable = this.slotsTotal - registeredStudents.size();
-		// TODO: Delete
-		System.out.println(this.slotsAvailable);
 	}
 	
 	/**
