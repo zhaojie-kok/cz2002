@@ -113,7 +113,6 @@ public class StudentManager implements EntityManager {
     /**
      * Allows a student to drop a course from either waitlist or list of registered courses
      * 
-     * @return Index No of index dropped
      * @param course  Course to drop
      * @param student Student wanting to drop
      * @throws InvalidInputException Thrown if student has not registered for course before (including waitlist)

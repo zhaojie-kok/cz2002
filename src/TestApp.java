@@ -32,14 +32,14 @@ public class TestApp {
         System.out.println(cMgr.checkVacanciesAvailable(i));
         
         StudentManager sMgr = new StudentManager();
-        Student s = sMgr.getStudent("SNEE001");
+        Student s = sMgr.getStudent("ARIE003");
+        System.out.println(s.getUserId());
 
-        for (Student S_:i.getWaitlistedStudents()){
+        for (Student S_:i.getRegisteredStudents()){
+            System.out.println(S_.getUserId());
             if (S_.equals(s)){
                 System.out.println("WOT");
             }
-            System.out.println("STUD: ");
-            System.out.println(S_.getUserId());
         }
         
         for (String value:s.getWaitlist().values()){
@@ -48,9 +48,8 @@ public class TestApp {
         for (String key:s.getWaitlist().keySet()){
             System.out.println(key);
         }
-        System.out.println(s.isWaitlisted(c) ? "Waitlisted" : "Not");
-        System.out.println(i.getWaitlistedStudents().remove(s) ? "removeWaitlist"  : "IDGI");
-        cMgr.removeStudent(s, i, c);
+        System.out.println(s.isRegistered(c) ? "Waitlisted" : "Not");
+        System.out.println(i.getRegisteredStudents().remove(s) ? "removeWaitlist"  : "IDGI");
         // StaffSystem staffSystem;
         // try {
         //     staffSystem = new StaffSystem("JOHN123");

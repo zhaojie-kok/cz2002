@@ -233,4 +233,18 @@ public class Student extends User implements Printable{
                             this.nationality, this.gender,
                             this.acadUnits, this.acadUnitsAllowed); 
     }
+
+    @Override
+    public boolean equals(Object obj){
+        try{
+            Student toCompare = (Student) obj;            
+            if (toCompare.getUserId().equals(userId)){
+                return true;
+            }
+        }
+        catch (ClassCastException e){
+            return false;
+        }
+        return false;
+    }
 }
