@@ -26,30 +26,13 @@ import readers.StaffReader;
 public class TestApp {
     public static void main(String[] args) throws Exception {
 
-        CourseMgr cMgr = new CourseMgr();
-        Course c = cMgr.getCourse("BU8201");
-        Index i = cMgr.getCourseIndex(c, "00403");
-        System.out.println(cMgr.checkVacanciesAvailable(i));
-        
-        StudentManager sMgr = new StudentManager();
-        Student s = sMgr.getStudent("ARIE003");
-        System.out.println(s.getUserId());
-
-        for (Student S_:i.getRegisteredStudents()){
-            System.out.println(S_.getUserId());
-            if (S_.equals(s)){
-                System.out.println("WOT");
-            }
+        String[] studentsToRegister = {"SLEE001", "STUA002"};
+        for (String st:studentsToRegister){
+            StudentSystem studentSystem = new StudentSystem(st);
+            studentSystem.selectCourse("EG0001");
+            studentSystem.selectIndex("10238");
+            studentSystem.addCourse();
         }
-        
-        for (String value:s.getWaitlist().values()){
-            System.out.println(value);
-        }
-        for (String key:s.getWaitlist().keySet()){
-            System.out.println(key);
-        }
-        System.out.println(s.isRegistered(c) ? "Waitlisted" : "Not");
-        System.out.println(i.getRegisteredStudents().remove(s) ? "removeWaitlist"  : "IDGI");
         // StaffSystem staffSystem;
         // try {
         //     staffSystem = new StaffSystem("JOHN123");
