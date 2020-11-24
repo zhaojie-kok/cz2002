@@ -93,6 +93,7 @@ public class Index implements Serializable, Printable{
 		if (slotsTotal < this.slotsTotal - this.slotsAvailable) {
 			throw new OutOfRangeException("New number of slots cannot be less than number of students already registered");
 		}
+		this.slotsAvailable = this.slotsAvailable - (this.slotsTotal - slotsTotal);
 		this.slotsTotal = slotsTotal;
 	}
 	
@@ -128,18 +129,6 @@ public class Index implements Serializable, Printable{
 	 */
 	public void setTimeTable(List<LessonDetails>[] timeTable) {
 		this.timeTable = timeTable;
-	}
-	
-	/**
-	 * Method to decrease total slots
-	 * 
-	 * @throws OutOfRangeException thrown when the index already has 0 available slots
-	 */
-	public void minusSlotsTotal() throws OutOfRangeException {
-		if (this.slotsAvailable == 0) {
-			throw new OutOfRangeException("Index is already full");
-		}
-		this.slotsTotal--;
 	}
 
 	/**

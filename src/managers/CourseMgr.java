@@ -137,15 +137,17 @@ public class CourseMgr implements EntityManager {
         }
 
         // Update slots Total
-        int changeInSlots = slotsTotal - index.getSlotsTotal();
-        if (changeInSlots != 0){
-            if (index.getSlotsAvailable() < changeInSlots){
-                throw new OutOfRangeException("new total slots cannot be less than number of students registered");
+        if (slotsTotal > 0){        
+            int changeInSlots = slotsTotal - index.getSlotsTotal();
+            if (changeInSlots != 0){
+                if (index.getSlotsAvailable() < changeInSlots){
+                    throw new OutOfRangeException("new total slots cannot be less than number of students registered");
+                }
             }
+            index.setSlotsTotal(slotsTotal);
+            course.updateIndex(index);
         }
         
-        index.setSlotsTotal(slotsTotal);
-        course.updateIndex(index);
         saveState(course);
     }
 

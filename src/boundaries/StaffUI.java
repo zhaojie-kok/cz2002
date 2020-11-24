@@ -639,6 +639,10 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
             displayOutput(e.getMessage());
         } catch (MissingSelectionException e) {
             displayOutput(e.getMessage());
+        } catch (InvalidInputException e) {
+            displayOutput(e.getMessage());
+        } catch (KeyNotFoundException e) {
+            displayOutput(e.getMessage());
         }
     }
 
