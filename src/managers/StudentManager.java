@@ -145,7 +145,6 @@ public class StudentManager implements EntityManager {
      * @throws KeyNotFoundException thrown if either student has not registered for the course
      */
     public Student[] swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException {
-        // TODO: Changed return type, anywhere else to update?
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
             throw new KeyNotFoundException("Both Students must be registered for the course");
         }
@@ -180,7 +179,6 @@ public class StudentManager implements EntityManager {
      */
     public Student swopIndex(Student student, Course course, Index newIndex)
             throws InvalidInputException, KeyNotFoundException {
-                // TODO: Updated return type to Student
         if (!student.isRegistered(course)) {
             throw new KeyNotFoundException("Student is not registered for this course");
         }
