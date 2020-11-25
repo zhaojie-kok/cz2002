@@ -62,147 +62,6 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     }
 
     /**
-     * Main menu of UI. All other functional methods are called from here
-     */
-    private void mainMenu() {
-        int choice = 0;
-
-        String[] options = { "Show System Status", "Change student access period", "Add Student to system", "Add course to system",
-                "Update course information", "Add index to a course", "Update index information",
-                "Print Students in a course index", "Print Students in a course", "Check available slots for course index", "Exit" };
-
-        while (choice != 10) {
-            choice = promptChoice("++++++++++Main Menu++++++++++", options);
-            switch (choice) {
-                case 0:
-                    checkSystemStatus();
-                    break;
-                case 1:
-                    updateAccessPeriod();
-                    break;
-                case 2:
-                    addStudent();
-                    break;
-                case 3:
-                    addCourse();
-                    break;
-                case 4:
-                    updateCourse();
-                    break;
-                case 5:
-                    addIndex();
-                    break;
-                case 6:
-                    updateIndex();
-                    break;
-                case 7:
-                    printIndexStudents(true);
-                    break;
-                case 8:
-                    printCourseStudents();
-                    break;
-                case 9:
-                    printIndexStudents(false);
-                    break;
-                case 10:
-                    break;
-                default:
-                    displayOutput("Choices must be between 1 and 10");
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Method to check the status of the system
-     */
-    private void checkSystemStatus() {
-        displayOutput(system.getSystemStatus());
-    }
-
-    /**
-     * Method to prompt user to select a course.Course selected will be recorded and
-     * used for subsequent methods in Staff system until removed
-     * 
-     * @return int: 1 denoting course successfully selected, -1 denoting user's
-     *         choice to exit selection
-     */
-    private int promptCourseSelection() {
-        String courseCode = "";
-        displayOutput("Please Enter Course Code: ");
-        while (true) {
-            courseCode = (String) getUserInput();
-            ;
-            courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")) {
-                return -1;
-            }
-            try {
-                system.selectCourse(courseCode);
-                return 1;
-            } catch (KeyNotFoundException e) {
-                displayOutput(e.getMessage());
-                displayOutput("Type \"exit\" to return to main menu");
-                return -1;
-            }
-        }
-    }
-
-    /**
-     * Method to prompt user to select an index. Index selected will be recorded
-     * and used for subsequent methods in Staff system until removed
-     * 
-     * @return int: 1 denoting index successfully selected, -1 denoting user's
-     *         choice to exit selection
-     */
-    private int promptIndexSelection() {
-        String indexNo = "";
-        displayOutput("Please enter an Index");
-        while (true) {
-            indexNo = (String) getUserInput();
-            indexNo = indexNo.toUpperCase();
-            if (indexNo.equals("EXIT")) {
-                return -1;
-            }
-            try {
-                system.selectIndex(indexNo);
-                return 1;
-            } catch (KeyNotFoundException e) {
-                displayOutput(e.getMessage());
-                displayOutput("Type \"exit\" to return to main menu");
-            } catch (MissingSelectionException e) {
-                displayOutput("Please select a course first");
-            }
-        }
-    }
-
-    /**
-     * Method to prompt user to select a student. student selected will be recorded and
-     * used for subsequent methods in Staff system until removed
-     * 
-     * @return int: 1 denoting student successfully selected, -1 denoting user's
-     *         choice to exit selection
-     */
-    private int promptStudentSelection() {
-        String identifier = "";
-        displayOutput("Please enter a student's user ID or matriculation number");
-        while (true) {
-            identifier = (String) getUserInput();
-            ;
-            identifier = identifier.toUpperCase();
-            if (identifier.equals("EXIT")) {
-                return -1;
-            }
-            try {
-                system.selectStudent(identifier);
-                return 1;
-            } catch (KeyNotFoundException e) {
-                displayOutput("Unable to identify student. Please re-enter or type \"exit\" for return to main menu");
-            }
-        }
-    }
-
-    /**
      * Method to get unbounded integer input from user
      * See {@link NumericUI#promptIntegerInput()}
      */
@@ -327,6 +186,202 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     }
 
     /**
+     * Main menu of UI. All other functional methods are called from here
+     */
+    private void mainMenu() {
+        int choice = 0;
+
+        String[] options = { "Show System Status", "Change student access period", "Add Student to system", "Add course to system",
+                "Update course information", "Add index to a course", "Update index information",
+                "Print Students in a course index", "Print Students in a course", "Check available slots for course index", "Exit" };
+
+        while (choice != 10) {
+            choice = promptChoice("++++++++++Main Menu++++++++++", options);
+            switch (choice) {
+                case 0:
+                    checkSystemStatus();
+                    break;
+                case 1:
+                    updateAccessPeriod();
+                    break;
+                case 2:
+                    addStudent();
+                    break;
+                case 3:
+                    addCourse();
+                    break;
+                case 4:
+                    updateCourse();
+                    break;
+                case 5:
+                    addIndex();
+                    break;
+                case 6:
+                    updateIndex();
+                    break;
+                case 7:
+                    printIndexStudents(true);
+                    break;
+                case 8:
+                    printCourseStudents();
+                    break;
+                case 9:
+                    printIndexStudents(false);
+                    break;
+                case 10:
+                    break;
+                default:
+                    displayOutput("Choices must be between 1 and 10");
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Method to prompt user to select a course.Course selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting course successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
+    private int promptCourseSelection() {
+        String courseCode = "";
+        displayOutput("Please Enter Course Code: ");
+        while (true) {
+            courseCode = (String) getUserInput();
+            ;
+            courseCode = courseCode.toUpperCase();
+            if (courseCode.equals("EXIT")) {
+                return -1;
+            }
+            try {
+                system.selectCourse(courseCode);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput(e.getMessage());
+                displayOutput("Type \"exit\" to return to main menu");
+                return -1;
+            }
+        }
+    }
+
+    /**
+     * Method to prompt user to select an index. Index selected will be recorded
+     * and used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting index successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
+    private int promptIndexSelection() {
+        String indexNo = "";
+        displayOutput("Please enter an Index");
+        while (true) {
+            indexNo = (String) getUserInput();
+            indexNo = indexNo.toUpperCase();
+            if (indexNo.equals("EXIT")) {
+                return -1;
+            }
+            try {
+                system.selectIndex(indexNo);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput(e.getMessage());
+                displayOutput("Type \"exit\" to return to main menu");
+            } catch (MissingSelectionException e) {
+                displayOutput("Please select a course first");
+            }
+        }
+    }
+
+    /**
+     * Method to prompt user to select a student. student selected will be recorded and
+     * used for subsequent methods in Staff system until removed
+     * 
+     * @return int: 1 denoting student successfully selected, -1 denoting user's
+     *         choice to exit selection
+     */
+    private int promptStudentSelection() {
+        String identifier = "";
+        displayOutput("Please enter a student's user ID or matriculation number");
+        while (true) {
+            identifier = (String) getUserInput();
+            ;
+            identifier = identifier.toUpperCase();
+            if (identifier.equals("EXIT")) {
+                return -1;
+            }
+            try {
+                system.selectStudent(identifier);
+                return 1;
+            } catch (KeyNotFoundException e) {
+                displayOutput("Unable to identify student. Please re-enter or type \"exit\" for return to main menu");
+            }
+        }
+    }
+
+    /**
+     * Method to create a set of lesson details using a LessonDetailMaker
+     * User will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.LessonDetailMaker#makeLessonDetails()} method
+     */
+    private void createLessonDetails() {
+        int choice;
+        String venue = null;
+        String type = null;
+        int dayOfWk = -1;
+        int evenOdd = -1;
+        LocalTime start = null;
+        LocalTime end = null;
+
+        String[] options = { "Venue", "Lesson Type", "Day of week", "Even or Odd week", "Start Time", "End Time",
+                "No further Changes" };
+        do {
+            choice = promptChoice("Which detail of the lesson to edit", options);
+            switch (choice) {
+                case 0:
+                    displayOutput("Enter venue name");
+                    venue = (String) getUserInput();;
+                    break;
+                case 1:
+                    displayOutput("Enter class type");
+                    type = (String) getUserInput();;
+                    break;
+                case 2:
+                    dayOfWk = promptChoice("Choose day of week (1 is Monday, 7 is Sunday)", DayOfWeek.values());
+                    dayOfWk++; // since the prompt choice starts at 0 instead of 1
+                    break;
+                case 3:
+                    evenOdd = promptChoice("Choose if lesson is even or odd type",
+                            new String[] { "Even", "Odd", "Both" });
+                    break;
+                case 4:
+                    start = getTimeInput();
+                    break;
+                case 5:
+                    end = getTimeInput();
+                    break;
+                case 6:
+                    try {
+                        system.selectLessonDetails(venue, type, dayOfWk, evenOdd, start, end);
+                    } catch (MissingParametersException m) {
+                        displayOutput(m.getMessage());
+                    } catch (OutOfRangeException o) {
+                        displayOutput(o.getMessage());
+                    }
+                    break;
+                default:
+                    displayOutput("Please choose between options 1 to 7");
+            }
+        } while (choice != 6);
+    }
+
+    /**
+     * Method to check the status of the system
+     */
+    private void checkSystemStatus() {
+        displayOutput(system.getSystemStatus());
+    }
+
+    /**
      * Method to update the access period of a student
      * Users will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method
      */
@@ -354,49 +409,75 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     }
 
     /**
-     * Method to display students registered in a course
+     * Method to add a new student into the system
+     * Users will need to input arguments for the {@link managers.StudentManager#createStudent(String, String, String, String, String, LocalDateTime[])} method
      */
-    private void printCourseStudents() {
-        int result;
+    private void addStudent() {
+        String userId = null;
+        String name = null;
+        String gender = null;
+        String nationality = null;
+        String email = null;
+        String matricNo = null;
+        LocalDateTime startAccess = null;
+        LocalDateTime endAccess = null;
+        String password = null;
 
-        // prompt user to select a course
-        result = promptCourseSelection();
-        if (result == -1) {
-            return;
-        }
-
-        try {
-            String toPrint = system.printStudentsbyCourse();
-            displayOutput(toPrint);
-        } catch (MissingSelectionException e) {
-            displayOutput(e.getMessage());
-        }
-    }
-
-    /**
-     * Method to display students registered in an index
-     */
-    private void printIndexStudents(boolean b) {
-        int result;
-
-        // prompt user to select a course
-        result = promptCourseSelection();
-        if (result == -1) {
-            return;
-        }
-
-        // prompt user to select an index
-        result = promptIndexSelection();
-        if (result == -1) {
-            return;
-        }
-
-        try {
-            String toPrint = system.printStudentsbyIndex(b);
-            displayOutput(toPrint);
-        } catch (MissingSelectionException e) {
-            displayOutput(e.getMessage());
-        }
+        String[] options = {"userID", "name", "gender", "nationality", "email addresss", "matriculation number", "Access Period Start", "Access Period End", "Password", "No further changes"};
+        int choice;
+        do {
+            choice = promptChoice("Select student info to edit", options);
+            switch (choice) {
+                case 0:
+                    displayOutput("Enter userID");
+                    userId = (String) getUserInput();
+                    break;
+                case 1:
+                    displayOutput("Enter student name");
+                    name = (String) getUserInput();
+                    break;
+                case 2:
+                    displayOutput("Enter student gender");
+                    gender = (String) getUserInput();
+                    break;
+                case 3:
+                    displayOutput("Enter student nationality");
+                    nationality = (String) getUserInput();
+                    break;
+                case 4:
+                    displayOutput("Enter email address of user");
+                    email = (String) getUserInput();
+                    break;
+                case 5:
+                    displayOutput("Enter student matriculation number");
+                    matricNo = (String) getUserInput();
+                    break;
+                case 6:
+                    displayOutput("Student's access period - start");
+                    startAccess = getDateInput();
+                    break;
+                case 7:
+                    displayOutput("Student's access period - end");
+                    endAccess = getDateInput();
+                    break;
+                case 8:
+                    displayOutput("Enter password for student account");
+                    password = (String) getUserInput();
+                    break;
+                case 9:
+                    LocalDateTime[] accessPeriod = {startAccess, endAccess};
+                    try {
+                        String listOfStudents = system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password);
+                        displayOutput("Successfully added " + name + "\n\n" + listOfStudents);
+                    } catch (KeyClashException k) {
+                        displayOutput(k.getMessage());
+                    } catch (FileReadingException f) {
+                        // in the event of a filereadingexception, there is a fatal error thus the method needs to exit
+                        displayOutput(f.getMessage());
+                        return;
+                    }
+            }
+        } while (choice != 9);
     }
 
     /**
@@ -432,7 +513,6 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } catch (KeyClashException | OutOfRangeException e) {
             displayOutput(e.getMessage());
         }
-
     }
 
     /**
@@ -492,61 +572,6 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         } catch (Exception e) {
             displayOutput(e.getMessage());
         }
-    }
-
-    /**
-     * Method to create a set of lesson details using a LessonDetailMaker
-     * User will need to input arguments for the {@link managers.StudentManager#updateAccessPeriod(entities.Student, LocalDateTime[])} method for the {@link managers.LessonDetailMaker#makeLessonDetails()} method
-     */
-    private void createLessonDetails() {
-        int choice;
-        String venue = null;
-        String type = null;
-        int dayOfWk = -1;
-        int evenOdd = -1;
-        LocalTime start = null;
-        LocalTime end = null;
-
-        String[] options = { "Venue", "Lesson Type", "Day of week", "Even or Odd week", "Start Time", "End Time",
-                "No further Changes" };
-        do {
-            choice = promptChoice("Which detail of the lesson to edit", options);
-            switch (choice) {
-                case 0:
-                    displayOutput("Enter venue name");
-                    venue = (String) getUserInput();;
-                    break;
-                case 1:
-                    displayOutput("Enter class type");
-                    type = (String) getUserInput();;
-                    break;
-                case 2:
-                    dayOfWk = promptChoice("Choose day of week (1 is Monday, 7 is Sunday)", DayOfWeek.values());
-                    dayOfWk++; // since the prompt choice starts at 0 instead of 1
-                    break;
-                case 3:
-                    evenOdd = promptChoice("Choose if lesson is even or odd type",
-                            new String[] { "Even", "Odd", "Both" });
-                    break;
-                case 4:
-                    start = getTimeInput();
-                    break;
-                case 5:
-                    end = getTimeInput();
-                    break;
-                case 6:
-                    try {
-                        system.selectLessonDetails(venue, type, dayOfWk, evenOdd, start, end);
-                    } catch (MissingParametersException m) {
-                        displayOutput(m.getMessage());
-                    } catch (OutOfRangeException o) {
-                        displayOutput(o.getMessage());
-                    }
-                    break;
-                default:
-                    displayOutput("Please choose between options 1 to 7");
-            }
-        } while (choice != 6);
     }
 
     /**
@@ -643,75 +668,49 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
     }
 
     /**
-     * Method to add a new student into the system
-     * Users will need to input arguments for the {@link managers.StudentManager#createStudent(String, String, String, String, String, LocalDateTime[])} method
+     * Method to display students registered in a course
      */
-    private void addStudent() {
-        String userId = null;
-        String name = null;
-        String gender = null;
-        String nationality = null;
-        String email = null;
-        String matricNo = null;
-        LocalDateTime startAccess = null;
-        LocalDateTime endAccess = null;
-        String password = null;
+    private void printCourseStudents() {
+        int result;
 
-        String[] options = {"userID", "name", "gender", "nationality", "email addresss", "matriculation number", "Access Period Start", "Access Period End", "Password", "No further changes"};
-        int choice;
-        do {
-            choice = promptChoice("Select student info to edit", options);
-            switch (choice) {
-                case 0:
-                    displayOutput("Enter userID");
-                    userId = (String) getUserInput();
-                    break;
-                case 1:
-                    displayOutput("Enter student name");
-                    name = (String) getUserInput();
-                    break;
-                case 2:
-                    displayOutput("Enter student gender");
-                    gender = (String) getUserInput();
-                    break;
-                case 3:
-                    displayOutput("Enter student nationality");
-                    nationality = (String) getUserInput();
-                    break;
-                case 4:
-                    displayOutput("Enter email address of user");
-                    email = (String) getUserInput();
-                    break;
-                case 5:
-                    displayOutput("Enter student matriculation number");
-                    matricNo = (String) getUserInput();
-                    break;
-                case 6:
-                    displayOutput("Student's access period - start");
-                    startAccess = getDateInput();
-                    break;
-                case 7:
-                    displayOutput("Student's access period - end");
-                    endAccess = getDateInput();
-                    break;
-                case 8:
-                    displayOutput("Enter password for student account");
-                    password = (String) getUserInput();
-                    break;
-                case 9:
-                    LocalDateTime[] accessPeriod = {startAccess, endAccess};
-                    try {
-                        String listOfStudents = system.addStudent(userId, name, gender, nationality, email, matricNo, accessPeriod, password);
-                        displayOutput("Successfully added " + name + "\n\n" + listOfStudents);
-                    } catch (KeyClashException k) {
-                        displayOutput(k.getMessage());
-                    } catch (FileReadingException f) {
-                        // in the event of a filereadingexception, there is a fatal error thus the method needs to exit
-                        displayOutput(f.getMessage());
-                        return;
-                    }
-            }
-        } while (choice != 9);
+        // prompt user to select a course
+        result = promptCourseSelection();
+        if (result == -1) {
+            return;
+        }
+
+        try {
+            String toPrint = system.printStudentsbyCourse();
+            displayOutput(toPrint);
+        } catch (MissingSelectionException e) {
+            displayOutput(e.getMessage());
+        }
+    }
+
+    /**
+     * Method to display students registered in an index
+     */
+    private void printIndexStudents(boolean b) {
+        int result;
+
+        // prompt user to select a course
+        result = promptCourseSelection();
+        if (result == -1) {
+            return;
+        }
+
+        // prompt user to select an index
+        result = promptIndexSelection();
+        if (result == -1) {
+            return;
+        }
+
+        try {
+            String toPrint = system.printStudentsbyIndex(b);
+            displayOutput(toPrint);
+        } catch (MissingSelectionException e) {
+            displayOutput(e.getMessage());
+        }
     }
 
     /**

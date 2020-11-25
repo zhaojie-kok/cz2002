@@ -21,27 +21,19 @@ import exceptions.OutOfRangeException;
  * Used to pass user inputs from UI classes to entity manager classes
  * Also used to invoke entity manager methods based on user actions from UI classes
  */
-public class StudentSystem implements CourseSystemInterface {
-    private CourseMgr courseMgr;
-    private StudentManager studentManager;
-    private CalendarMgr calendarMgr;
-
-    private Student user;
-    private Course selectedCourse = null;
-    private Index selectedIndex = null;
+public class StudentSystem extends AbstractSystem implements CourseSystemInterface {
 
     /**
      * Constructor
+     * NOTE: selectedStudent defaults to the user, since the user is always of interest
      * 
-     * @param userId UserID of student user logging into system
-     * @throws FileReadingException thrown if student file of user cannot be accessed
+     * @param userId UserID of student selectedStudent logging into system
+     * @throws FileReadingException thrown if student file of selectedStudent cannot be accessed
      * @throws KeyNotFoundException thrown if student details cannot be found
      */
     public StudentSystem(String userId) throws FileReadingException, KeyNotFoundException {
-        calendarMgr = new CalendarMgr();
-        studentManager = new StudentManager();
-        courseMgr = new CourseMgr();
-        user = studentManager.getStudent(userId);
+        super();
+        selectedStudent = studentManager.getStudent(userId);
     }
 
     /**
@@ -125,7 +117,7 @@ public class StudentSystem implements CourseSystemInterface {
         String format = "Course: %s\n ->Index: %s\n";
         String toReturn = "";
         String toAdd;
-        HashMap<String, String> hMap = user.getCourses();
+        HashMap<String, String> hMap = selectedStudent.getCourses();
         List<String> indexes = new ArrayList<String>(hMap.values());
         List<String> courses = new ArrayList<String>(hMap.keySet());
         for (int i = 0; i < hMap.size(); i++) {
@@ -142,7 +134,7 @@ public class StudentSystem implements CourseSystemInterface {
         String format = "Course: %s\n ->Index: %s\n";
         String toReturn = "";
         String toAdd;
-        HashMap<String, String> hMap = user.getWaitlist();
+        HashMap<String, String> hMap = selectedStudent.getWaitlist();
         List<String> indexes = new ArrayList<String>(hMap.values());
         List<String> courses = new ArrayList<String>(hMap.keySet());
         for (int i = 0; i < hMap.size(); i++) {
@@ -188,6 +180,7 @@ public class StudentSystem implements CourseSystemInterface {
     /**
      * Method to clear all previously made selections See
      * {@link Systems#clearSelections()} method
+     * NOTE: selectedStudent will not be cleared as it always refers to the user
      */
     @Override
     public void clearSelections() {
@@ -202,7 +195,7 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public String getTimeTable() throws FileReadingException {
         String[][] tableForm = new String[25][14]; // for 2 weeks, 8 am to 8.30pm in 30 min intervals
-        HashMap<String, String> courses = user.getCourses();
+        HashMap<String, String> courses = selectedStudent.getCourses();
         Course course;
         Index ind;
         List<LessonDetails>[] lessons;
@@ -260,12 +253,12 @@ public class StudentSystem implements CourseSystemInterface {
     }
 
     /**
-     * Method to register a student for a course
+     * Method to register user for a course
      * 
      * @return int denoting status of registration (1. Registration successful, 0. Waitlisted)
      * @throws KeyNotFoundException thrown if index selected is not under course selected
      * @throws MissingSelectionException thrown if course or index have not been selected
-     * @throws MissingParametersException thrown if course or index have not been selected or user is invalid
+     * @throws MissingParametersException thrown if course or index have not been selected or selectedStudent is invalid
      * @throws InvalidInputException thrown if student cannot register for the course
      */
     public int addCourse() throws KeyNotFoundException, MissingSelectionException,
@@ -279,24 +272,24 @@ public class StudentSystem implements CourseSystemInterface {
             throw new MissingSelectionException("Please select an index");
         }
 
-        // check if student is already registered
-        if (user.isRegistered(selectedCourse)) {
+        // check if user is already registered
+        if (selectedStudent.isRegistered(selectedCourse)) {
             throw new InvalidInputException("You are already registered for this course");
         }
 
         // Check timing clash
-        if (checkAddClash(user)) {
+        if (checkAddClash(selectedStudent)) {
             throw new InvalidInputException("Timetable clash detected. Course registration not allowed");
         }
 
         // studentManager tries to register student for the course, or add student to the waitlist if the index is full
-        int result = studentManager.addCourse(selectedCourse, selectedIndex, user);
+        int result = studentManager.addCourse(selectedCourse, selectedIndex, selectedStudent);
         switch (result) {
             case 1:
-                courseMgr.addStudent(user, selectedIndex, selectedCourse);
+                courseMgr.addStudent(selectedStudent, selectedIndex, selectedCourse);
                 break;
             case 0:
-                courseMgr.enqueueWaitlist(user, selectedIndex, selectedCourse);
+                courseMgr.enqueueWaitlist(selectedStudent, selectedIndex, selectedCourse);
                 break;
         }
 
@@ -314,8 +307,8 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public void dropCourse() throws InvalidInputException, MissingParametersException, KeyNotFoundException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-        courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, user.getCourseIndex(selectedCourse.getCourseCode())), selectedCourse);
-        user = studentManager.dropCourse(selectedCourse, user);
+        courseMgr.removeStudent(selectedStudent, courseMgr.getCourseIndex(selectedCourse, selectedStudent.getCourseIndex(selectedCourse.getCourseCode())), selectedCourse);
+        selectedStudent = studentManager.dropCourse(selectedCourse, selectedStudent);
         clearSelections();
     }
 
@@ -361,13 +354,13 @@ public class StudentSystem implements CourseSystemInterface {
             throw new MissingSelectionException("Please select a course first");
         }
         
-        if (identifier == user.getMatricNo() || identifier == user.getUserId()) {
+        if (identifier == selectedStudent.getMatricNo() || identifier == selectedStudent.getUserId()) {
             throw new InvalidInputException("Cannot swop with yourself");
         }
         Student toSwapWith = studentManager.getStudent(identifier);
 
         // first ensure that the swopping students both are enrolled in the course
-        if (!user.isRegistered(selectedCourse)) {
+        if (!selectedStudent.isRegistered(selectedCourse)) {
             throw new KeyNotFoundException("you are not registered in this course");
         } else if (!toSwapWith.isRegistered(selectedCourse)) {
             throw new KeyNotFoundException(identifier + " is not registered in this course");
@@ -375,7 +368,7 @@ public class StudentSystem implements CourseSystemInterface {
 
         String strToSwapTo = toSwapWith.getCourseIndex(selectedCourse.getCourseCode());
         Index toSwapTo = courseMgr.getCourseIndex(selectedCourse, strToSwapTo);
-        String strCurr = user.getCourseIndex(selectedCourse.getCourseCode());
+        String strCurr = selectedStudent.getCourseIndex(selectedCourse.getCourseCode());
         Index currentIndex = courseMgr.getCourseIndex(selectedCourse, strCurr);
 
         // do nothing if both are registered in same course
@@ -384,9 +377,9 @@ public class StudentSystem implements CourseSystemInterface {
             return;
         }
 
-        if (!checkSwopClash(user, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
-            courseMgr.swopStudents(user, toSwapWith, selectedCourse);
-            studentManager.swopIndex(user, toSwapWith, selectedCourse);
+        if (!checkSwopClash(selectedStudent, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
+            courseMgr.swopStudents(selectedStudent, toSwapWith, selectedCourse);
+            studentManager.swopIndex(selectedStudent, toSwapWith, selectedCourse);
         } else {
             throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
         }
@@ -405,13 +398,13 @@ public class StudentSystem implements CourseSystemInterface {
         // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a Course for swopping index");
-        } else if (user.isRegistered(selectedCourse)) {
+        } else if (selectedStudent.isRegistered(selectedCourse)) {
             throw new InvalidInputException("You are not registered for this course");
         }
         
         if (selectedIndex == null) {
             throw new MissingSelectionException("Please select an Index to swop to");
-        } else if (user.isRegistered(selectedCourse, selectedIndex)){
+        } else if (selectedStudent.isRegistered(selectedCourse, selectedIndex)){
             throw new InvalidInputException("You are already in this index");
         }
         // no more slots
@@ -419,13 +412,13 @@ public class StudentSystem implements CourseSystemInterface {
             throw new InvalidInputException("The chosen index is full");
         }
 
-        String current = user.getCourseIndex(selectedCourse.getCourseCode());
-        if (checkSwopClash(user, selectedIndex)){
+        String current = selectedStudent.getCourseIndex(selectedCourse.getCourseCode());
+        if (checkSwopClash(selectedStudent, selectedIndex)){
             throw new InvalidInputException("Timetable clash detected. Index Swop not allowed");
         }
-        courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
-        courseMgr.addStudent(user, selectedIndex, selectedCourse);
-        studentManager.swopIndex(user, selectedCourse, selectedIndex);
+        courseMgr.removeStudent(selectedStudent, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
+        courseMgr.addStudent(selectedStudent, selectedIndex, selectedCourse);
+        studentManager.swopIndex(selectedStudent, selectedCourse, selectedIndex);
     }
 
     /**

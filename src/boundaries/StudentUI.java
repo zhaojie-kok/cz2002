@@ -122,13 +122,6 @@ public class StudentUI extends Promptable implements HiddenInputUI {
     }
 
     /**
-     * Method to check the status of the system
-     */
-    private void checkSystemStatus() {
-        displayOutput(system.getSystemStatus());
-    }
-
-    /**
      * Method to prompt user to select a course.Course selected will be recorded and
      * used for subsequent methods in Staff system until removed
      * 
@@ -181,6 +174,13 @@ public class StudentUI extends Promptable implements HiddenInputUI {
                 return -1;
             }
         }
+    }
+
+    /**
+     * Method to check the status of the system
+     */
+    private void checkSystemStatus() {
+        displayOutput(system.getSystemStatus());
     }
 
     /**
