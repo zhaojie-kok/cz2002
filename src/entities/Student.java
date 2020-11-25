@@ -9,10 +9,6 @@ import exceptions.MissingParametersException;
 /**
  * Student entities meant to encapsulate student user details
  */
-/**
- * @author zhaojie
- *
- */
 public class Student extends User implements Printable{
     private static final long serialVersionUID = 7073083131568074880L;
     private String matricNo;
