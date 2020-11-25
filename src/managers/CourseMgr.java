@@ -23,6 +23,7 @@ import boundaries.NotifSender;
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> allCourses;
     private CourseReader cReader;
+    private NotifSender notifSender;
 
     /**
      * Constructor
@@ -35,6 +36,7 @@ public class CourseMgr implements EntityManager {
         } catch (FileReadingException e) {
             throw e;
         }
+        notifSender = new NotifSender();
     }
 
     /**
@@ -46,7 +48,7 @@ public class CourseMgr implements EntityManager {
      * @param acadU      Academic units carried by new course
      * @return new course that has been successfully created
      * @throws OutOfRangeException thrown if academic units are insufficient
-     * @throws KeyClashException
+     * @throws KeyClashException thrown if courseCode already exists
      */
     public Course createCourse(String courseCode, String courseName, School school, int acadU)
             throws OutOfRangeException, KeyClashException {
@@ -88,7 +90,7 @@ public class CourseMgr implements EntityManager {
      * @param courseName New name of course
      * @param school     School hosting the course
      * @return true if change was successful, false if otherwise
-     * @throws KeyClashException
+     * @throws KeyClashException thrown if course Code already exists
      */
     public boolean updateCourse(Course course, String courseCode, String courseName, School school)
             throws KeyClashException {
@@ -153,13 +155,14 @@ public class CourseMgr implements EntityManager {
 
     /**
      * Method to access all courses in the system
+     * @return HashMap containing all courses. Course codes are keys
      */
     public HashMap<String, Course> getAllCourses(){
         return allCourses;
     }
 
     /**
-     * Method to accesss a specific course in the system
+     * Method to access a specific course in the system
      * 
      * @param courseCode Course code of the course to be accessed
      * @return           Course with matching course code
@@ -430,7 +433,7 @@ public class CourseMgr implements EntityManager {
                         + "with Index " + i.getIndexNo();
         
         try {
-            NotifSender.sendNotif("Successful application for " + c.getCourseName(), body, s.getEmail());
+            notifSender.sendNotif("Successful application for " + c.getCourseName(), body, s.getEmail(), "email");
         } catch (AddressException a) {
             System.out.println(a.getMessage());
         } catch (MessagingException m) {

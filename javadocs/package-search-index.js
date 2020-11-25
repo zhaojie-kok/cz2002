@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"boundaries"},{"l":"entities"},{"l":"entities.course_info"},{"l":"exceptions"},{"l":"managers"},{"l":"readers"}]

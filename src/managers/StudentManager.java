@@ -9,6 +9,7 @@ import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
 import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
+import exceptions.MissingParametersException;
 
 /**
  * Controller class for handling Student Entities
@@ -31,12 +32,12 @@ public class StudentManager implements EntityManager {
      * Method to retrieve a Student object from system
      * 
      * @param identifier String identifier. Either userID or matriculation number
-     * @return           Returns student based on identifier (either matricNo or userId)
+     * @return Returns student based on identifier (either matricNo or userId)
      * @throws KeyNotFoundException thrown if student cannot be identified
      */
     public Student getStudent(String identifier) throws KeyNotFoundException {
         Student toReturn = students.get(identifier);
-        if (toReturn == null){
+        if (toReturn == null) {
             throw new KeyNotFoundException(identifier);
         }
         return toReturn;
@@ -44,6 +45,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to get HashMap of all students in system
+     * @return HashMap of all students in system. Matriculation number and User ID are used as keys
      */
     public HashMap<String, Student> getStudents() {
         return students;
@@ -59,14 +61,15 @@ public class StudentManager implements EntityManager {
      * @param email        Email address of new student
      * @param matricNo     Matriculation number of new student
      * @param accessPeriod Access period of new student
-     * @throws KeyClashException thrown if details required to be unique are not
+     * @throws KeyClashException          thrown if details required to be unique
+     *                                    are not
+     * @throws MissingParametersException thrown if any above fields are null
      */
     public void createStudent(String userId, String name, String gender, String nationality, String email,
-    String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException {
+            String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException, MissingParametersException {
         /**
          * creates a new student based on information provided
          */
-        // TODO: throw exception if any field is null in user
         if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
             throw new KeyClashException("Matric Number " + matricNo);
@@ -115,6 +118,7 @@ public class StudentManager implements EntityManager {
      * 
      * @param course  Course to drop
      * @param student Student wanting to drop
+     * @return student that was dropped
      * @throws InvalidInputException Thrown if student has not registered for course before (including waitlist)
      */
     public Student dropCourse(Course course, Student student) throws InvalidInputException {
@@ -141,7 +145,6 @@ public class StudentManager implements EntityManager {
      * @throws KeyNotFoundException thrown if either student has not registered for the course
      */
     public Student[] swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException {
-        // TODO: Changed return type, anywhere else to update?
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
             throw new KeyNotFoundException("Both Students must be registered for the course");
         }
@@ -176,7 +179,6 @@ public class StudentManager implements EntityManager {
      */
     public Student swopIndex(Student student, Course course, Index newIndex)
             throws InvalidInputException, KeyNotFoundException {
-                // TODO: Updated return type to Student
         if (!student.isRegistered(course)) {
             throw new KeyNotFoundException("Student is not registered for this course");
         }
@@ -212,6 +214,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to return list of students
+     * @return String with information of all students
      */
     public String printAllStudents(){
         String toReturn = "";
@@ -230,8 +233,15 @@ public class StudentManager implements EntityManager {
         return toReturn;
     }
 
+    
+    /**
+     * Method to update a student after being successfully dequeued from waitlist
+     * 
+     * @param fromWaitlist the student
+     * @param course 	   the course
+     * @param index		   the index
+     */
     public void dequeueWaitlist(Student fromWaitlist, Course course, Index index){
-        // TODO: New method
         fromWaitlist.removeWaitlist(course);
         fromWaitlist.addCourse(course.getCourseCode(), index.getIndexNo(), course.getAcadU());
         saveState(fromWaitlist);
@@ -239,6 +249,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to save the state of a student object to a file
+     * @param student Student to be saved
      */
 	@Override
     public void saveState(Object student) {

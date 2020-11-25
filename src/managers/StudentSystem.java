@@ -108,6 +108,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
      * Method to get all the indexes of a course selected
      * 
      * @param format String format for information
+     * @return String containing all indexes in the course
      */
     public String getIndexesOfCourse(String format) {
         String toReturn = "";
@@ -123,6 +124,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
 
     /**
      * Method to check courses a student has registered for
+     * @return String containing all courses and respective index student is registered for
      */
     public String checkRegisteredCourses() {
         // FUNCTIONAL REQUIREMENT - Student: 3. Check registered courses
@@ -144,6 +146,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
 
     /**
      * Method to check courses a student has waitlisted for
+     * @return String containing all courses and respective index student is waitlisted for
      */
     public String checkWaitlistedCourses() {
         String format = "Course: %s\n ->Index: %s\n";
@@ -319,7 +322,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
      *                                    selected course
      * @throws MissingParametersException thrown if course or index have not been
      *                                    selected
-     * @throws KeyNotFoundException
+     * @throws KeyNotFoundException		  thrown if selected index is not under selected course
      */
     public void dropCourse() throws InvalidInputException, MissingParametersException, KeyNotFoundException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
@@ -334,7 +337,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
 
     /**
      * Method to check vacancies available for selected course
-     * 
+     * @return HashMap of vacancies for all courses. Course code are used as keys, slots available stored as values
      * @throws MissingSelectionException thrown if course has yet to be selected
      */
     public HashMap<String, Integer[]> checkVacanciesAvailable() throws MissingSelectionException {

@@ -475,6 +475,8 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
                         // in the event of a filereadingexception, there is a fatal error thus the method needs to exit
                         displayOutput(f.getMessage());
                         return;
+                    } catch (MissingParametersException e) {
+                        displayOutput(e.getMessage());
                     }
             }
         } while (choice != 9);

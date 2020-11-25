@@ -2,6 +2,8 @@ package entities;
 
 import java.io.Serializable;
 
+import exceptions.MissingParametersException;
+
 /**
  * General purpose entity class for all users
  */
@@ -17,14 +19,34 @@ public class User implements Serializable{
     /**
      * Constructor
      * 
-     * @param userId userID of the user
-     * @param userType Type of user
-     * @param name Name of user
-     * @param gender Gender of user
+     * @param userId      userID of the user
+     * @param userType    Type of user
+     * @param name        Name of user
+     * @param gender      Gender of user
      * @param nationality Nationality of user
-     * @param email email address of user
+     * @param email       email address of user
+     * @throws MissingParametersException thrown if any arguments are missing
      */
-    User(String userId, String userType, String name, String gender, String nationality, String email) {
+    User(String userId, String userType, String name, String gender, String nationality, String email)
+            throws MissingParametersException {
+        if (userId == null) {
+            throw new MissingParametersException("UserID cannot be blank");
+        }
+        if (userType == null) {
+            throw new MissingParametersException("User Type cannot be blank");
+        }
+        if (name == null) {
+            throw new MissingParametersException("User's name cannot be blank");
+        }
+        if (gender == null) {
+            throw new MissingParametersException("User's gender cannot be blank");
+        }
+        if (nationality == null) {
+            throw new MissingParametersException("User's nationality cannot be blank");
+        }
+        if (email == null) {
+            throw new MissingParametersException("User's email cannot be blank");
+        }
         this.userId = userId;
         this.userType = userType;
         this.name = name;
@@ -35,13 +57,15 @@ public class User implements Serializable{
 
     /**
      * Getter for userID
+     * @return user ID
      */
     public String getUserId() {
         return this.userId;
     }
 
     /**
-     * Getter for user tye
+     * Getter for user type
+     * @return user type
      */
     public String getUserType() {
         return this.userType;
@@ -49,6 +73,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's name
+     * @return user name
      */
     public String getName() {
         return this.name;
@@ -56,6 +81,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's gender
+     * @return user's gender
      */
     public String getGender() {
         return this.gender;
@@ -63,6 +89,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's nationality
+     * @return user's nationality
      */
     public String getNationality() {
         return this.nationality;
@@ -70,6 +97,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's email address
+     * @return user's email address
      */
     public String getEmail() {
         return this.email;

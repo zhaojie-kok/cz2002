@@ -7,6 +7,7 @@ package boundaries;
 public interface HiddenInputUI {
     /**
      * Method for user to provide input without input without input being shown
+     * @return The user's input
      */
     public Object getHiddenInput();
 }

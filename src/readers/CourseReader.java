@@ -22,7 +22,7 @@ public class CourseReader extends FileReader {
 
     /**
      * Method to read data from a file.
-     * See {@link FileReader#getData()}
+     * See {@link FileReader#getData(String)}
      */
     @Override
     public Object getData(String params) throws FileReadingException {

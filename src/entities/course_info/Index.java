@@ -30,8 +30,8 @@ public class Index implements Serializable, Printable{
 	 * @param slotsTotal Total number of slots available for this index
 	 * @param timeTable  An array of lists of LessonDetails, showing the timetable
 	 *                   of the course across 2 weeks (even and odd weeks)
-	 * @throws MissingParametersException
-	 * @throws OutOfRangeException
+	 * @throws MissingParametersException thrown if any above fields are null
+	 * @throws OutOfRangeException thrown if number of slots is insufficient (minimum 1)
 	 */
 	public Index(String indexNo, int slotsTotal, List<LessonDetails>[] timeTable)
 			throws MissingParametersException, OutOfRangeException {
@@ -54,6 +54,7 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Getter method for the index number
+	 * @return index number
 	 */
 	public String getIndexNo() {
 		return indexNo;
@@ -71,6 +72,7 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Getter method for the slots available to the index
+	 * @return empty slots available
 	 */
 	public int getSlotsAvailable() {
 		return slotsAvailable;
@@ -78,7 +80,7 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Getter method for the total number of slots available to the index
-	 * @return
+	 * @return total slots available
 	 */
 	public int getSlotsTotal() {
 		return slotsTotal;
@@ -88,6 +90,7 @@ public class Index implements Serializable, Printable{
 	 * Setter method for the total number of slots available to the index
 	 * NOTE: new total number of slots cannot cause the available number of slots to become negative
 	 * @param slotsTotal new total number of slots
+	 * @throws OutOfRangeException thrown if number of slots given is less than students already registered
 	 */
 	public void setSlotsTotal(int slotsTotal) throws OutOfRangeException {
 		if (slotsTotal < this.slotsTotal - this.slotsAvailable) {
@@ -99,11 +102,17 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Getter for the list of students registered for the course
+	 * @return List of students registered
 	 */
 	public List<Student> getRegisteredStudents() {
 		return registeredStudents;
 	}
 
+	
+	/**
+	 * Getter for list of students in waitlist
+	 * @return List of students in waitlist
+	 */
 	public List<Student> getWaitlistedStudents() {
 		return new ArrayList<Student>(waitlist);
 	}
@@ -119,6 +128,7 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Getter for the timetable of the course
+	 * @return Timetable as an array of lists (array of 14 slots, each representing 1 day for 2 weeks)
 	 */
 	public List<LessonDetails>[] getTimeTable() {
 		return timeTable;
@@ -126,6 +136,7 @@ public class Index implements Serializable, Printable{
 	
 	/**
 	 * Setter for the timetable of the course
+	 * @param timeTable new timetable for the index
 	 */
 	public void setTimeTable(List<LessonDetails>[] timeTable) {
 		this.timeTable = timeTable;
@@ -161,7 +172,7 @@ public class Index implements Serializable, Printable{
 	}
 
 	/**
-	 * Returns index no
+	 * @return index number
 	 */
 	@Override
 	public String getLessInfo(){
@@ -170,7 +181,7 @@ public class Index implements Serializable, Printable{
 
 	/**
 	 * Retrieves information about the index
-	 * Returns a string of information on the index
+	 * @return a string of information on the index
 	 * Eg.
 	 * Index: 20001
 	 * Slots available: 10 out of 20
@@ -210,7 +221,8 @@ public class Index implements Serializable, Printable{
 	}
 
 	/**
-	 * Retrieves a string of students registered/waitlisted
+	 * Retrieves a string of students associated with index
+	 * @return String of students registered and waitlisted
 	 * Eg.
 	 * Registered students:
 	 * 1. 
