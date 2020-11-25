@@ -193,12 +193,14 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * @param accessPeriod Access period of new student
      * @param password     Password for new userID
      * @return String with list of students
-     * @throws KeyClashException    thrown if details required to be unique are not
-     * @throws FileReadingException thrown if new file cannot be created
+     * @throws KeyClashException          thrown if details required to be unique
+     *                                    are not
+     * @throws FileReadingException       thrown if new file cannot be created
+     * @throws MissingParametersException thrown if any above fields are null
      */
     public String addStudent(String userId, String name, String gender, String nationality, String email,
             String matricNo, LocalDateTime[] accessPeriod, String password)
-            throws KeyClashException, FileReadingException {
+            throws KeyClashException, FileReadingException, MissingParametersException {
         // Call student manager to create the student
         boolean isUnique = false;
         try {
@@ -215,7 +217,6 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
 
         try {
             studentManager.createStudent(userId, name, gender, nationality, email, matricNo, accessPeriod);
-            // TODO: check validity of email
             // If student is created, then create login details
             Object[] data = { userId, password, "student", accessPeriod };
             loginMgr.createNewLoginDetails(data);

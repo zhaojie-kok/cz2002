@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import entities.course_info.*;
 import exceptions.KeyNotFoundException;
+import exceptions.MissingParametersException;
 
 /**
  * Student entities meant to encapsulate student user details
@@ -20,20 +21,36 @@ public class Student extends User implements Printable{
     /**
      * Constructor
      * 
-     * @param userId String identifier for student user. Must be unique among all users
-     * @param name Name of student user
-     * @param gender Gender of student user
-     * @param nationality Nationality of student user
-     * @param matricNo Matriculation number for student user. Must be unique among all students
+     * @param userId       String identifier for student user. Must be unique among
+     *                     all users
+     * @param name         Name of student user
+     * @param gender       Gender of student user
+     * @param nationality  Nationality of student user
+     * @param matricNo     Matriculation number for student user. Must be unique
+     *                     among all students
      * @param accessPeriod Access period for student user
-     * @param courses Courses taken by student. Hashmap mapping course codes to indexes
-     * @param waitlist Waitlist of student. Hashmap mapping course codes to indexes
+     * @param courses      Courses taken by student. Hashmap mapping course codes to
+     *                     indexes
+     * @param waitlist     Waitlist of student. Hashmap mapping course codes to
+     *                     indexes
+     * @throws MissingParametersException
      */
-    public Student(
-        String userId, String name, String gender, String nationality, String email,
-        String matricNo, LocalDateTime[] accessPeriod, HashMap<String, String> courses,
-        HashMap<String, String> waitlist) {
+    public Student(String userId, String name, String gender, String nationality, String email, String matricNo,
+            LocalDateTime[] accessPeriod, HashMap<String, String> courses, HashMap<String, String> waitlist)
+            throws MissingParametersException {
         super(userId, "student", name, gender, nationality, email);
+        if (matricNo == null) {
+            throw new MissingParametersException("Matriculation Number cannot be blank");
+        }
+        if (accessPeriod == null) {
+            throw new MissingParametersException("Access Period cannot be blank");
+        }
+        if (courses == null) {
+            courses = new HashMap<>();
+        }
+        if (waitlist == null) {
+            waitlist = new HashMap<>();
+        }
     
         this.acadUnits = 0;
         this.acadUnitsAllowed = 21;

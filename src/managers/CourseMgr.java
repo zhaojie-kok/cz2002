@@ -23,6 +23,7 @@ import boundaries.NotifSender;
 public class CourseMgr implements EntityManager {
     private HashMap<String, Course> allCourses;
     private CourseReader cReader;
+    private NotifSender notifSender;
 
     /**
      * Constructor
@@ -35,6 +36,7 @@ public class CourseMgr implements EntityManager {
         } catch (FileReadingException e) {
             throw e;
         }
+        notifSender = new NotifSender();
     }
 
     /**
@@ -430,7 +432,7 @@ public class CourseMgr implements EntityManager {
                         + "with Index " + i.getIndexNo();
         
         try {
-            NotifSender.sendNotif("Successful application for " + c.getCourseName(), body, s.getEmail());
+            notifSender.sendNotif("Successful application for " + c.getCourseName(), body, s.getEmail(), "email");
         } catch (AddressException a) {
             System.out.println(a.getMessage());
         } catch (MessagingException m) {

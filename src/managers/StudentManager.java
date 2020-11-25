@@ -9,6 +9,7 @@ import exceptions.FileReadingException;
 import exceptions.InvalidInputException;
 import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
+import exceptions.MissingParametersException;
 
 /**
  * Controller class for handling Student Entities
@@ -31,12 +32,12 @@ public class StudentManager implements EntityManager {
      * Method to retrieve a Student object from system
      * 
      * @param identifier String identifier. Either userID or matriculation number
-     * @return           Returns student based on identifier (either matricNo or userId)
+     * @return Returns student based on identifier (either matricNo or userId)
      * @throws KeyNotFoundException thrown if student cannot be identified
      */
     public Student getStudent(String identifier) throws KeyNotFoundException {
         Student toReturn = students.get(identifier);
-        if (toReturn == null){
+        if (toReturn == null) {
             throw new KeyNotFoundException(identifier);
         }
         return toReturn;
@@ -59,14 +60,15 @@ public class StudentManager implements EntityManager {
      * @param email        Email address of new student
      * @param matricNo     Matriculation number of new student
      * @param accessPeriod Access period of new student
-     * @throws KeyClashException thrown if details required to be unique are not
+     * @throws KeyClashException          thrown if details required to be unique
+     *                                    are not
+     * @throws MissingParametersException thrown if any above fields are null
      */
     public void createStudent(String userId, String name, String gender, String nationality, String email,
-    String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException {
+            String matricNo, LocalDateTime[] accessPeriod) throws KeyClashException, MissingParametersException {
         /**
          * creates a new student based on information provided
          */
-        // TODO: throw exception if any field is null in user
         if (students.containsKey(matricNo)){
             // If another student exists with the matricNo or userId, no student is created
             throw new KeyClashException("Matric Number " + matricNo);

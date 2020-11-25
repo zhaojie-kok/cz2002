@@ -1,5 +1,7 @@
 package entities;
 
+import exceptions.MissingParametersException;
+
 /**
  * Staff entities meant for staff/admin users
  */
@@ -16,9 +18,15 @@ public class Staff extends User{
      * @param name        Name of the staff user
      * @param gender      Gender of the staff user
      * @param nationality Nationality of the staff user
+     * @throws MissingParametersException
      */
-    public Staff(String staffNo, String userId, String name, String gender, String nationality, String email) {
+    public Staff(String staffNo, String userId, String name, String gender, String nationality, String email)
+            throws MissingParametersException {
         super(userId, "staff", name, gender, nationality, email);
+
+        if (staffNo == null) {
+            throw new MissingParametersException("Staff Number cannot be null");
+        }
         this.staffNo = staffNo;
     }
 
