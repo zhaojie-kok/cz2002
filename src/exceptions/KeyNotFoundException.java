@@ -10,7 +10,7 @@ public class KeyNotFoundException extends Exception {
     /**
      * Constructor
      * 
-     * @param message error message to be accessed with {@link #getMessage()} method
+     * @param key name of key in error message to be accessed with {@link #getMessage()} method
      */
     public KeyNotFoundException(String key){
         this.message = key + " not found";

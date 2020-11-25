@@ -8,6 +8,7 @@ package boundaries;
 public interface GeneralUI {
     /** 
      * the UI should also be able to retrieve and return user response
+     * @return User's input
      */
     public abstract Object getUserInput();
 

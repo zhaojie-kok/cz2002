@@ -48,7 +48,7 @@ public class CourseMgr implements EntityManager {
      * @param acadU      Academic units carried by new course
      * @return new course that has been successfully created
      * @throws OutOfRangeException thrown if academic units are insufficient
-     * @throws KeyClashException
+     * @throws KeyClashException thrown if courseCode already exists
      */
     public Course createCourse(String courseCode, String courseName, School school, int acadU)
             throws OutOfRangeException, KeyClashException {
@@ -90,7 +90,7 @@ public class CourseMgr implements EntityManager {
      * @param courseName New name of course
      * @param school     School hosting the course
      * @return true if change was successful, false if otherwise
-     * @throws KeyClashException
+     * @throws KeyClashException thrown if course Code already exists
      */
     public boolean updateCourse(Course course, String courseCode, String courseName, School school)
             throws KeyClashException {
@@ -155,13 +155,14 @@ public class CourseMgr implements EntityManager {
 
     /**
      * Method to access all courses in the system
+     * @return HashMap containing all courses. Course codes are keys
      */
     public HashMap<String, Course> getAllCourses(){
         return allCourses;
     }
 
     /**
-     * Method to accesss a specific course in the system
+     * Method to access a specific course in the system
      * 
      * @param courseCode Course code of the course to be accessed
      * @return           Course with matching course code

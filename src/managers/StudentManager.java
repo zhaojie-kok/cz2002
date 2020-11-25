@@ -45,6 +45,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to get HashMap of all students in system
+     * @return HashMap of all students in system. Matriculation number and User ID are used as keys
      */
     public HashMap<String, Student> getStudents() {
         return students;
@@ -117,6 +118,7 @@ public class StudentManager implements EntityManager {
      * 
      * @param course  Course to drop
      * @param student Student wanting to drop
+     * @return student that was dropped
      * @throws InvalidInputException Thrown if student has not registered for course before (including waitlist)
      */
     public Student dropCourse(Course course, Student student) throws InvalidInputException {
@@ -214,6 +216,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to return list of students
+     * @return String with information of all students
      */
     public String printAllStudents(){
         String toReturn = "";
@@ -232,8 +235,15 @@ public class StudentManager implements EntityManager {
         return toReturn;
     }
 
+    
+    /**
+     * Method to update a student after being successfully dequeued from waitlist
+     * 
+     * @param fromWaitlist the student
+     * @param course 	   the course
+     * @param index		   the index
+     */
     public void dequeueWaitlist(Student fromWaitlist, Course course, Index index){
-        // TODO: New method
         fromWaitlist.removeWaitlist(course);
         fromWaitlist.addCourse(course.getCourseCode(), index.getIndexNo(), course.getAcadU());
         saveState(fromWaitlist);
@@ -241,6 +251,7 @@ public class StudentManager implements EntityManager {
 
     /**
      * Method to save the state of a student object to a file
+     * @param student Student to be saved
      */
 	@Override
     public void saveState(Object student) {

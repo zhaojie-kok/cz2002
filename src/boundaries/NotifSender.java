@@ -55,6 +55,8 @@ public class NotifSender implements EmailSender{
 	 * @param subject Notification subject
 	 * @param body    Message body
 	 * @param contact Recipient's contact
+	 * @param mode	  The mode of communication (only supports email currently)
+	 * 				  Must be one of following <ol> <li> email </li> </ol>
 	 * @return true if notification was made successfully, false otherwise
 	 * @throws MessagingException in event where notification cannot be made, exception is thrown
 	 */

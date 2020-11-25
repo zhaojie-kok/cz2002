@@ -57,13 +57,15 @@ public class User implements Serializable{
 
     /**
      * Getter for userID
+     * @return user ID
      */
     public String getUserId() {
         return this.userId;
     }
 
     /**
-     * Getter for user tye
+     * Getter for user type
+     * @return user type
      */
     public String getUserType() {
         return this.userType;
@@ -71,6 +73,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's name
+     * @return user name
      */
     public String getName() {
         return this.name;
@@ -78,6 +81,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's gender
+     * @return user's gender
      */
     public String getGender() {
         return this.gender;
@@ -85,6 +89,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's nationality
+     * @return user's nationality
      */
     public String getNationality() {
         return this.nationality;
@@ -92,6 +97,7 @@ public class User implements Serializable{
 
     /**
      * Getter for user's email address
+     * @return user's email address
      */
     public String getEmail() {
         return this.email;

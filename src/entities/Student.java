@@ -9,6 +9,10 @@ import exceptions.MissingParametersException;
 /**
  * Student entities meant to encapsulate student user details
  */
+/**
+ * @author zhaojie
+ *
+ */
 public class Student extends User implements Printable{
     private static final long serialVersionUID = 7073083131568074880L;
     private String matricNo;
@@ -26,6 +30,7 @@ public class Student extends User implements Printable{
      * @param name         Name of student user
      * @param gender       Gender of student user
      * @param nationality  Nationality of student user
+     * @param email		   Email address for student
      * @param matricNo     Matriculation number for student user. Must be unique
      *                     among all students
      * @param accessPeriod Access period for student user
@@ -33,7 +38,7 @@ public class Student extends User implements Printable{
      *                     indexes
      * @param waitlist     Waitlist of student. Hashmap mapping course codes to
      *                     indexes
-     * @throws MissingParametersException
+     * @throws MissingParametersException Thrown if any above fields are null
      */
     public Student(String userId, String name, String gender, String nationality, String email, String matricNo,
             LocalDateTime[] accessPeriod, HashMap<String, String> courses, HashMap<String, String> waitlist)
@@ -62,6 +67,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for student matriculation number
+     * @return student's matriculation number
      */
     public String getMatricNo() {
         return this.matricNo;
@@ -69,6 +75,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for student access period
+     * @return student's access period
      */
     public LocalDateTime[] getAccessPeriod() {
         return this.accessPeriod;
@@ -76,6 +83,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for student's registered courses
+     * @return HashMap of student's registered courses. Course code are used as keys, index numbers stored as values
      */
     public HashMap<String, String> getCourses() {
         return this.courses;
@@ -83,6 +91,7 @@ public class Student extends User implements Printable{
 
     /**
      * Method to check which index number student is registered under for a certain course
+     * @return Index number for course student has registered for
      * @param courseCode course code of course to check
      * @throws KeyNotFoundException thrown when student is not registered for course code inputted
      */
@@ -99,6 +108,7 @@ public class Student extends User implements Printable{
     /**
      * Method to check if student is registered for a certain course
      * Does not include waitlisted courses
+     * @return true if student is registered, false otherwise
      * @param course course to check
      */
     public boolean isRegistered(Course course){
@@ -107,7 +117,7 @@ public class Student extends User implements Printable{
 
     /**
      * Method to check if student is registered under a given index for a course
-     * 
+     * @return true if student is registered, false otherwise
      * @param course course to be checked
      * @param index index to be checked
      * @throws KeyNotFoundException thrown if student has not registered for the course
@@ -122,6 +132,7 @@ public class Student extends User implements Printable{
 
     /**
      * Method to check if student is waitlisted for a course
+     * @return true if student is waitlisted, false otherwise
      * @param course course to be checked
      */
     public boolean isWaitlisted(Course course) {
@@ -131,6 +142,7 @@ public class Student extends User implements Printable{
     /**
      * Method to check if student is waitlisted under a given index for a course
      * 
+     * @return true if student is waitlisted, false otherwise
      * @param course course to be checked
      * @param index  index to be checked
      * @throws KeyNotFoundException thrown if student is not waitlisted for the course
@@ -145,6 +157,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for academic units student is registered for
+     * @return number of academic units student's registered courses hold in total
      */
     public int getAcadUnits() {
         return this.acadUnits;
@@ -152,6 +165,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for maximum number of academic units student is allowed to have
+     * @return maximum number of academic units student can take
      */
     public int getAcadUnitsAllowed() {
         return this.acadUnitsAllowed;
@@ -159,7 +173,7 @@ public class Student extends User implements Printable{
 
     /**
      * Getter for student's waitlist
-     * @return HashMap<Course Code, Index Number>
+     * @return HashMap of student's waitlist. Course codes are used as keys, index numbers are stored as values
      */
     public HashMap<String, String> getWaitlist() {
         return this.waitlist;
@@ -221,7 +235,7 @@ public class Student extends User implements Printable{
     }
 
     /**
-     * Same as getInfo()
+     * Same as {@link #getInfo()}
      */
     @Override
     public String getLessInfo(){
@@ -230,7 +244,7 @@ public class Student extends User implements Printable{
 
     /**
      * Method to get basic information about the student
-     * Returns string with information on student as specified in functional
+     * @return string with information on student as specified in functional
      * requirements (Admin 6.) Eg. John Doe - Male - Singaporean
      */
     @Override
@@ -240,7 +254,7 @@ public class Student extends User implements Printable{
 
     /**
      * Method to get detailed information about the student
-     * Returns string with more information on student Eg. U1900000A - R19000 - John
+     * @return string with more information on student Eg. U1900000A - R19000 - John
      * Doe Singaporean, Male AUs: 16 (max 21);
      */
     @Override
@@ -251,6 +265,9 @@ public class Student extends User implements Printable{
                             this.acadUnits, this.acadUnitsAllowed); 
     }
 
+    /**
+     * Compares against another student object
+     */
     @Override
     public boolean equals(Object obj){
         try{

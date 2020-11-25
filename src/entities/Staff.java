@@ -18,7 +18,8 @@ public class Staff extends User{
      * @param name        Name of the staff user
      * @param gender      Gender of the staff user
      * @param nationality Nationality of the staff user
-     * @throws MissingParametersException
+     * @param email 	  Email address of staff user
+     * @throws MissingParametersException Thrown if any of the above fields are null
      */
     public Staff(String staffNo, String userId, String name, String gender, String nationality, String email)
             throws MissingParametersException {
@@ -32,6 +33,7 @@ public class Staff extends User{
 
     /**
      * Getter for the staff's identification number
+     * @return Staff identification number
      */
     public String getStaffNo() {
         return this.staffNo;

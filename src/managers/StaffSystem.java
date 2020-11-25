@@ -231,6 +231,10 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * other details about the course, use the updateIndex, addIndex, or removeIndex
      * method
      * 
+     * @param courseCode New course code
+     * @param courseName New course name
+     * @param school new school hosting course
+     * 
      * @throws MissingSelectionException thrown if course has yet to be selected
      * @throws KeyClashException         thrown if new course code is not unique
      */
@@ -263,8 +267,8 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      *                                   course
      * @throws MissingSelectionException thrown if course or index have yet to be
      *                                   selected
-     * @throws InvalidInputException
-     * @throws KeyNotFoundException
+     * @throws InvalidInputException 	 thrown if any input is found to be invalid (e.g: if any are null)
+     * @throws KeyNotFoundException		 thrown if selected index cannot be found under selected course
      */
     public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException, KeyClashException,
             MissingSelectionException, InvalidInputException, KeyNotFoundException {
@@ -292,7 +296,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * @param indexNo    Index number of new index
      * @param slotsTotal Total number of slots in index
      * @throws KeyClashException thrown if indexNo is not unique within the course
-     * @throws MissingParametersException thrown if course or timetable is yet to be selected. See {@link #selectCourse()} and {@link #selectLessonDetails()}
+     * @throws MissingParametersException thrown if course or timetable is yet to be selected. See {@link #selectCourse(String)} and {@link #selectLessonDetails(String, String, int, int, LocalTime, LocalTime)}
      * @throws OutOfRangeException thrown if slotsTotal is insufficient
      */
     public void addIndex(String indexNo, int slotsTotal) throws KeyClashException, MissingParametersException,
@@ -304,7 +308,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
     }
 
     /**
-     * Method to add course to system using {@link CourseMgr#createCourse()} method
+     * Method to add course to system using {@link CourseMgr#createCourse(String, String, School, int)} method
      * 
      * @param courseCode Course code of new course
      * @param courseName Name of new course
@@ -320,7 +324,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
 
     /**
      * Method to retrieve vacancies available to the selected index
-     * 
+     * @return number of slots empty for selected index
      * @throws MissingSelectionException thrown if course or index have yet to be selected
      */
     public int checkAvailableVacancies() throws MissingSelectionException {
@@ -337,7 +341,8 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
 
     /**
      * Method to view all students registered for an index
-     * 
+     * @param b whether or not to see detailed info about students in index
+     * @return String of student info registered/slot capacity for index
      * @throws MissingSelectionException thrown if course or index are yet to be selected
      */
     public String printStudentsbyIndex(boolean b) throws MissingSelectionException {
@@ -356,7 +361,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
 
     /**
      * Method to view all students registered in a course
-     * 
+     * @return String of all students in course
      * @throws MissingSelectionException thrown if course has yet to be selected
      */
     public String printStudentsbyCourse() throws MissingSelectionException {
@@ -367,10 +372,10 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
     }
 
     /**
-     * Method to retrieve detailed information about a course, including students
+     * Method to retrieve information about a course, including students
      * registered
-     * 
-     * @throws MissingSelectionExceptionthrown if course has yet to be selected
+     * @return String of information about a course
+     * @throws MissingSelectionException thrown if course has yet to be selected
      */
     public String getCourseInfo() throws MissingSelectionException {
         if (selectedCourse == null) {
@@ -378,6 +383,11 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
         }
         return selectedCourse.getMoreInfo();
     }
+    
+    /**
+     * Method to retrieve information about all courses
+     * @return String of information about all courses
+     */
     public String printAllCourses(){
         String toReturn = "";
         Course c;

@@ -77,8 +77,8 @@ public class Course implements Serializable, Printable{
 
     /**
      * Mutator method for existing indices in the 
-     * @param index
-     * @param oldIndexNo
+     * @param index new index to change  
+     * @param oldIndexNo previous index number
      */
     public void updateIndex(Index index, String oldIndexNo){
         indexes.remove(oldIndexNo);
@@ -105,13 +105,15 @@ public class Course implements Serializable, Printable{
 
     /**
      * Getter method for the course code
+     * @return course code
      */
     public String getCourseCode(){
         return courseCode;
     }
 
     /**
-     * Getter metthod for the course name
+     * Getter method for the course name
+     * @return course name
      */
     public String getCourseName(){
         return courseName;
@@ -126,7 +128,7 @@ public class Course implements Serializable, Printable{
     }
 
     /**
-     * Getter method for the number of avaiblable slots for a particular index
+     * Getter method for the number of available slots for a particular index
      * @param indexNo index number identifying the index
      * @return integer of the number of slots available
      */
@@ -136,6 +138,7 @@ public class Course implements Serializable, Printable{
 
     /**
      * Getter method for the number of academic units carried by the course
+     * @return number of academic units carried
      */
     public int getAcadU(){
         return acadU;
@@ -155,6 +158,7 @@ public class Course implements Serializable, Printable{
 
     /**
      * Getter method to access all the indexes under the course
+     * @return Hashmap of indexes under course. Index numbers used as keys
      */
     public HashMap<String, Index> getIndexes(){
         return indexes;
@@ -171,7 +175,7 @@ public class Course implements Serializable, Printable{
     }
 
     /**
-     * Returns a one liner
+     * @return a one liner
      * AC2101 - Accounting Recognition and Measurement
      */
     @Override
@@ -181,7 +185,7 @@ public class Course implements Serializable, Printable{
 
     /**
      * Retrieves information about the course
-     * Returns formatted string of course information
+     * @return formatted string of course information
      * Eg:
      * AC2101 - Accounting Recognition and Measurement
      * .....
@@ -198,7 +202,7 @@ public class Course implements Serializable, Printable{
 
     /**
      * Retrieves detailed information about the course
-     * Returns formatted string of course information
+     * @return formatted string of course information
      * Eg.
      * AC2101 - Accounting Recognition and Measurement
      * .....

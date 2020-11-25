@@ -95,12 +95,12 @@ public class LoginMgr {
     /**
      * Method to allow changing of access period
      * 
-     * @param user            User tobe updated
+     * @param user            User to be updated
      * @param newAccessPeriod New access period
-     * @throws FileReadingException
-     * @throws ClassNotFoundException
-     * @throws IOException
-     * @throws KeyNotFoundException
+     * @throws FileReadingException   Thrown if file cannot be accessed
+     * @throws ClassNotFoundException Thrown if wrong/invalid class found in file
+     * @throws IOException			  Thrown if error resulted during file access
+     * @throws KeyNotFoundException	  Thrown if file cannot be found
      */
     public void updateAccessPeriod(User user, LocalDateTime[] newAccessPeriod)
             throws ClassNotFoundException, IOException, FileReadingException, KeyNotFoundException {

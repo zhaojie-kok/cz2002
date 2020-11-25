@@ -44,6 +44,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	
 	/**
 	 * Getter for lesson venue
+	 * @return lesson venue
 	 */
 	public String getLessonVenue() {
 		return lessonVenue;
@@ -60,6 +61,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	
 	/**
 	 * Getter for lesson type
+	 * @return lesson type
 	 */
 	public String getLessonType() {
 		return lessonType;
@@ -68,7 +70,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	/**
 	 * Setter for lesson type
 	 * 
-	 * @param lessonTypeString describing the lesson type
+	 * @param lessonType describing the lesson type
 	 */
 	public void setLessonType(String lessonType) {
 		this.lessonType = lessonType;
@@ -76,6 +78,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	
 	/**
 	 * Getter for the DayOfWeek lesson lies on
+	 * @return day of lesson
 	 */
 	public DayOfWeek getLessonDay() {
 		return lessonDay;
@@ -84,7 +87,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	/**
 	 * setter for DayOfWeek lesson lies on
 	 * 
-	 * @param lessonDayDayOfWeek from java.time for represent which day lesson falls on
+	 * @param lessonDay DayOfWeek from java.time for represent which day lesson falls on
 	 */
 	public void setLessonDay(DayOfWeek lessonDay) {
 		this.lessonDay = lessonDay;
@@ -92,9 +95,12 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 
 	/**
 	 * Getter for evenOdd of lesson
-	 * 0: even weeks
-	 * 1: odd weeks
-	 * 2: both
+	 *@return which weeks lessons fall under
+	 * <ol>
+	 * 		<li>even weeks</li>
+	 *		<li>odd weeks</li>
+	 *		<li>all weeks</li>
+	 *</ol>
 	 */
 	public int getEvenOdd() {
 		return evenOdd;
@@ -102,9 +108,12 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 
 	/**
 	 * Setter for evenOdd of lesson
-	 * 0: even weeks
-	 * 1: odd weeks
-	 * 2: both
+	 * @param evenOdd must be one of following choices (as an int):
+	 * <ol>
+	 * 		<li>even weeks</li>
+	 *		<li>odd weeks</li>
+	 *		<li>all weeks</li>
+	 *</ol>
 	 */
 	public void setEvenOdd(int evenOdd) {
 		this.evenOdd = evenOdd;
@@ -112,6 +121,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	
 	/**
 	 * Getter for start time of the lesson
+	 * @return Starting time of lesson
 	 */
 	public LocalTime getStartTime() {
 		return startTime;
@@ -127,6 +137,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	
 	/**
 	 * Getter for end time of the lesson
+	 * @return ending time for lesson
 	 */
 	public LocalTime getEndTime() {
 		return endTime;
