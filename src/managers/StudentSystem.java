@@ -18,8 +18,8 @@ import exceptions.OutOfRangeException;
 
 /**
  * Controller for the student system.
- * Used to pass user inputs from UI classes to entity manager classes
- * Also used to invoke entity manager methods based on user actions from UI classes
+ * Used to pass selectedStudent inputs from UI classes to entity manager classes
+ * Also used to invoke entity manager methods based on selectedStudent actions from UI classes
  */
 public class StudentSystem extends AbstractSystem implements CourseSystemInterface {
 
@@ -207,7 +207,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
     }
 
     /**
-     * Method to view the timetable for the user's registered courses
+     * Method to view the timetable for the selectedStudent's registered courses
      * @return Timetable formatted as a String
      * @throws FileReadingException thrown if problems are found with student's data
      */
@@ -238,35 +238,33 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
                         }
                     }
                 }
-
-                output += "\nEVEN WEEKS\n|     |";
-                for (int i=0; i<DayOfWeek.values().length; i++) {
-                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
-                }
-                for (int i=0; i<tableForm.length; i++) {
-                    output += String.format("\n|%02d:%02d|", ((int) (i/2)) + 8, i%2 * 30);
-                    for (int j=0; j<7; j++) {
-                        output += String.format("%s|", 
-                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
-                    }
-                }
-                output += "\nODD WEEKS\n|     |";
-                for (int i = 0; i < DayOfWeek.values().length; i++) {
-                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
-                }
-                for (int i = 0; i < tableForm.length; i++) {
-                    output += String.format("\n|%02d:%02d|", ((int) (i / 2)) + 8, i % 2 * 30);
-                    for (int j = 7; j < tableForm[0].length; j++) {
-                        output += String.format("%s|", 
-                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
-                    }
-                }
-
             } catch (KeyNotFoundException e) {
                 throw new FileReadingException("inconsistencies found in student data. Please contact system administrator");
             }
         }
         
+        output += "\nEVEN WEEKS\n|     |";
+        for (int i=0; i<DayOfWeek.values().length; i++) {
+            output += String.format("%15s|", DayOfWeek.values()[i].toString());
+        }
+        for (int i=0; i<tableForm.length; i++) {
+            output += String.format("\n|%02d:%02d|", ((int) (i/2)) + 8, i%2 * 30);
+            for (int j=0; j<7; j++) {
+                output += String.format("%s|", 
+                    tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
+            }
+        }
+        output += "\nODD WEEKS\n|     |";
+        for (int i = 0; i < DayOfWeek.values().length; i++) {
+            output += String.format("%15s|", DayOfWeek.values()[i].toString());
+        }
+        for (int i = 0; i < tableForm.length; i++) {
+            output += String.format("\n|%02d:%02d|", ((int) (i / 2)) + 8, i % 2 * 30);
+            for (int j = 7; j < tableForm[0].length; j++) {
+                output += String.format("%s|", 
+                    tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
+            }
+        }
         return output;
     }
 
@@ -290,7 +288,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
             throw new MissingSelectionException("Please select an index");
         }
 
-        // check if user is already registered
+        // check if selectedStudent is already registered
         if (selectedStudent.isRegistered(selectedCourse)) {
             throw new InvalidInputException("You are already registered for this course");
         }
@@ -325,7 +323,11 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
      */
     public void dropCourse() throws InvalidInputException, MissingParametersException, KeyNotFoundException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-        courseMgr.removeStudent(selectedStudent, courseMgr.getCourseIndex(selectedCourse, selectedStudent.getCourseIndex(selectedCourse.getCourseCode())), selectedCourse);
+        Index index = courseMgr.getCourseIndex(selectedCourse, selectedStudent.getCourseIndex(selectedCourse.getCourseCode()));
+        Student fromWaitlist = courseMgr.removeStudent(selectedStudent, index, selectedCourse);
+        if (fromWaitlist != null){
+            studentManager.dequeueWaitlist(fromWaitlist, selectedCourse, index);
+        }
         selectedStudent = studentManager.dropCourse(selectedCourse, selectedStudent);
         clearSelections();
     }
@@ -358,7 +360,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
     /**
      * Method to swop index with another student
      * 
-     * @param identifier String identifier of student other than user to swop with
+     * @param identifier String identifier of student other than selectedStudent to swop with
      * @throws KeyNotFoundException      If either student has not registered for
      *                                   course
      * @throws MissingSelectionException If course to swop has not been selected
@@ -396,8 +398,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         }
 
         if (!checkSwopClash(selectedStudent, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
-            courseMgr.swopStudents(selectedStudent, toSwapWith, selectedCourse);
-            studentManager.swopIndex(selectedStudent, toSwapWith, selectedCourse);
+            Student[] updatedStudents = studentManager.swopIndex(selectedStudent, toSwapWith, selectedCourse);
+            selectedStudent = updatedStudents[0];
+            courseMgr.swopStudents(selectedStudent, updatedStudents[1], selectedCourse);
         } else {
             throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
         }
@@ -409,7 +412,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
      * @throws KeyNotFoundException       thrown if chosen index does not exist for the selected course
      * @throws MissingSelectionException  thrown if either course or index has not been selected
      * @throws MissingParametersException thrown if either course or index has not been selected
-     * @throws InvalidInputException      thrown if user is not registered for course, already in the new index, new index is full, or timetable clashes
+     * @throws InvalidInputException      thrown if selectedStudent is not registered for course, already in the new index, new index is full, or timetable clashes
      */
     public void swopToIndex() throws KeyNotFoundException, MissingSelectionException,
     MissingParametersException, InvalidInputException {
@@ -434,9 +437,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         if (checkSwopClash(selectedStudent, selectedIndex)){
             throw new InvalidInputException("Timetable clash detected. Index Swop not allowed");
         }
+        selectedStudent = studentManager.swopIndex(selectedStudent, selectedCourse, selectedIndex);
         courseMgr.removeStudent(selectedStudent, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
         courseMgr.addStudent(selectedStudent, selectedIndex, selectedCourse);
-        studentManager.swopIndex(selectedStudent, selectedCourse, selectedIndex);
     }
 
     /**
@@ -487,9 +490,6 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course first");
         }
-        if (selectedIndex == null) {
-            throw new MissingSelectionException("Please select an index first");
-        }
         HashMap<String, String> courses = student.getCourses();
         Course course;
         Index registered;
@@ -497,7 +497,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         // iterate through all of student's registered courses to check for clash
         for (Map.Entry<String, String> entry: courses.entrySet()) {
             // except for the course intending to switch out (since they will likely clash)
-            if (entry.getKey() == selectedCourse.getCourseCode()){
+            if (entry.getKey().equals(selectedCourse.getCourseCode())){
                 continue;
             }
             course = courseMgr.getCourse(entry.getKey());

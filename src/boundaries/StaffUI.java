@@ -571,6 +571,8 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         // pass the new values to the system to update
         try {
             system.updateCourse(newCourseCode, newCourseName, newSchool);
+            displayOutput("Successfully updated course");
+            displayOutput(system.printAllCourses());
         } catch (Exception e) {
             displayOutput(e.getMessage());
         }
@@ -610,6 +612,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         try {
             system.addIndex(indexNo, slots);
+            displayOutput("Index successfully added to course");
         } catch (Exception e) {
             displayOutput(e.getMessage());
         }
@@ -660,6 +663,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
 
         try {
             system.updateIndex(indexNo, slots);
+            displayOutput("Index updated");
         } catch (OutOfRangeException e) {
             displayOutput(e.getMessage());
         } catch (KeyClashException e) {

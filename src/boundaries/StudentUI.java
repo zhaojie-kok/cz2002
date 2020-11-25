@@ -356,7 +356,8 @@ public class StudentUI extends Promptable implements HiddenInputUI {
         displayOutput("Enter user ID of the student you are swopping with");
         String swopID = (String) getUserInput();
         displayOutput("Enter the other student's password");
-        String swopPassword = (String) getHiddenInput();
+        
+        String swopPassword = new String((char[])getHiddenInput());
 
         // verify the login details of the other student
         LoginMgr loginMgr = new LoginMgr();
@@ -364,7 +365,6 @@ public class StudentUI extends Promptable implements HiddenInputUI {
             result = loginMgr.verifyLoginDetails(swopID, swopPassword);
         } catch (Exception e) {
             displayOutput(e.getMessage());
-            ;
             return;
         }
         if (result != 1) { // if the login details are not verified to be a student

@@ -207,9 +207,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
             loginMgr.verifyLoginDetails(userId, null);
         } catch (KeyNotFoundException e) {
             isUnique = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
 
         if (!isUnique) {
             throw new KeyClashException("UserID " + userId);

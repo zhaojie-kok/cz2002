@@ -139,9 +139,11 @@ public class StudentManager implements EntityManager {
      * @param s1     First student
      * @param s2     Second student
      * @param course Course to swop index
+     * @return Updated Students s1, s2
      * @throws KeyNotFoundException thrown if either student has not registered for the course
      */
-    public void swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException {
+    public Student[] swopIndex(Student s1, Student s2, Course course) throws KeyNotFoundException {
+        // TODO: Changed return type, anywhere else to update?
         if (!(s1.isRegistered(course) && s2.isRegistered(course))) {
             throw new KeyNotFoundException("Both Students must be registered for the course");
         }
@@ -153,13 +155,15 @@ public class StudentManager implements EntityManager {
 
         // do nothing if indexes are the same
         if (i1 == i2) {
-            return;
+            return new Student[]{s1, s2};
         }
 
         s1.changeIndex(courseCode, i2);
         s2.changeIndex(courseCode, i1);
         saveState(s1);
         saveState(s2);
+        
+        return new Student[]{s1, s2};
     }
 
     /**
@@ -168,11 +172,13 @@ public class StudentManager implements EntityManager {
      * @param student  Student swopping index
      * @param course   Course to swop
      * @param newIndex Index to swop to
+     * @return Updated student
      * @throws InvalidInputException thrown if newIndex has no available slots
      * @throws KeyNotFoundException thrown if student is not registered for the course
      */
-    public void swopIndex(Student student, Course course, Index newIndex)
+    public Student swopIndex(Student student, Course course, Index newIndex)
             throws InvalidInputException, KeyNotFoundException {
+                // TODO: Updated return type to Student
         if (!student.isRegistered(course)) {
             throw new KeyNotFoundException("Student is not registered for this course");
         }
@@ -181,6 +187,7 @@ public class StudentManager implements EntityManager {
         }
         student.changeIndex(course.getCourseCode(), newIndex.getIndexNo());
         saveState(student);
+        return student;
     }
 
     /**
@@ -223,6 +230,13 @@ public class StudentManager implements EntityManager {
             toReturn += s.getLessInfo() + "\n";
         }
         return toReturn;
+    }
+
+    public void dequeueWaitlist(Student fromWaitlist, Course course, Index index){
+        // TODO: New method
+        fromWaitlist.removeWaitlist(course);
+        fromWaitlist.addCourse(course.getCourseCode(), index.getIndexNo(), course.getAcadU());
+        saveState(fromWaitlist);
     }
 
     /**

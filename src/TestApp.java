@@ -25,14 +25,30 @@ import readers.StaffReader;
 
 public class TestApp {
     public static void main(String[] args) throws Exception {
+        // LoginReader loginReader = new LoginReader("data/loginDetails");
+        // String[] details = { newStaff.getUserId(), "password", "staff", null};
+        // try {
+        //     loginReader.writeData(details);
+        // } catch (FileReadingException e1) {
+        //     // TODO Auto-generated catch block
+        //     e1.printStackTrace();
+        // }
 
-        String[] studentsToRegister = {"SLEE001", "STUA002"};
-        for (String st:studentsToRegister){
-            StudentSystem studentSystem = new StudentSystem(st);
-            studentSystem.selectCourse("EG0001");
-            studentSystem.selectIndex("10238");
-            studentSystem.addCourse();
-        }
+        StudentManager sMgr = new StudentManager();
+        LocalDateTime[] newAccessPeriod = { LocalDateTime.of(2020, 11, 10, 0, 0),
+                LocalDateTime.of(2020, 12, 20, 0, 0) };
+        Student s = new Student("STUF002", "Student F", "F", "Singaporean", "czassignment482@gmail.com", "U20202511A", newAccessPeriod, new HashMap<String, String>(), new HashMap<String, String>());
+        sMgr.saveState(s);
+        // s = sMgr.getStudent("STUD002");
+        // s.changeIndex("BU8201", "00402");
+        // sMgr.saveState(s);
+        // String[] studentsToRegister = {"STUA002","STUC002", "STUE002", "ARIE003", "BASH001", "BELL003", "CIND003", "DOC0001", "DOPE001", "HUAM003"};
+        // for (String st:studentsToRegister){
+        //     StudentSystem studentSystem = new StudentSystem(st);
+        //     studentSystem.selectCourse("CZ2007");
+        //     studentSystem.selectIndex("10154");
+        //     studentSystem.addCourse();
+        // }
         // StaffSystem staffSystem;
         // try {
         //     staffSystem = new StaffSystem("JOHN123");
@@ -72,10 +88,10 @@ public class TestApp {
         // e.printStackTrace();
         // }
 
-        // TESTING ADD STAFF (DEBUG ONLY)
-        // String staffNo, String userId, String userType, String name, String gender, String nationality
+        // // TESTING ADD STAFF (DEBUG ONLY)
+        // // String staffNo, String userId, String userType, String name, String gender, String nationality
         // StaffReader staffReader = new StaffReader("data/staff/");
-        // Staff newStaff = new Staff("admin00", "JOHN123", "staff", "John Lim", "M", "Singaporean");
+        // Staff newStaff = new Staff("admin01", "STAF123", "staff", "Staff A", "M", "Singaporean");
         // staffReader.writeData(newStaff);
         // LoginReader loginReader = new LoginReader("data/loginDetails");
         // String[] details = { newStaff.getUserId(), "password", "staff", null};
