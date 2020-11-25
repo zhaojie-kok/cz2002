@@ -246,23 +246,24 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
      */
     private int promptCourseSelection() {
         String courseCode = "";
+        int returnVal = -1;
         displayOutput("Please Enter Course Code: ");
-        while (true) {
-            courseCode = (String) getUserInput();
-            ;
-            courseCode = courseCode.toUpperCase();
-            if (courseCode.equals("EXIT")) {
-                return -1;
-            }
-            try {
-                system.selectCourse(courseCode);
-                return 1;
-            } catch (KeyNotFoundException e) {
-                displayOutput(e.getMessage());
-                displayOutput("Type \"exit\" to return to main menu");
-                return -1;
+        while (!courseCode.equals("EXIT")) {
+            courseCode = (String) getUserInput().toUpperCase();
+            if (!courseCode.equals("EXIT")) {
+                try {
+                    system.selectCourse(courseCode);
+                    courseCode = "EXIT";
+                    returnVal = 1;
+                } catch (KeyNotFoundException e) {
+                    displayOutput(e.getMessage());
+                    displayOutput("Type \"exit\" to return to main menu");
+                }
+            } else {
+                returnVal = -1;
             }
         }
+        return returnVal;
     }
 
     /**
