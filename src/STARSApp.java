@@ -72,9 +72,8 @@ public class STARSApp extends Promptable implements HiddenInputUI {
     public int promptLogin() {
         displayOutput("Please Enter Username: ");
         userId = scn.nextLine();
-        displayOutput("Enter Password: "); 
-        char[] passString = System.console().readPassword();
-        String password = new String(passString );
+        displayOutput("Enter Password: ");
+        String password = (String) getHiddenInput();
 
         int result = 0;
         try {
@@ -101,7 +100,14 @@ public class STARSApp extends Promptable implements HiddenInputUI {
      */
     @Override
     public Object getHiddenInput() {
-        return System.console().readPassword();
+        String toReturn;
+        if (System.console() == null){
+            toReturn = scn.nextLine();
+        }else{
+            char[] passString = System.console().readPassword();
+            toReturn = new String(passString );
+        }
+        return toReturn;
     }
 
     /**
