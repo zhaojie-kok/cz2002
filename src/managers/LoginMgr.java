@@ -64,7 +64,7 @@ public class LoginMgr {
             LocalDateTime[] accessPeriod = (LocalDateTime[]) data[2];
             if (data.length == 0) {
                 return -1;
-            } else if (!loginReader.hashPassword(password).equals(hashedPassword)) {
+            } else if (password == null || !loginReader.hashPassword(password).equals(hashedPassword)) {
                 throw new InvalidInputException("Wrong Password");
             } else {
                 // return positive numerics instead of just boolean for success to make it easy to add more classes

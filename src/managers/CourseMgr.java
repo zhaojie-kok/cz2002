@@ -224,11 +224,13 @@ public class CourseMgr implements EntityManager {
      * @param student   Student to be removed
      * @param index     Index to remove student from
      * @param course    Course to remove student from
+     * @return Student removed from waitlist, if any
      * @throws MissingParametersException thrown if arguments provided are incomplete
      * @throws InvalidInputException thrown if student has not registered for the course
      */
-    public void removeStudent(Student student, Index index, Course course) throws MissingParametersException,
+    public Student removeStudent(Student student, Index index, Course course) throws MissingParametersException,
             InvalidInputException {
+        Student toReturn = null;
         if (student == null || index == null || course == null){
             throw new MissingParametersException("Missing arguments provided, please check inputs");
         }
@@ -237,7 +239,7 @@ public class CourseMgr implements EntityManager {
         if (studentList.remove(student)){
             index.setRegisteredStudents(studentList);
             course.updateIndex(index);
-            dequeueWaitlist(course, index);
+            toReturn = dequeueWaitlist(course, index);
             saveState(course);
         } else if (studentWaitlist.remove(student)) { // check waitlist if not in the list of registered students
             index.removeFromWaitList(student);
@@ -246,6 +248,7 @@ public class CourseMgr implements EntityManager {
         } else {
             throw new InvalidInputException(student.getUserId() + " is not registered for " + index.getIndexNo());
         }
+        return toReturn;
     }
 
     /**
@@ -254,7 +257,6 @@ public class CourseMgr implements EntityManager {
      * @param s1     first student to be swopped
      * @param s2     second stuednt to be swopped
      * @param course Course to swop student indexes
-     * @throws KeyNotFoundException thrown if course cannot be found under either student's registered courses
      * @throws InvalidInputException thrown if either student has not registered for the course
      */
     public void swopStudents (Student s1, Student s2, Course course) throws KeyNotFoundException, InvalidInputException {
@@ -276,19 +278,15 @@ public class CourseMgr implements EntityManager {
         // then do the same for student s2 with i2 and i1 respectively
         List<Student> list1 = i1.getRegisteredStudents();
         List<Student> list2 = i2.getRegisteredStudents();
-        boolean removed1 = list1.remove(s1);
-        boolean removed2 = list2.remove(s1);
-        if (removed1 && removed2) {
-            list1.add(s2);
-            list2.add(s1);
-            i1.setRegisteredStudents(list1);
-            i2.setRegisteredStudents(list2);
-            course.updateIndex(i1);
-            course.updateIndex(i2);
-            saveState(course);
-        } else {
-            throw new KeyNotFoundException("Inconsistencies found for student data. Please contact system administrator");
-        }
+        list1.remove(s1);
+        list2.remove(s1);
+        list1.add(s2);
+        list2.add(s1);
+        i1.setRegisteredStudents(list1);
+        i2.setRegisteredStudents(list2);
+        course.updateIndex(i1);
+        course.updateIndex(i2);
+        saveState(course);
 
     }
 
@@ -298,9 +296,9 @@ public class CourseMgr implements EntityManager {
      * @param course course hosting index
      * @param index  Index to dequeue waitlist
      */
-    private void dequeueWaitlist(Course course, Index index){
+    private Student dequeueWaitlist(Course course, Index index){
         if (index == null || course == null){
-            return;
+            return null;
         }
         Student student = index.dequeueWaitlist();
         try {
@@ -308,16 +306,18 @@ public class CourseMgr implements EntityManager {
                 informWaitlistSuccess(student, course, index);
                 course.updateIndex(index);
                 saveState(course);
+                return student;
             }
         } catch (InvalidInputException e) {
             if (index.getSlotsAvailable() == 0) {
-                return;
+                return null;
             } else {
                 dequeueWaitlist(course, index);
             }
         } catch (MissingParametersException m) {
             m.printStackTrace();
         }
+        return null;
     }
 
     /**

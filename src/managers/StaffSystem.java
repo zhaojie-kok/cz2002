@@ -217,9 +217,7 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
             loginMgr.verifyLoginDetails(userId, null);
         } catch (KeyNotFoundException e) {
             isUnique = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
 
         if (!isUnique) {
             throw new KeyClashException("UserID " + userId);

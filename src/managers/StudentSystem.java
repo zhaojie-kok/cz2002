@@ -245,35 +245,33 @@ public class StudentSystem implements CourseSystemInterface {
                         }
                     }
                 }
-
-                output += "\nEVEN WEEKS\n|     |";
-                for (int i=0; i<DayOfWeek.values().length; i++) {
-                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
-                }
-                for (int i=0; i<tableForm.length; i++) {
-                    output += String.format("\n|%02d:%02d|", ((int) (i/2)) + 8, i%2 * 30);
-                    for (int j=0; j<7; j++) {
-                        output += String.format("%s|", 
-                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
-                    }
-                }
-                output += "\nODD WEEKS\n|     |";
-                for (int i = 0; i < DayOfWeek.values().length; i++) {
-                    output += String.format("%15s|", DayOfWeek.values()[i].toString());
-                }
-                for (int i = 0; i < tableForm.length; i++) {
-                    output += String.format("\n|%02d:%02d|", ((int) (i / 2)) + 8, i % 2 * 30);
-                    for (int j = 7; j < tableForm[0].length; j++) {
-                        output += String.format("%s|", 
-                            tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
-                    }
-                }
-
             } catch (KeyNotFoundException e) {
                 throw new FileReadingException("inconsistencies found in student data. Please contact system administrator");
             }
         }
         
+        output += "\nEVEN WEEKS\n|     |";
+        for (int i=0; i<DayOfWeek.values().length; i++) {
+            output += String.format("%15s|", DayOfWeek.values()[i].toString());
+        }
+        for (int i=0; i<tableForm.length; i++) {
+            output += String.format("\n|%02d:%02d|", ((int) (i/2)) + 8, i%2 * 30);
+            for (int j=0; j<7; j++) {
+                output += String.format("%s|", 
+                    tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
+            }
+        }
+        output += "\nODD WEEKS\n|     |";
+        for (int i = 0; i < DayOfWeek.values().length; i++) {
+            output += String.format("%15s|", DayOfWeek.values()[i].toString());
+        }
+        for (int i = 0; i < tableForm.length; i++) {
+            output += String.format("\n|%02d:%02d|", ((int) (i / 2)) + 8, i % 2 * 30);
+            for (int j = 7; j < tableForm[0].length; j++) {
+                output += String.format("%s|", 
+                    tableForm[i][j] != null ? tableForm[i][j] : String.format("%15s", ""));
+            }
+        }
         return output;
     }
 
@@ -332,7 +330,11 @@ public class StudentSystem implements CourseSystemInterface {
      */
     public void dropCourse() throws InvalidInputException, MissingParametersException, KeyNotFoundException {
         // FUNCTIONAL REQUIREMENT - Student: 2. Drop course
-        courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, user.getCourseIndex(selectedCourse.getCourseCode())), selectedCourse);
+        Index index = courseMgr.getCourseIndex(selectedCourse, user.getCourseIndex(selectedCourse.getCourseCode()));
+        Student fromWaitlist = courseMgr.removeStudent(user, index, selectedCourse);
+        if (fromWaitlist != null){
+            studentManager.dequeueWaitlist(fromWaitlist, selectedCourse, index);
+        }
         user = studentManager.dropCourse(selectedCourse, user);
         clearSelections();
     }
@@ -403,8 +405,9 @@ public class StudentSystem implements CourseSystemInterface {
         }
 
         if (!checkSwopClash(user, toSwapTo) && !checkSwopClash(toSwapWith, currentIndex)){
-            courseMgr.swopStudents(user, toSwapWith, selectedCourse);
-            studentManager.swopIndex(user, toSwapWith, selectedCourse);
+            Student[] updatedStudents = studentManager.swopIndex(user, toSwapWith, selectedCourse);
+            user = updatedStudents[0];
+            courseMgr.swopStudents(user, updatedStudents[1], selectedCourse);
         } else {
             throw new OutOfRangeException("Timetable clash detected. Index Swop not allowed");
         }
@@ -441,9 +444,9 @@ public class StudentSystem implements CourseSystemInterface {
         if (checkSwopClash(user, selectedIndex)){
             throw new InvalidInputException("Timetable clash detected. Index Swop not allowed");
         }
+        user = studentManager.swopIndex(user, selectedCourse, selectedIndex);
         courseMgr.removeStudent(user, courseMgr.getCourseIndex(selectedCourse, current), selectedCourse);
         courseMgr.addStudent(user, selectedIndex, selectedCourse);
-        studentManager.swopIndex(user, selectedCourse, selectedIndex);
     }
 
     /**
@@ -494,9 +497,6 @@ public class StudentSystem implements CourseSystemInterface {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a course first");
         }
-        if (selectedIndex == null) {
-            throw new MissingSelectionException("Please select an index first");
-        }
         HashMap<String, String> courses = student.getCourses();
         Course course;
         Index registered;
@@ -504,7 +504,7 @@ public class StudentSystem implements CourseSystemInterface {
         // iterate through all of student's registered courses to check for clash
         for (Map.Entry<String, String> entry: courses.entrySet()) {
             // except for the course intending to switch out (since they will likely clash)
-            if (entry.getKey() == selectedCourse.getCourseCode()){
+            if (entry.getKey().equals(selectedCourse.getCourseCode())){
                 continue;
             }
             course = courseMgr.getCourse(entry.getKey());
