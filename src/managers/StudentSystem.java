@@ -25,7 +25,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
 
     /**
      * Constructor
-     * NOTE: selectedStudent defaults to the selectedStudent, since the selectedStudent is always of interest
+     * NOTE: selectedStudent defaults to the user, since the user is always of interest
      * 
      * @param userId UserID of student selectedStudent logging into system
      * @throws FileReadingException thrown if student file of selectedStudent cannot be accessed
@@ -198,7 +198,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
     /**
      * Method to clear all previously made selections See
      * {@link Systems#clearSelections()} method
-     * NOTE: selectedStudent will not be cleared as it always refers to the selectedStudent
+     * NOTE: selectedStudent will not be cleared as it always refers to the user
      */
     @Override
     public void clearSelections() {
@@ -269,7 +269,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
     }
 
     /**
-     * Method to register selectedStudent for a course
+     * Method to register user for a course
      * 
      * @return int denoting status of registration (1. Registration successful, 0. Waitlisted)
      * @throws KeyNotFoundException thrown if index selected is not under course selected
@@ -313,7 +313,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
     }
 
     /**
-     * Method to allow student selectedStudent to drop course
+     * Method to allow student user to drop course
      * 
      * @throws InvalidInputException      thrown if student has not registered for
      *                                    selected course
