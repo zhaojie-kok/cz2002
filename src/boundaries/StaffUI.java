@@ -12,7 +12,7 @@ import managers.StaffSystem;
 /**
  * UI for Staff users. Meant to abstract staff system from user
  */
-public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
+public class StaffUI extends ChoiceUI implements NumericUI, DateTimeUI {
     private static Scanner scn;
     private static String userId;
     private static StaffSystem system;
@@ -249,7 +249,7 @@ public class StaffUI extends Promptable implements NumericUI, DateTimeUI {
         int returnVal = -1;
         displayOutput("Please Enter Course Code: ");
         while (!courseCode.equals("EXIT")) {
-            courseCode = (String) getUserInput().toUpperCase();
+            courseCode = ((String) getUserInput()).toUpperCase();
             if (!courseCode.equals("EXIT")) {
                 try {
                     system.selectCourse(courseCode);

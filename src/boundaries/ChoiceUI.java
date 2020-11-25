@@ -3,7 +3,7 @@ package boundaries;
 /**
  * Parent class for UI types that need to get a choice from user
  */
-public abstract class Promptable implements GeneralUI{
+public abstract class ChoiceUI implements GeneralUI{
     /**
      * Method to get the choice from the user based on a list of options
      * 

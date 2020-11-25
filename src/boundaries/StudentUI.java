@@ -14,7 +14,7 @@ import managers.StudentSystem;
 /**
  * UI for student users. Meant to abstract student system from users
  */
-public class StudentUI extends Promptable implements HiddenInputUI {
+public class StudentUI extends ChoiceUI implements HiddenInputUI {
     private static Scanner scn;
     private static String userId;
     private static StudentSystem system;

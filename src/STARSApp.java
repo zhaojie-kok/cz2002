@@ -6,7 +6,7 @@ import boundaries.*;
 /**
  * Main Application for our STARS system
  */
-public class STARSApp extends Promptable implements HiddenInputUI {
+public class STARSApp extends ChoiceUI implements HiddenInputUI {
     private static Scanner scn = new Scanner(System.in);
     private static LoginMgr loginMgr = new LoginMgr();
     private static String userId;
