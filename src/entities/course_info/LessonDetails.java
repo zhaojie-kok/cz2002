@@ -176,7 +176,7 @@ public class LessonDetails implements Serializable, Comparable, Printable {
 	public String getMoreInfo() {
 		String info = String.format("|%10s|", this.lessonType);
 		String[] daysOfWeek = {"Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"};
-		info += String.format(" %5s |", daysOfWeek[this.lessonDay.getValue()]);
+		info += String.format(" %5s |", daysOfWeek[this.lessonDay.getValue() - 1]);
 		info += String.format(" %02d%02d-%02d%02d |", this.startTime.getHour(), this.startTime.getMinute(),
 					this.endTime.getHour(), this.endTime.getMinute());
 		info += String.format(" %15s\n", this.lessonVenue);

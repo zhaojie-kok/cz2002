@@ -2,6 +2,7 @@ package managers;
 
 import entities.course_info.*;
 import exceptions.FileReadingException;
+import exceptions.InvalidInputException;
 import exceptions.KeyClashException;
 import exceptions.KeyNotFoundException;
 import exceptions.MissingSelectionException;
@@ -192,11 +193,12 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * @param accessPeriod Access period of new student
      * @param password     Password for new userID
      * @return String with list of students
-     * @throws KeyClashException thrown if details required to be unique are not
+     * @throws KeyClashException    thrown if details required to be unique are not
      * @throws FileReadingException thrown if new file cannot be created
      */
     public String addStudent(String userId, String name, String gender, String nationality, String email,
-                            String matricNo, LocalDateTime[] accessPeriod, String password) throws KeyClashException, FileReadingException {
+            String matricNo, LocalDateTime[] accessPeriod, String password)
+            throws KeyClashException, FileReadingException {
         // Call student manager to create the student
         boolean isUnique = false;
         try {
@@ -231,7 +233,7 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * method
      * 
      * @throws MissingSelectionException thrown if course has yet to be selected
-     * @throws KeyClashException thrown if new course code is not unique
+     * @throws KeyClashException         thrown if new course code is not unique
      */
     public void updateCourse(String courseCode, String courseName, School school)
             throws KeyClashException, MissingSelectionException {
@@ -256,12 +258,17 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
      * 
      * @param indexNo    index number to be changed to
      * @param slotsTotal New total capacity of index
-     * @throws OutOfRangeException thrown if slotsTotal is less than number of students currently registered for index
-     * @throws KeyClashException thrown if indexNo is not unique within the course
-     * @throws MissingSelectionException thrown if course or index have yet to be selected
+     * @throws OutOfRangeException       thrown if slotsTotal is less than number of
+     *                                   students currently registered for index
+     * @throws KeyClashException         thrown if indexNo is not unique within the
+     *                                   course
+     * @throws MissingSelectionException thrown if course or index have yet to be
+     *                                   selected
+     * @throws InvalidInputException
+     * @throws KeyNotFoundException
      */
-    public void updateIndex(String indexNo, int slotsTotal)
-            throws OutOfRangeException, KeyClashException, MissingSelectionException {
+    public void updateIndex(String indexNo, int slotsTotal) throws OutOfRangeException, KeyClashException,
+            MissingSelectionException, InvalidInputException, KeyNotFoundException {
         if (selectedCourse == null) {
             throw new MissingSelectionException("Course must first be selected");
         }
@@ -269,6 +276,15 @@ public class StaffSystem extends AbstractSystem implements StudentSystemInterfac
             throw new MissingSelectionException("Index must first be selected");
         }
         courseMgr.updateIndex(selectedCourse, selectedIndex, indexNo, slotsTotal);
+        Index newIndex = courseMgr.getCourseIndex(selectedCourse, indexNo);
+        for (Student s : selectedIndex.getRegisteredStudents()){
+            studentManager.dropCourse(selectedCourse, s);
+            studentManager.addCourse(selectedCourse, newIndex, s);
+        }
+        for (Student s: selectedIndex.getWaitlistedStudents()){
+            studentManager.dropCourse(selectedCourse, s);
+            studentManager.addCourse(selectedCourse, newIndex, s);
+        }
     }
 
     /**

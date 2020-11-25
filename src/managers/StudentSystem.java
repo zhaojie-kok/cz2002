@@ -49,6 +49,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
             c = courses.next();
             toReturn += c.getInfo();
         }
+        if (toReturn == ""){
+            return "No courses found";
+        }
         return toReturn;
     }
 
@@ -69,6 +72,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
             if (c.isSchool(school)) {
                 toReturn += String.format(format, c.getInfo());
             }
+        }
+        if (toReturn == ""){
+            return "No courses found";
         }
         return toReturn;
     }
@@ -92,6 +98,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
                 toReturn += String.format(format, c.getInfo());
             }
         }
+        if (toReturn == ""){
+            return "No courses found";
+        }
         return toReturn;
     }
 
@@ -105,6 +114,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         Iterator<Index> indexes = selectedCourse.getIndexes().values().iterator();
         while (indexes.hasNext()) {
             toReturn += String.format(format, indexes.next().getInfo());
+        }
+        if (toReturn == ""){
+            return "None";
         }
         return toReturn;
     }
@@ -124,6 +136,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
             toAdd = String.format(format, courses.get(i), indexes.get(i));
             toReturn += toAdd;
         }
+        if (toReturn == ""){
+            return "None";
+        }
         return toReturn;
     }
 
@@ -140,6 +155,9 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         for (int i = 0; i < hMap.size(); i++) {
             toAdd = String.format(format, courses.get(i), indexes.get(i));
             toReturn += toAdd;
+        }
+        if (toReturn == ""){
+            return "None";
         }
         return toReturn;
     }
@@ -398,7 +416,7 @@ public class StudentSystem extends AbstractSystem implements CourseSystemInterfa
         // FUNCTIONAL REQUIREMENT - Student: 5. Change index number of course
         if (selectedCourse == null) {
             throw new MissingSelectionException("Please select a Course for swopping index");
-        } else if (selectedStudent.isRegistered(selectedCourse)) {
+        } else if (!selectedStudent.isRegistered(selectedCourse)) {
             throw new InvalidInputException("You are not registered for this course");
         }
         

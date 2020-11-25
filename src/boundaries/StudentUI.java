@@ -334,7 +334,7 @@ public class StudentUI extends Promptable implements HiddenInputUI {
             system.swopToIndex();
             displayOutput("Index Succesfully Changed");
         } catch (Exception e) {
-            e.printStackTrace();
+            displayOutput(e.getMessage());
             return;
         }
     }
