@@ -298,6 +298,7 @@ public class CourseMgr implements EntityManager {
      * 
      * @param course course hosting index
      * @param index  Index to dequeue waitlist
+     * @return student that was dequeued
      */
     private Student dequeueWaitlist(Course course, Index index){
         if (index == null || course == null){

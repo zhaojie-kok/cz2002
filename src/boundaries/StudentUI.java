@@ -20,10 +20,10 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
     private static StudentSystem system;
 
     /**
-     * Constructor
-     * NOTE: Student system will not be instantiated until {@link #run()} method is called
+     * Constructor NOTE: Student system will not be instantiated until
+     * {@link #run()} method is called
      * 
-     * @param scn Scanner object for receiving input from user
+     * @param scn    Scanner object for receiving input from user
      * @param userId ID of user
      */
     public StudentUI(Scanner scn, String userId) {
@@ -141,7 +141,8 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
                     returnVal = 1;
                     courseCode = "EXIT";
                 } catch (KeyNotFoundException e) {
-                    displayOutput("No such course code exists, please re-enter or type \"exit\" to return to main menu");
+                    displayOutput(
+                            "No such course code exists, please re-enter or type \"exit\" to return to main menu");
                 }
             }
         }
@@ -184,9 +185,10 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
     }
 
     /**
-     * Method to allow students to register for a course
-     * user will need to enter arguments for {@link managers.StudentManager#addCourse()} method
-     * user will be automatically added to waitlist if the index is full
+     * Method to allow students to register for a course user will need to enter
+     * arguments for
+     * {@link managers.StudentManager#addCourse(entities.course_info.Course, entities.course_info.Index, entities.Student)}
+     * method user will be automatically added to waitlist if the index is full
      */
     private void addCourse() {
         int result;
@@ -204,7 +206,7 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
         // try to add course in the system
         try {
             result = system.addCourse();
-            switch(result) {
+            switch (result) {
                 case 0:
                     displayOutput("Course is full, you have been added to waitlist");
                     break;
@@ -219,7 +221,8 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
     }
 
     /**
-     * Method to allow students to drop a course, whether from their registered or waitlisted courses
+     * Method to allow students to drop a course, whether from their registered or
+     * waitlisted courses
      */
     private void dropCourse() {
         int result;
@@ -252,7 +255,7 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
      * Displays the list of vacancies available for each course in the system
      */
     private void checkVacanciesAvailable() {
-        String[] options = {"Check by course", "Check by index"};
+        String[] options = { "Check by course", "Check by index" };
         int choice = promptChoice("How would you like to check course vacancies?", options);
 
         int result = promptCourseSelection();
@@ -267,7 +270,7 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
                 return;
             }
         }
-        
+
         displayOutput("Vacancies Available: ");
         HashMap<String, Integer[]> compiled;
         try {
@@ -281,9 +284,11 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
     }
 
     /**
-     * Method to display a list of courses
-     * User can choose to filter by school with {@link managers.StudentSystem#printCoursesBySchool()} method
-     * or users can filter using keywords with {@link managers.StudentSystem#printCoursesByStringFilter()} method
+     * Method to display a list of courses User can choose to filter by school with
+     * {@link managers.StudentSystem#printCoursesBySchool(School, String)} method or
+     * users can filter using keywords with
+     * {@link managers.StudentSystem#printCoursesByStringFilter(String, String)}
+     * method
      */
     private void printCourses() {
         // print all, b sch, or by filter
@@ -340,8 +345,8 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
     }
 
     /**
-     * Method to allow 2 students to swop their indexes with each other
-     * NOTE: userID and password of the swopping student is required
+     * Method to allow 2 students to swop their indexes with each other NOTE: userID
+     * and password of the swopping student is required
      */
     private void swopStudentIndex() {
         int result;
@@ -356,8 +361,8 @@ public class StudentUI extends ChoiceUI implements HiddenInputUI {
         displayOutput("Enter user ID of the student you are swopping with");
         String swopID = (String) getUserInput();
         displayOutput("Enter the other student's password");
-        
-        String swopPassword = new String((char[])getHiddenInput());
+
+        String swopPassword = new String((char[]) getHiddenInput());
 
         // verify the login details of the other student
         LoginMgr loginMgr = new LoginMgr();
