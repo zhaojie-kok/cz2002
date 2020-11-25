@@ -60,7 +60,6 @@ public class Student extends User implements Printable{
         this.courses = courses;
         this.waitlist = waitlist;
     }
-
     /**
      * Getter for student matriculation number
      * @return student's matriculation number

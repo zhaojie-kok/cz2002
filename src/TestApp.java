@@ -34,11 +34,6 @@ public class TestApp {
         //     e1.printStackTrace();
         // }
 
-        StudentManager sMgr = new StudentManager();
-        LocalDateTime[] newAccessPeriod = { LocalDateTime.of(2020, 11, 10, 0, 0),
-                LocalDateTime.of(2020, 12, 20, 0, 0) };
-        Student s = new Student("STUF002", "Student F", "F", "Singaporean", "czassignment482@gmail.com", "U20202511A", newAccessPeriod, new HashMap<String, String>(), new HashMap<String, String>());
-        sMgr.saveState(s);
         // s = sMgr.getStudent("STUD002");
         // s.changeIndex("BU8201", "00402");
         // sMgr.saveState(s);
