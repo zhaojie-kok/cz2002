@@ -23,16 +23,10 @@ import java.util.List;
  * entity manager classes Also used to invoke entity manager methods based on
  * user actions from UI classes
  */
-public class StaffSystem implements StudentSystemInterface, CourseSystemInterface {
-    private CourseMgr courseMgr;
-    private StudentManager studentManager;
-    private CalendarMgr calendarMgr;
+public class StaffSystem extends AbstractSystem implements StudentSystemInterface, CourseSystemInterface {
     private LoginMgr loginMgr;
     private LessonDetailMaker lessonDetailMaker;
 
-    private Course selectedCourse;
-    private Index selectedIndex;
-    private Student selectedStudent;
     private List<LessonDetails>[] timetable = new ArrayList[14];
 
     /**
@@ -40,20 +34,14 @@ public class StaffSystem implements StudentSystemInterface, CourseSystemInterfac
      * in to system
      * 
      * @param userId User ID of the staff user logged in to the system
-     * @throws FileReadingException thrown if file cannot be read or found
+     * @throws FileReadingException thrown if files cannot be read or found
      */
     public StaffSystem(String userId) throws FileReadingException {
+        super();
         for (int i = 0; i < 14; i++) {
             timetable[i] = new ArrayList<LessonDetails>();
         }
         loginMgr = new LoginMgr("data/loginDetails");
-        calendarMgr = new CalendarMgr();
-        try {
-            studentManager = new StudentManager();
-            courseMgr = new CourseMgr();
-        } catch (FileReadingException e) {
-            throw e;
-        }
         lessonDetailMaker = new LessonDetailMaker();
     }
 

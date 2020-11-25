@@ -11,7 +11,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 
-/** Default class for sending notifications to users.
+/**
+ * Default class for sending notifications to users.
  * Method of notifying is email by default.
  */
 public class NotifSender {
